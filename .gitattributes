@@ -1,0 +1,4 @@
+* text eol=lf
+
+* linguist-vendored
+src/** linguist-vendored=false

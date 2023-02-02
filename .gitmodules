@@ -1,0 +1,10 @@
+[submodule "libs/imgui"]
+	path = libs/imgui
+	url = https://github.com/ocornut/imgui.git
+	branch = docking
+[submodule "libs/stb"]
+	path = libs/stb
+	url = https://github.com/nothings/stb.git
+[submodule "libs/trojan-go"]
+	path = libs/trojan-go
+	url = https://github.com/gfw-report/trojan-go.git
