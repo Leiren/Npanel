@@ -740,6 +740,10 @@ void view_notes_popupframe(User **_user)
 void show_user_configs(User **_user)
 {
     static User user;
+    static char tcpqtextbuf[150];
+    static char wsqtextbuf[150];
+    const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
+    const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
 
     int imgSize = 300;
     int minModulePixelSize = 3;
@@ -758,10 +762,9 @@ void show_user_configs(User **_user)
         ImGui::SetNextWindowSize(ImVec2(600, 0));
 
         // tcp:
-        char qtextbuf[150];
-        sprintf(qtextbuf, "trojan://%s@%s:%d?security=tls&type=tcp#%s", user.password.c_str(), ServerReportStore::last_report.panelsettings.domain.c_str(),
+        sprintf(tcpqtextbuf, "trojan://%s@%s:%d?security=tls&type=tcp#%s", user.password.c_str(), ServerReportStore::last_report.panelsettings.domain.c_str(),
                 ServerReportStore::last_report.panelsettings.mainport, user.name.c_str());
-        std::string qrText = qtextbuf;
+        std::string qrText = tcpqtextbuf;
         std::string fileName = "qr-tcp.png";
         auto QrPng = QrToPng(fileName, imgSize, minModulePixelSize, qrText, true, qrcodegen::QrCode::Ecc::MEDIUM);
         if (QrPng.writeToPNG())
@@ -773,9 +776,9 @@ void show_user_configs(User **_user)
         // ws:
         if (user.protocol == 1)
         {
-            sprintf(qtextbuf, "trojan://%s@%s:%d?security=tls&type=ws&path=%s&#%s", user.password.c_str(), ServerReportStore::last_report.panelsettings.domain.c_str(),
+            sprintf(wsqtextbuf, "trojan://%s@%s:%d?security=tls&type=ws&path=%s&#%s", user.password.c_str(), ServerReportStore::last_report.panelsettings.domain.c_str(),
                     ServerReportStore::last_report.panelsettings.mainport, ServerReportStore::last_report.panelsettings.websocket_path.c_str(), user.name.c_str());
-            std::string qrText = qtextbuf;
+            std::string qrText = wsqtextbuf;
             std::string fileName = "qr-ws.png";
             auto QrPng = QrToPng(fileName, imgSize, minModulePixelSize, qrText, true, qrcodegen::QrCode::Ecc::MEDIUM);
             if (QrPng.writeToPNG())
@@ -792,22 +795,34 @@ void show_user_configs(User **_user)
     {
         const int child_H = my_image_height + 16;
         ImGui::BeginChild("Child1", ImVec2(0, child_H + 2 * frame_pad), true);
-        if (ImGui::BeginTable("table_sorting", 2, ImGuiTableFlags_BordersInnerV, ImVec2(0.0f, 0), 0.0f))
+        if (ImGui::BeginTable("table_qr_tcp", 2, ImGuiTableFlags_BordersInnerV, ImVec2(0.0f, 0), 0.0f))
         {
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
 
             ImGui::Image((void *)(intptr_t)tcp_texture, ImVec2(my_image_width, my_image_height));
             ImGui::TableNextColumn();
-            ImGui::Text("Text 1");
-            if(ImGui::Button("Download QR-Code")){
-                  emscripten::val::global("window").call<void>(
-                    "offerFileAsDownload",
-                    string("filename.ext"),
-                    string("mime/type")
-                );
+            char buf[50];
+            sprintf(buf, "User %s", user.name.c_str());
+            ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
+            ImGui::Text(buf);
+            ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
+            sprintf(buf, "Protocol: TCP", user.name.c_str());
+            ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
+            ImGui::Text(buf);
+            ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
+
+            ImGui::Dummy(ImVec2(0, child_H - 5 * TEXT_BASE_HEIGHT));
+
+            if (ImGui::Button("Download QR-Code", ImVec2(-FLT_MIN, 0)))
+            {
+                EM_ASM(
+                    offerFileAsDownload(("qr-tcp.png"), ("mime/type")););
             }
-            ImGui::Text("Text 3");
+            if (ImGui::Button("Copy Text Config", ImVec2(-FLT_MIN, 0)))
+            {
+                ImGui::SetClipboardText(tcpqtextbuf);
+            }
             ImGui::EndTable();
         }
         ImGui::EndChild();
@@ -818,16 +833,34 @@ void show_user_configs(User **_user)
             return;
         }
         ImGui::BeginChild("Child2", ImVec2(0, child_H + 2 * frame_pad), true);
-        if (ImGui::BeginTable("table_sorting", 2, ImGuiTableFlags_BordersInnerV, ImVec2(0.0f, 0), 0.0f))
+        if (ImGui::BeginTable("table_qr_ws", 2, ImGuiTableFlags_BordersInnerV, ImVec2(0.0f, 0), 0.0f))
         {
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
 
             ImGui::Image((void *)(intptr_t)ws_texture, ImVec2(my_image_width, my_image_height));
             ImGui::TableNextColumn();
-            ImGui::Text("Text 1");
-            ImGui::Text("Text 2");
-            ImGui::Text("Text 3");
+            char buf[50];
+            sprintf(buf, "User %s", user.name.c_str());
+            ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
+            ImGui::Text(buf);
+            ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
+            sprintf(buf, "Protocol: WebSocket", user.name.c_str());
+            ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
+            ImGui::Text(buf);
+            ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
+
+            ImGui::Dummy(ImVec2(0, child_H - 5 * TEXT_BASE_HEIGHT));
+
+            if (ImGui::Button("Download QR-Code", ImVec2(-FLT_MIN, 0)))
+            {
+                EM_ASM(
+                    offerFileAsDownload(("qr-ws.png"), ("mime/type")););
+            }
+            if (ImGui::Button("Copy Text Config", ImVec2(-FLT_MIN, 0)))
+            {
+                ImGui::SetClipboardText(tcpqtextbuf);
+            }
             ImGui::EndTable();
         }
         ImGui::EndChild();

@@ -4,6 +4,7 @@
 #include "colors.h"
 #include "server_report_store.h"
 #include "connection.h"
+extern void HelpMarker(const char *desc);
 
 struct BashConsole
 {
@@ -140,7 +141,13 @@ struct BashConsole
         if (ImGui::BeginPopup("Options"))
         {
             ImGui::Checkbox("Auto-scroll", &AutoScroll);
+            if(ImGui::Button("Kill Terminal")){
+                Connection::send("kill-bash",0);
+            }
+            ImGui::SameLine();
+            HelpMarker("In case your terminal frozen or not responding, kill it to recreate the session.");
             ImGui::EndPopup();
+
         }
         // Options, Filter
         if (ImGui::Button("Options"))

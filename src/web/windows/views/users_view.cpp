@@ -314,13 +314,16 @@ void user_opt_popup(User *user)
                     notes_user = user;
                     break;
                 case 3:
+                    user->traffic_total.download = 0;
+                    user->traffic_total.upload = 0;
+                    Connection::updateUser(*user);
                     break;
                 }
             }
             if (i == 3)
             {
                 ImGui::SameLine();
-                HelpMarker("This will reset Total Traffics used, this is useful when the user has reached the traffic limit.");
+                HelpMarker("This will reset Traffics used.\nIt is useful when the user has reached the traffic limit.");
             }
         }
         ImGui::Separator();
