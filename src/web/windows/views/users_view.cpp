@@ -5,9 +5,8 @@
 #include "log.h"
 #include "colors.h"
 #include "connection.h"
-extern void HelpMarker(const char *desc);
+#include "customwidgets.h"
 
-void ToggleButton(const char *str_id, bool *v);
 void user_opt_popup(User *);
 extern void new_user_popup_frame(bool *new_state);
 extern void edit_user_popupframe(User **_user);
@@ -115,7 +114,7 @@ static void PopStyleCompact()
 
 void render_list()
 {
-    const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
+    const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("x").x;
     const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
 
     // static ImVector<UserRowModel> items;
@@ -221,14 +220,14 @@ void render_list()
                 // ImGui::Unindent(ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(),1).GetWidth()/2 - TEXT_BASE_WIDTH*strlen(item->Name)/2 - ImGui::GetStyle().FramePadding.x);
 
                 ImGui::TableNextColumn();
-                ImGui::Indent(ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 2).GetWidth() / 2.0f - TEXT_BASE_WIDTH * 2.65f - ImGui::GetStyle().FramePadding.x);
+                ImGui::Indent(ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 2).GetWidth() / 2.0f - TEXT_BASE_WIDTH * 3.2f - ImGui::GetStyle().FramePadding.x);
                 bool c_enable = item->enable;
                 ToggleButton("Active", &item->enable);
                 if (item->enable != c_enable)
                 {
                     Connection::updateUser(*item);
                 }
-                ImGui::Unindent(ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 2).GetWidth() / 2.0f - TEXT_BASE_WIDTH * 2.65f - ImGui::GetStyle().FramePadding.x);
+                ImGui::Unindent(ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 2).GetWidth() / 2.0f - TEXT_BASE_WIDTH * 3.2f - ImGui::GetStyle().FramePadding.x);
 
                 ImGui::TableNextColumn();
                 if (ImGui::Button("Options", ImVec2(TEXT_BASE_WIDTH * 10, 0)))
@@ -268,10 +267,10 @@ void render_list()
                 ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 7).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * strlen(showbuf) / 2.0f - ImGui::GetStyle().FramePadding.x);
 
                 ImGui::TableNextColumn();
-                if (item->days_left == 0)
-                    sprintf(showbuf, "no-limit");
+                if (item->day_limit)
+                    sprintf(showbuf, "%d D %d H", item->days_left,item->minutes_left/60);
                 else
-                    sprintf(showbuf, "%d", item->days_left);
+                    sprintf(showbuf, "%s", "no-limit");
 
                 ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 8).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * strlen(showbuf) / 2.0f - ImGui::GetStyle().FramePadding.x);
                 ImGui::AlignTextToFramePadding();
@@ -389,28 +388,4 @@ void users_view_frame()
 
     ImGui::PopStyleVar(1);
     ImGui::PopStyleColor();
-}
-
-void ToggleButton(const char *str_id, bool *v)
-{
-    ImVec4 *colors = ImGui::GetStyle().Colors;
-    ImVec2 p = ImGui::GetCursorScreenPos();
-    ImDrawList *draw_list = ImGui::GetWindowDrawList();
-
-    float height = ImGui::GetFrameHeight();
-    float width = height * 1.75f;
-    float radius = height * 0.50f;
-
-    ImGui::InvisibleButton(str_id, ImVec2(width, height));
-    if (ImGui::IsItemClicked())
-        *v = !*v;
-    ImGuiContext &gg = *ImGui::GetCurrentContext();
-    float ANIM_SPEED = 0.085f;
-    if (gg.LastActiveId == gg.CurrentWindow->GetID(str_id)) // && g.LastActiveIdTimer < ANIM_SPEED)
-        float t_anim = ImSaturate(gg.LastActiveIdTimer / ANIM_SPEED);
-    if (*v)
-        draw_list->AddRectFilled(p, ImVec2(p.x + width, p.y + height), ImGui::GetColorU32(*v ? colors[ImGuiCol_ButtonActive] : ImVec4(0.78f, 0.78f, 0.78f, 1.0f)), height * 0.5f);
-    else
-        draw_list->AddRectFilled(p, ImVec2(p.x + width, p.y + height), ImGui::GetColorU32(*v ? colors[ImGuiCol_Button] : ImVec4(0.85f, 0.85f, 0.85f, 1.0f)), height * 0.50f);
-    draw_list->AddCircleFilled(ImVec2(p.x + radius + (*v ? 1 : 0) * (width - radius * 2.0f), p.y + radius), radius - 1.5f, IM_COL32(255, 255, 255, 255));
 }

@@ -15,7 +15,8 @@
 #include "implot.h"
 #include <cstdio>
 #include <iostream>
-        
+#include "imnodes.h"
+
 
 extern void loop();
 extern void setup();
@@ -57,16 +58,19 @@ int init_imgui()
   IMGUI_CHECKVERSION();
   ImGui::CreateContext();
   ImPlot::CreateContext();
+  ImNodes::CreateContext();
   ImGui_ImplGlfw_InitForOpenGL(g_window, true);
   ImGui_ImplOpenGL3_Init();
 
   // Setup style
   ImGui::StyleColorsDark();
+  // ImNodes::StyleColorsDark();
+
 
   ImGuiIO &io = ImGui::GetIO();
 
   // Load Fonts
-  const char *font = "resources/SometypeMono-Medium.ttf";
+  const char *font = "resources/Poppins-Medium.ttf";
   io.Fonts->AddFontFromFileTTF(font, 23.0f);
   io.Fonts->AddFontFromFileTTF(font, 18.0f);
   io.Fonts->AddFontFromFileTTF(font, 26.0f);

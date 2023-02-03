@@ -4,8 +4,7 @@
 #include "colors.h"
 #include "server_report_store.h"
 #include "connection.h"
-extern void HelpMarker(const char *desc);
-
+#include "customwidgets.h"
 struct BashConsole
 {
     char InputBuf[256];

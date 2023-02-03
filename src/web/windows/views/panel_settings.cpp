@@ -5,9 +5,8 @@
 #include "server_report_store.h"
 #include "connection.h"
 #include <stdlib.h>
-extern void HelpMarker(const char *desc);
-extern void ToggleButton(const char *str_id, bool *v);
-
+#include "customwidgets.h"
+static bool has_error = false;
 void samelinehelpmarker(const char *desc)
 {
     ImGui::SameLine();
@@ -16,14 +15,10 @@ void samelinehelpmarker(const char *desc)
 }
 void cursor_pos()
 {
-    const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
+    const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("x").x;
 
     ImGui::SetCursorPosX(TEXT_BASE_WIDTH * 30);
 }
-
-void panel_settings_frame()
-{
-    const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
     static char input_admin_username[80];
     static char input_admin_password[80];
     static char input_domain[80];
@@ -33,11 +28,47 @@ void panel_settings_frame()
     static char input_cert_path[80];
     static char input_private_key_path[80];
     static bool input_mux = true;
+void apply_panel_settingn(){
 
-    static bool first_time = true;
-    if (first_time)
+    
+
+    char main_domain_buf[10];
+    sprintf(main_domain_buf,"%d",input_mainport);
+    char fake_website_index_buf[10];
+    sprintf(fake_website_index_buf,"%d",input_fake_website_index);
+
+    Connection::send("update-panel-settings",9,
+    input_admin_username,
+    input_admin_password,
+    input_domain,
+    main_domain_buf,
+    input_ws_path,
+    fake_website_index_buf,
+    input_cert_path,
+    input_private_key_path,
+    input_mux?"1":"0"
+    )->connect([](Result res){
+        if (res.success)
+        {
+            console.log("Panel new settings sent.");
+            has_error = false;
+        }else{
+            console.log("Panel new settings Failed. (so the settings aren't applied) info:");
+            console.log(res.info);
+            has_error = true;
+
+        }
+
+        
+    });
+}
+
+void panel_settings_frame(bool tab_changed)
+{
+    const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
+
+    if (tab_changed || ServerReportStore::last_report.panelsettings.domain == "")
     {
-        first_time = false;
 
         strcpy(input_admin_username, ServerReportStore::last_report.panelsettings.admin_username.c_str());
         strcpy(input_admin_password, ServerReportStore::last_report.panelsettings.admin_password.c_str());
@@ -46,9 +77,9 @@ void panel_settings_frame()
         strcpy(input_cert_path, ServerReportStore::last_report.panelsettings.cert_path.c_str());
         strcpy(input_private_key_path, ServerReportStore::last_report.panelsettings.private_key_path.c_str());
 
-        input_mainport =  ServerReportStore::last_report.panelsettings.mainport;
-        input_fake_website_index =  ServerReportStore::last_report.panelsettings.fakewebsite_template;
-        input_mux =  ServerReportStore::last_report.panelsettings.mux;
+        input_mainport = ServerReportStore::last_report.panelsettings.mainport;
+        input_fake_website_index = ServerReportStore::last_report.panelsettings.fakewebsite_template;
+        input_mux = ServerReportStore::last_report.panelsettings.mux;
     }
 
     ImGui::Text("login username:");
@@ -63,7 +94,7 @@ void panel_settings_frame()
         "Note:\nIf you forget your username or password, you find it in file /opt/Npanel/panel.json\n");
     cursor_pos();
 
-    ImGui::InputText("##input_admin_password", input_admin_password, IM_ARRAYSIZE(input_admin_password));
+    ImGui::InputText("##input_admin_password", input_admin_password, IM_ARRAYSIZE(input_admin_password),ImGuiInputTextFlags_Password);
     ImGui::Text("domain:");
     samelinehelpmarker("Your website domain.\n"
                        "Note: your ssl certifcate & private key must match the domain.\n"
@@ -78,6 +109,8 @@ void panel_settings_frame()
                        "Note: Changing port will NOT improve your connection speed/bandwidth.");
     cursor_pos();
     ImGui::InputInt("##input_mainport", &input_mainport, 0);
+    input_mainport = std::min(65535, input_mainport);
+    input_mainport = std::max(0, input_mainport);
 
     ImGui::Text("websocket path:");
     samelinehelpmarker("Used for Websocket configs\n"
@@ -99,7 +132,7 @@ void panel_settings_frame()
 
     ImGui::Text("certificate path:");
     samelinehelpmarker("Certificate file path\n"
-                       "Start your path with /  and as you know it's complete path!\n"
+                       "Start your path with /  and as you know it's full path!\n"
                        "This certificate must match the domain you enetered.\n"
                        "Examples: /etc/letsencrypt/live/my.domain.com/fullchain.pem\n"
                        "Examples: /etc/letsencrypt/live/my.domain.com/cert.pem");
@@ -109,7 +142,7 @@ void panel_settings_frame()
 
     ImGui::Text("private key path:");
     samelinehelpmarker("Private key file path\n"
-                       "Start your path with /  and as you know it's complete path!\n"
+                       "Start your path with /  and as you know it's full path!\n"
                        "This key must match the domain you enetered.\n"
                        "Examples: /etc/letsencrypt/live/my.domain.com/privkey.pem\n");
 
@@ -150,6 +183,8 @@ void panel_settings_frame()
 
         if (ImGui::Button("OK", ImVec2(120, 0)))
         {
+            apply_panel_settingn();
+// 
             ImGui::CloseCurrentPopup();
         }
         ImGui::SetItemDefaultFocus();
@@ -166,7 +201,7 @@ void panel_settings_frame()
 
         ImGui::Text("In order to backup your users: /opt/Npanel/users.db\n"
                     "In order to backup your settings: /opt/Npanel/panel.json\n"
-                    "But I suggest you to Backup the folder /opt/Npanel completely.\n\n"
+                    "But I suggest you to Backup the folder /opt/Npanel entirely.\n\n"
                     "for security reasons, you should dwonload those files yourself, we don't provide you any links."
 
         );

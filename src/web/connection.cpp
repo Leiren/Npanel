@@ -230,6 +230,8 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
                 user.ip_limit = resobj["users"].GetArray()[i].GetObject()["ip_limit"].GetInt();
                 user.enable = resobj["users"].GetArray()[i].GetObject()["enable"].GetBool();
                 user.days_left = resobj["users"].GetArray()[i].GetObject()["days_left"].GetInt();
+                user.day_limit = resobj["users"].GetArray()[i].GetObject()["day_limit"].GetBool();
+                user.minutes_left = resobj["users"].GetArray()[i].GetObject()["minutes_left"].GetInt();
                 user.protocol = resobj["users"].GetArray()[i].GetObject()["protocol"].GetInt();
                 user.note = resobj["users"].GetArray()[i].GetObject()["note"].GetString();
 
@@ -328,6 +330,7 @@ rocket::signal<void(Result)> *Connection::updateUser(const User &user)
     char ip_limited_amount[16];
     char enable[16];
     char duration_limited_amount[16];
+    char duration_limited_bool[16];
     char protocol[16];
 
     sprintf(speed_limited_upload, "%d", user.speed_limit.upload);
@@ -337,8 +340,9 @@ rocket::signal<void(Result)> *Connection::updateUser(const User &user)
     sprintf(ip_limited_amount, "%d", user.ip_limit);
     sprintf(enable, "%d", user.enable ? 1 : 0);
     sprintf(duration_limited_amount, "%d", user.days_left);
+    sprintf(duration_limited_bool, "%d", user.day_limit?1:0);
     sprintf(protocol, "%d", user.protocol);
-    auto result = Connection::send("update-user", 11,
+    auto result = Connection::send("update-user", 12,
                                    user.name.c_str(),
                                    user.password.c_str(),
                                    speed_limited_upload,
@@ -348,6 +352,7 @@ rocket::signal<void(Result)> *Connection::updateUser(const User &user)
                                    ip_limited_amount,
                                    enable, // enable
                                    duration_limited_amount,
+                                   duration_limited_bool,
                                    protocol,
                                    user.note.c_str());
     result->connect([=](Result res)

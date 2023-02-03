@@ -8,18 +8,7 @@
 #include "QrToPng.h"
 #include "imageloader.h"
 #include "emscripten/bind.h"
-void HelpMarker(const char *desc)
-{
-    ImGui::TextDisabled("(?)");
-    if (ImGui::IsItemHovered(ImGuiHoveredFlags_DelayShort))
-    {
-        ImGui::BeginTooltip();
-        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-        ImGui::TextUnformatted(desc);
-        ImGui::PopTextWrapPos();
-        ImGui::EndTooltip();
-    }
-}
+#include "customwidgets.h"
 void error_popupframe();
 
 static bool has_error = false;
@@ -142,6 +131,7 @@ static void create_user(nup_state &cst)
         upu.ip_limit = cst.ip_limited_amount;
         upu.enable = "1";//enable
         upu.days_left = cst.duration_limited_amount;
+        upu.day_limit = cst.duration_limited == 1;        
         upu.protocol = cst.protocol;
         upu.note = cst.notes;
        
@@ -237,6 +227,7 @@ static void update_user(nup_state &cst, const char *user_password, bool user_ena
     upu.ip_limit = cst.ip_limited_amount;
     upu.enable = user_enable; // enable
     upu.days_left = cst.duration_limited_amount;
+    upu.day_limit = cst.duration_limited == 1;
     upu.protocol = cst.protocol;
     upu.note = cst.notes;
 
@@ -483,7 +474,7 @@ void edit_user_popupframe(User **_user)
         {
             state.ip_limited = 1;
         }
-        if (user.days_left != 0)
+        if (user.day_limit)
         {
             state.duration_limited = 1;
         }
@@ -742,7 +733,7 @@ void show_user_configs(User **_user)
     static User user;
     static char tcpqtextbuf[150];
     static char wsqtextbuf[150];
-    const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
+    const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("x").x;
     const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
 
     int imgSize = 300;
@@ -805,11 +796,11 @@ void show_user_configs(User **_user)
             char buf[50];
             sprintf(buf, "User %s", user.name.c_str());
             ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
-            ImGui::Text(buf);
+            ImGui::TextUnformatted(buf);
             ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
             sprintf(buf, "Protocol: TCP", user.name.c_str());
             ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
-            ImGui::Text(buf);
+            ImGui::TextUnformatted(buf);
             ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
 
             ImGui::Dummy(ImVec2(0, child_H - 5 * TEXT_BASE_HEIGHT));
@@ -843,11 +834,11 @@ void show_user_configs(User **_user)
             char buf[50];
             sprintf(buf, "User %s", user.name.c_str());
             ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
-            ImGui::Text(buf);
+            ImGui::TextUnformatted(buf);
             ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
             sprintf(buf, "Protocol: WebSocket", user.name.c_str());
             ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
-            ImGui::Text(buf);
+            ImGui::TextUnformatted(buf);
             ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
 
             ImGui::Dummy(ImVec2(0, child_H - 5 * TEXT_BASE_HEIGHT));

@@ -35,6 +35,8 @@ struct User
     bool enable;
     int ip_limit;
     int days_left;
+    bool day_limit;
+    int minutes_left;
     int protocol;
     string note;
 };
