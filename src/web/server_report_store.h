@@ -46,7 +46,7 @@ struct PanelConfStructure
     string domain;
     int mainport;
     string websocket_path;
-    string fakewebsite_url;
+    int fakewebsite_template;
     string cert_path;
     string private_key_path;
     bool mux;
@@ -66,7 +66,7 @@ struct ServerReport
     User *users = nullptr;
     PanelConfStructure panelsettings;
     int days_left;
-    char last_software_update[35];  
+
 };
 class   ServerReportStore
 {

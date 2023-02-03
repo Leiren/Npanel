@@ -20,7 +20,6 @@ void server_status_frame()
     int server_capacity = ServerReportStore::last_report.server_capacity;
     int users_count = ServerReportStore::last_report.users_count;
     int active_users_count = ServerReportStore::last_report.active_users_count;
-    char *last_software_update = ServerReportStore::last_report.last_software_update;
 
     if (is_first_time)
     {
@@ -169,22 +168,22 @@ void server_status_frame()
         ImGui::Button(server_grade, ImVec2(-FLT_MIN, 0.0f));
         ImGui::PopStyleColor();
 
-        ImGui::TableNextColumn();
-        ImGui::Button("Software Last-Update", ImVec2(-FLT_MIN, 0.0f));
-        ImGui::TableNextColumn();
-        ImGui::Button(last_software_update, ImVec2(-FLT_MIN, 0.0f));
+        // ImGui::TableNextColumn();
+        // ImGui::Button("Software Last-Update", ImVec2(-FLT_MIN, 0.0f));
+        // ImGui::TableNextColumn();
+        // ImGui::Button(last_software_update, ImVec2(-FLT_MIN, 0.0f));
 
         ImGui::TableNextColumn();
         ImGui::Button("Software Version", ImVec2(-FLT_MIN, 0.0f));
         ImGui::TableNextColumn();
-        ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.246f, 0.836f, 0.051f, 0.65f));
-        ImGui::Button("0.0.7 Alpha (Latest)", ImVec2(-FLT_MIN, 0.0f));
-        ImGui::PopStyleColor();
+        // ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.246f, 0.836f, 0.051f, 0.65f));
+        ImGui::Button("0.0.7 Alpha ", ImVec2(-FLT_MIN, 0.0f));
+        // ImGui::PopStyleColor();
 
-        ImGui::TableNextColumn();
-        ImGui::Button("Software Release Date", ImVec2(-FLT_MIN, 0.0f));
-        ImGui::TableNextColumn();
-        ImGui::Button("Thu, 26 Jan 2023 19:31:16", ImVec2(-FLT_MIN, 0.0f));
+        // ImGui::TableNextColumn();
+        // ImGui::Button("Software Release Date", ImVec2(-FLT_MIN, 0.0f));
+        // ImGui::TableNextColumn();
+        // ImGui::Button("Thu, 26 Jan 2023 19:31:16", ImVec2(-FLT_MIN, 0.0f));
 
         ImGui::EndTable();
     }

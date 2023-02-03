@@ -26,7 +26,7 @@ static bool has_error = false;
 static std::string last_error_msg;
 struct nup_state
 {
-    char name[16] = "";
+    char name[30] = "";
     int protocol = 0;
     int speed_limited = 0; // 0 - 1
     int speed_limited_upload = 0;
@@ -300,7 +300,7 @@ void new_user_popup_frame(bool *new_state)
         ImGui::SameLine();
         ImGui::InputText("##name_input_text", state.name, IM_ARRAYSIZE(state.name));
         ImGui::SameLine();
-        HelpMarker("Enter the user name.\ncan have space.\nmaximum 16 characters.\nmultiple configs can have same names.");
+        HelpMarker("Enter the user name.\ncan have space.\nmultiple configs can have same names.");
 
         // protocol
         ImGui::AlignTextToFramePadding();
@@ -507,7 +507,7 @@ void edit_user_popupframe(User **_user)
         ImGui::SameLine();
         ImGui::InputText("##name_input_text", state.name, IM_ARRAYSIZE(state.name));
         ImGui::SameLine();
-        HelpMarker("Enter the user name.\ncan have space.\nmaximum 16 characters.\nmultiple configs can have same names.");
+        HelpMarker("Enter the user name.\ncan have space.\nmultiple configs can have same names.");
 
         // protocol
         ImGui::AlignTextToFramePadding();

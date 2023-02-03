@@ -80,6 +80,9 @@ rocket::signal<void(Result)> *Connection::send(const char *req, int param_count,
     else
     {
         console.error("[Socket] Falied to send (socket == nullptr)");
+        EM_ASM(
+
+            window.location.reload(););
         delete req_sig;
         req_sig = nullptr;
     }
@@ -203,10 +206,10 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
             //     }
             // }else
             //     new_report.users = (User *)new User[new_report.users_count];
-            //this works , pls dont touch it !!! fuck it
+            // this works , pls dont touch it !!! fuck it
             if (ServerReportStore::last_report.users == nullptr)
                 ServerReportStore::last_report.users = (User *)new User[999];
-            new_report.users =  ServerReportStore::last_report.users;
+            new_report.users = ServerReportStore::last_report.users;
 
             for (int i = 0; i < new_report.users_count; i++)
             {
@@ -233,9 +236,21 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
                 new_report.users[i] = user;
             }
 
-            strcpy(new_report.last_software_update, resobj["last_software_update"].GetString());
-            strcpy(ServerReportStore::last_report.last_software_update, resobj["last_software_update"].GetString());
+ 
 
+            new_report.panelsettings.admin_username = resobj["panelsettings"].GetObject()["admin_username"].GetString();
+            new_report.panelsettings.admin_password = resobj["panelsettings"].GetObject()["admin_password"].GetString();
+            new_report.panelsettings.domain = resobj["panelsettings"].GetObject()["domain"].GetString();
+            new_report.panelsettings.mainport = resobj["panelsettings"].GetObject()["mainport"].GetInt();
+            new_report.panelsettings.websocket_path = resobj["panelsettings"].GetObject()["websocket_path"].GetString();
+            new_report.panelsettings.fakewebsite_template = resobj["panelsettings"].GetObject()["fakewebsite_template"].GetInt();
+            new_report.panelsettings.cert_path = resobj["panelsettings"].GetObject()["cert_path"].GetString();
+            new_report.panelsettings.private_key_path = resobj["panelsettings"].GetObject()["private_key_path"].GetString();
+            new_report.panelsettings.mux = resobj["panelsettings"].GetObject()["mux"].GetBool();
+            new_report.panelsettings.first_launch = resobj["panelsettings"].GetObject()["first_launch"].GetBool();
+            
+
+          
             ServerReportStore::last_report = new_report;
             (ServerReportStore::signal)(&new_report);
         }

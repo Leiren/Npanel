@@ -153,7 +153,7 @@ void render_list()
         // - ImGuiTableColumnFlgas_NoSort / ImGuiTableColumnFlags_NoSortAscending / ImGuiTableColumnFlags_NoSortDescending
         // - ImGuiTableColumnFlags_PreferSortAscending / ImGuiTableColumnFlags_PreferSortDescending
         ImGui::TableSetupColumn("Id", ImGuiTableColumnFlags_DefaultSort | ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 3, UserRowModelColumnID_ID);
-        ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 16, UserRowModelColumnID_Name);
+        ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 30, UserRowModelColumnID_Name);
         ImGui::TableSetupColumn("Enable", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed, 0.0f, UserRowModelColumnID_Action_Enable);
         ImGui::TableSetupColumn("Options##top_list", ImGuiTableColumnFlags_NoSort | ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 10, UserRowModelColumnID_Action_Options);
 
