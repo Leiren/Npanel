@@ -7,6 +7,8 @@
 #include <GLFW/glfw3.h>
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "implot.h"
+#include "imnodes.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 #include "imageloader.h"
@@ -15,7 +17,12 @@
 #include "windows/leftsidebar_window.h"
 #include "windows/main_window.h"
 #include "windows/log_window.h"
+#include "windows/login_window.h"
 #include "views/simpleoverlay.h"
+
+extern void apply_theme_default();
+extern void apply_theme_embraceTheDarkness();
+
 extern GLFWwindow *g_window;
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 bool show_demo_window = true;
@@ -28,6 +35,10 @@ ImGuiID dock_id_left;
 ImGuiID dock_id_right;
 ImGuiID dock_id_bottom;
 
+bool AUTH = false;
+bool FIRSTRUN = false;
+bool BEGIN = false;
+
 EM_JS(int, canvas_get_width, (), {
     return Module.canvas.width;
 });
@@ -36,13 +47,59 @@ EM_JS(int, canvas_get_height, (), {
     return Module.canvas.height;
 });
 
+static bool ShowStyleSelector(const char *label)
+{
+    static int style_idx = 0;
+    const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("x").x;
+
+    ImGui::SetNextItemWidth(TEXT_BASE_WIDTH * 16);
+    if (ImGui::Combo(label, &style_idx, "Default\0Light\0Classic\0Dark\0Darker"))
+    {
+        switch (style_idx)
+        {
+        case 0://defailt
+            ImGui::StyleColorsDark();
+            apply_theme_default();
+            ImPlot::StyleColorsAuto();
+            ImNodes::StyleColorsDark();
+
+            break;
+        case 1://light
+            ImGui::StyleColorsLight();
+            ImPlot::StyleColorsLight();
+            ImNodes::StyleColorsLight();
+
+            break;
+        case 2://classic
+            ImGui::StyleColorsClassic();
+            ImPlot::StyleColorsClassic();
+            ImNodes::StyleColorsClassic();
+            
+            break;
+        case 3://dark
+            ImGui::StyleColorsDark();
+            ImPlot::StyleColorsDark();
+            ImNodes::StyleColorsDark();
+            
+            break;
+        case 4://darker
+            ImGui::StyleColorsDark();
+            apply_theme_embraceTheDarkness();
+            ImPlot::StyleColorsAuto();
+            ImNodes::StyleColorsDark();
+
+            break;
+        }
+        return true;
+    }
+    return false;
+}
 void on_size_changed()
 {
     glfwSetWindowSize(g_window, g_width, g_height);
 
     ImGui::SetCurrentContext(ImGui::GetCurrentContext());
 }
-
 
 void loop()
 {
@@ -102,12 +159,22 @@ void loop()
         ImGui::SetCursorPosX(p.x + 60);
         if (ImGui::BeginMenu("Menu"))
         {
-            static int mode = DebugMode ? 0 : 1;
 
-            ImGui::RadioButton("Debug", &mode, 0);
+            ImGui::Text("Theme:");
             ImGui::SameLine();
-            ImGui::RadioButton("Release", &mode, 1);
-            DebugMode = mode == 0;
+            ShowStyleSelector("##Colors-Selector");
+            if (ImGui::Selectable("check github for updates"))
+            {
+                EM_ASM(window.open("https://github.com/Leiren/Npanel", '_blank').focus(););
+            }
+            ImGui::Separator();
+            if (ImGui::Selectable("logout"))
+            {
+                EM_ASM(
+                    setCookie("token", "", 3);
+
+                    window.location.reload(););
+            }
             ImGui::EndMenu();
         }
 
@@ -144,9 +211,18 @@ void loop()
     static LeftSideBarWindow lsb_w;
     static MainWindow main_w;
     static LogWindow log_w;
-    lsb_w.tick();
-    main_w.tick();
-    log_w.tick();
+    static LoginWindow login_w;
+    if (BEGIN)
+    {
+        if (AUTH && !FIRSTRUN)
+        {
+            lsb_w.tick();
+            main_w.tick();
+            log_w.tick();
+        }
+        else
+            login_w.tick();
+    }
 
     ImGui::ShowDemoWindow();
 

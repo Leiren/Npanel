@@ -17,7 +17,6 @@
 #include <iostream>
 #include "imnodes.h"
 
-
 extern void loop();
 extern void setup();
 GLFWwindow *g_window;
@@ -51,7 +50,7 @@ int init_gl()
 
   return 0;
 }
-
+extern void apply_theme_default();
 int init_imgui()
 {
   // Setup Dear ImGui binding
@@ -64,8 +63,9 @@ int init_imgui()
 
   // Setup style
   ImGui::StyleColorsDark();
-  // ImNodes::StyleColorsDark();
-
+  apply_theme_default();
+  ImPlot::StyleColorsAuto();
+  ImNodes::StyleColorsDark();
 
   ImGuiIO &io = ImGui::GetIO();
 
@@ -91,7 +91,7 @@ int init()
   init_gl();
   init_imgui();
   setup();
-    // printf("hello, world!\n");
+  // printf("hello, world!\n");
 
   // freopen("recousrces/ggout.txt","w",stdout);
   // std::cout << "hi";

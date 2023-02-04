@@ -6,61 +6,125 @@
 #include "connection.h"
 #include <stdlib.h>
 #include "customwidgets.h"
+using std::string;
 static bool has_error = false;
-void samelinehelpmarker(const char *desc)
+static string error = "";
+static void samelinehelpmarker(const char *desc)
 {
     ImGui::SameLine();
     HelpMarker(desc);
     ImGui::SameLine();
 }
-void cursor_pos()
+static void cursor_pos()
 {
     const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("x").x;
 
     ImGui::SetCursorPosX(TEXT_BASE_WIDTH * 30);
 }
-    static char input_admin_username[80];
-    static char input_admin_password[80];
-    static char input_domain[80];
-    static int input_mainport;
-    static char input_ws_path[80];
-    static int input_fake_website_index = 0;
-    static char input_cert_path[80];
-    static char input_private_key_path[80];
-    static bool input_mux = true;
-void apply_panel_settingn(){
+static void error_popupframe()
+{
+    if (has_error)
+        ImGui::OpenPopup("Error##psettings");
+    ImGui::SetNextWindowSize(ImVec2(600, -1));
+    bool meaningless = true;
+    if (ImGui::BeginPopupModal("Error##psettings", &meaningless, ImGuiWindowFlags_NoSavedSettings))
+    {
 
-    
+        has_error = false;
+        ImGui::TextWrapped("%s", error.c_str());
 
+        ImGui::EndPopup();
+    }
+}
+static char input_admin_username[80];
+static char input_admin_password[80];
+static char input_domain[80];
+static int input_mainport;
+static char input_ws_path[80];
+static int input_fake_website_index = 0;
+static char input_cert_path[80];
+static char input_private_key_path[80];
+static bool input_mux = true;
+void apply_panel_settingn()
+{
+
+    if (strlen(input_admin_username) < 3)
+    {
+        error = "admin user name too low.";
+        has_error = true;
+    }
+
+    if (strlen(input_admin_password) < 3)
+    {
+        error = "admin password too low.";
+        has_error = true;
+    }
+    if (strlen(input_domain) < 3)
+    {
+        error = "domain too low.";
+        has_error = true;
+    }
+    if (strlen(input_ws_path) < 2)
+    {
+        error = "ws path too low.";
+        has_error = true;
+    }
+    if (input_ws_path[0] != '/')
+    {
+        error = "ws path must begin with /";
+        has_error = true;
+    }
+    if (strlen(input_cert_path) < 4)
+    {
+        error = "cert path too low.";
+        has_error = true;
+    }
+    if (input_cert_path[0] != '/')
+    {
+        error = "cert path must begin with /";
+        has_error = true;
+    }
+    if (strlen(input_private_key_path) < 4)
+    {
+        error = "private key path too low.";
+        has_error = true;
+    }
+    if (input_private_key_path[0] != '/')
+    {
+        error = "private key path must begin with /";
+        has_error = true;
+    }
+    if (has_error)
+        return;
     char main_domain_buf[10];
-    sprintf(main_domain_buf,"%d",input_mainport);
+    sprintf(main_domain_buf, "%d", input_mainport);
     char fake_website_index_buf[10];
-    sprintf(fake_website_index_buf,"%d",input_fake_website_index);
+    sprintf(fake_website_index_buf, "%d", input_fake_website_index);
 
-    Connection::send("update-panel-settings",9,
-    input_admin_username,
-    input_admin_password,
-    input_domain,
-    main_domain_buf,
-    input_ws_path,
-    fake_website_index_buf,
-    input_cert_path,
-    input_private_key_path,
-    input_mux?"1":"0"
-    )->connect([](Result res){
-        if (res.success)
-        {
-            console.log("Panel new settings sent.");
-            has_error = false;
-        }else{
-            console.log("Panel new settings Failed. (so the settings aren't applied) info:");
-            console.log(res.info);
-            has_error = true;
-
-        }
-
-        
-    });
+    Connection::send("update-panel-settings", 9,
+                     input_admin_username,
+                     input_admin_password,
+                     input_domain,
+                     main_domain_buf,
+                     input_ws_path,
+                     fake_website_index_buf,
+                     input_cert_path,
+                     input_private_key_path,
+                     input_mux ? "1" : "0")
+        ->connect([](Result res)
+                  {
+                      if (res.success)
+                      {
+                          console.log("Panel new settings sent.");
+                          has_error = false;
+                      }
+                      else
+                      {
+                          console.log("Panel new settings Failed. (so the settings aren't applied) info:");
+                          console.log("%s",res.info);
+                          error = res.info;
+                          has_error = true;
+                      } });
 }
 
 void panel_settings_frame(bool tab_changed)
@@ -94,11 +158,12 @@ void panel_settings_frame(bool tab_changed)
         "Note:\nIf you forget your username or password, you find it in file /opt/Npanel/panel.json\n");
     cursor_pos();
 
-    ImGui::InputText("##input_admin_password", input_admin_password, IM_ARRAYSIZE(input_admin_password),ImGuiInputTextFlags_Password);
+    ImGui::InputText("##input_admin_password", input_admin_password, IM_ARRAYSIZE(input_admin_password), ImGuiInputTextFlags_Password);
     ImGui::Text("domain:");
     samelinehelpmarker("Your website domain.\n"
                        "Note: your ssl certifcate & private key must match the domain.\n"
-                       "Therefore If you change it, you must change ssl certificate as well.");
+                       "Therefore If you change it, you must change ssl certificate as well.\n"
+                       "example: sub.mydomain.com or mydomain.com ");
     cursor_pos();
     ImGui::InputText("##input_domain", input_domain, IM_ARRAYSIZE(input_domain));
 
@@ -106,11 +171,16 @@ void panel_settings_frame(bool tab_changed)
     samelinehelpmarker("Trojan-go and Npanel use this port\n"
                        "Note: if you set anything other than 443 , your are at risk of being blocked by gfw, i suggest you to never do this!\n"
                        "Note: Changing port will NOT unblock your server, you should change ip.\n"
-                       "Note: Changing port will NOT improve your connection speed/bandwidth.");
+                       "Note: Changing port will NOT improve your connection speed/bandwidth.\n"
+                       "Note: Npanel will try to free the port (kill) before it starts. make sure this port it not used by anyother proccess.");
     cursor_pos();
-    ImGui::InputInt("##input_mainport", &input_mainport, 0);
+    if (ImGui::InputInt("##input_mainport", &input_mainport, 0))
+    {
+        if (input_mainport == 80 || input_mainport == 2060 || input_mainport == 2061)
+            input_mainport = 0;
+    }
     input_mainport = std::min(65535, input_mainport);
-    input_mainport = std::max(0, input_mainport);
+    input_mainport = std::max(10, input_mainport);
 
     ImGui::Text("websocket path:");
     samelinehelpmarker("Used for Websocket configs\n"
@@ -184,8 +254,10 @@ void panel_settings_frame(bool tab_changed)
         if (ImGui::Button("OK", ImVec2(120, 0)))
         {
             apply_panel_settingn();
-// 
-            ImGui::CloseCurrentPopup();
+            if (!has_error)
+            {
+                ImGui::CloseCurrentPopup();
+            }
         }
         ImGui::SetItemDefaultFocus();
         ImGui::SameLine();
@@ -193,6 +265,7 @@ void panel_settings_frame(bool tab_changed)
         {
             ImGui::CloseCurrentPopup();
         }
+        error_popupframe();
         ImGui::EndPopup();
     }
 
@@ -202,7 +275,7 @@ void panel_settings_frame(bool tab_changed)
         ImGui::Text("In order to backup your users: /opt/Npanel/users.db\n"
                     "In order to backup your settings: /opt/Npanel/panel.json\n"
                     "But I suggest you to Backup the folder /opt/Npanel entirely.\n\n"
-                    "for security reasons, you should dwonload those files yourself, we don't provide you any links."
+                    "For security reasons, you should download those files yourself, we don't provide you any links."
 
         );
         ImGui::Separator();
@@ -214,4 +287,6 @@ void panel_settings_frame(bool tab_changed)
 
         ImGui::EndPopup();
     }
+
+    error_popupframe();
 }

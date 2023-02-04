@@ -10,11 +10,16 @@ using namespace rapidjson;
 using namespace std;
 extern bool live_data;
 
+extern bool AUTH;
+extern bool FIRSTRUN;
+extern bool BEGIN;
+
 EMSCRIPTEN_WEBSOCKET_T *Connection::socket = nullptr;
 int Connection::req_key = 0;
 map<int, rocket::signal<void(Result)> *> Connection::events = {};
 rocket::signal<void(const char *)> Connection::bash_results;
 
+string Connection::pure_origin = "";
 string Connection::token = "";
 
 rocket::signal<void(Result)> *Connection::send(const char *req, int param_count, ...)
@@ -80,14 +85,82 @@ rocket::signal<void(Result)> *Connection::send(const char *req, int param_count,
     else
     {
         console.error("[Socket] Falied to send (socket == nullptr)");
-        EM_ASM(
-
-            window.location.reload(););
+        EM_ASM(window.location.reload(););
         delete req_sig;
         req_sig = nullptr;
     }
     events[req_key] = req_sig;
     return req_sig;
+}
+
+void Connection::_login()
+{
+    const char *cookie_token = (const char *)EM_ASM_PTR(
+        var token = getCookie("token");
+        if (token == null) {
+            return "";
+        } return token;);
+    if (strlen(cookie_token) > 5)
+    {
+        token = cookie_token; // dose it work?
+        Connection::send("client-hello", 0)->connect([](Result result)
+                                                     {
+                                                         if (result.success)
+                                                         {
+                                                             // loged in
+                                                             token = result.info;
+                                                             EM_ASM({
+                                                            const str = UTF8ToString($0);
+
+                                                                 alert(str);
+                                                                 setCookie("token", str, 3);
+                                                             },
+                                                                    token.c_str());
+
+                                                             AUTH = true;
+                                                             BEGIN = true;
+                                                         }
+                                                         else
+                                                         {
+                                                             // token expired
+                                                             AUTH = false;
+                                                             BEGIN = true;
+                                                         }
+
+                                                         // else go to login page
+                                                     });
+    }
+    else
+    {
+        EM_ASM(setCookie("token", "", 3););
+
+        Connection::send("Auth", 1, "")->connect([](Result result)
+                                                 {
+                                                     if (result.success)
+                                                     {
+                                                         // loged in
+                                                         token = result.info;
+                                                         EM_ASM({
+                                                            const str = UTF8ToString($0);
+
+                                                             alert(str);
+                                                             setCookie("token", str, 3);
+                                                         },
+                                                                token.c_str());
+
+                                                         AUTH = true;
+                                                         BEGIN = true;
+                                                     }
+                                                     else
+                                                     {
+                                                         // token expired
+                                                         //  go to login page
+
+                                                         AUTH = false;
+                                                         BEGIN = true;
+                                                     }
+                                                 });
+    }
 }
 EM_BOOL Connection::onopen(int eventType, const EmscriptenWebSocketOpenEvent *websocketEvent, void *userData)
 {
@@ -101,14 +174,27 @@ EM_BOOL Connection::onopen(int eventType, const EmscriptenWebSocketOpenEvent *we
     // \"specialparam\":\"\",\
     // \"key\":\"a\"\
     // }";
-    Connection::send("Auth", 2, "", "")->connect([](Result result)
+
+    // EM_ASM(window.location.reload(););
+
+    Connection::send("Auth", 1, "")->connect([](Result result)
+                                             {
+                                                 if (result.success)
                                                  {
-                                                     if (result.success)
-                                                     {
-                                                         token = result.info;
-                                                     }
-                                                     // else go to login page
-                                                 });
+                                                     token = result.info;
+                                                     FIRSTRUN = true;
+                                                     AUTH = true;
+                                                     BEGIN = true;
+                                                 }
+                                                 else
+                                                 { // not first run, username and password present
+                                                     FIRSTRUN = false;
+
+                                                     _login();
+                                                 }
+
+                                                 // else go to login page
+                                             });
 
     return EM_TRUE;
 }
@@ -142,9 +228,15 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
             console.log("[ERROR] Could not parse server message. Something is definitely wrong!");
             console.log("%d", resobj.GetParseError());
         }
+
         Result result;
         if (resobj.HasMember("key"))
         {
+            if ((ApiErrorCode)atoi(resobj["code"].GetString()) == ApiErrorCode::token_expired)
+            {
+                AUTH = false;
+            }
+
             console.log("[Socket] [Recv] message: %s", dec);
 
             if (strcmp(resobj["key"].GetString(), "bash") == 0)
@@ -238,8 +330,6 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
                 new_report.users[i] = user;
             }
 
- 
-
             new_report.panelsettings.admin_username = resobj["panelsettings"].GetObject()["admin_username"].GetString();
             new_report.panelsettings.admin_password = resobj["panelsettings"].GetObject()["admin_password"].GetString();
             new_report.panelsettings.domain = resobj["panelsettings"].GetObject()["domain"].GetString();
@@ -250,9 +340,7 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
             new_report.panelsettings.private_key_path = resobj["panelsettings"].GetObject()["private_key_path"].GetString();
             new_report.panelsettings.mux = resobj["panelsettings"].GetObject()["mux"].GetBool();
             new_report.panelsettings.first_launch = resobj["panelsettings"].GetObject()["first_launch"].GetBool();
-            
 
-          
             ServerReportStore::last_report = new_report;
             (ServerReportStore::signal)(&new_report);
         }
@@ -297,7 +385,7 @@ void Connection::init()
         console.error("[Fatal] unexpected origin; either http or https was expcted.");
         emscripten_exit_with_live_runtime();
     }
-
+    pure_origin = after_slashes;
     snprintf(wsurl, 100, "ws%s://%s/stream", ssl ? "s" : "", after_slashes);
 
     EmscriptenWebSocketCreateAttributes ws_attrs = {
@@ -317,7 +405,7 @@ rocket::signal<void(Result)> *Connection::createUser(const User &user)
 {
     auto result = Connection::send("create-user", 1, user.name.c_str());
     result->connect([&](Result res)
-                    { console.log("User %s created.", user.name.c_str()); });
+                    { if(res.success) console.log("User %s created.", user.name.c_str()); });
 
     return result;
 }
@@ -340,7 +428,7 @@ rocket::signal<void(Result)> *Connection::updateUser(const User &user)
     sprintf(ip_limited_amount, "%d", user.ip_limit);
     sprintf(enable, "%d", user.enable ? 1 : 0);
     sprintf(duration_limited_amount, "%d", user.days_left);
-    sprintf(duration_limited_bool, "%d", user.day_limit?1:0);
+    sprintf(duration_limited_bool, "%d", user.day_limit ? 1 : 0);
     sprintf(protocol, "%d", user.protocol);
     auto result = Connection::send("update-user", 12,
                                    user.name.c_str(),

@@ -27,7 +27,7 @@ void LeftSideBarWindow::onFrame()
         "Users",
         "Panel Settings",
         "Bash",
-        "Tunnels",
+        "Nodes & Routers",
         "About"
 
     };

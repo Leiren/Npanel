@@ -160,7 +160,7 @@ void render_list()
         ImGui::TableSetupColumn("Current Download Speed", ImGuiTableColumnFlags_WidthFixed, 0.0f, UserRowModelColumnID_Download_Speed);
         ImGui::TableSetupColumn("Total Upload", ImGuiTableColumnFlags_WidthFixed, 0.0f, UserRowModelColumnID_Total_Download);
         ImGui::TableSetupColumn("Total Download", ImGuiTableColumnFlags_WidthFixed, 0.0f, UserRowModelColumnID_Total_Upload);
-        ImGui::TableSetupColumn("days left", ImGuiTableColumnFlags_WidthFixed, 0.0f, UserRowModelColumnID_days_left);
+        ImGui::TableSetupColumn("days left", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 11, UserRowModelColumnID_days_left);
 
         ImGui::TableSetupScrollFreeze(0, 1); // Make row always visible
         ImGui::TableHeadersRow();

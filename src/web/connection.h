@@ -36,9 +36,11 @@ private:
     static EM_BOOL onerror(int eventType, const EmscriptenWebSocketErrorEvent *websocketEvent, void *userData);
     static EM_BOOL onopen(int eventType, const EmscriptenWebSocketOpenEvent *websocketEvent, void *userData);
 
-
-
+    static void _login();
+    friend class LoginWindow;
 public:
+    static string pure_origin;
+
     static EMSCRIPTEN_WEBSOCKET_T *socket;
 
     static rocket::signal<void(const char*)> bash_results;

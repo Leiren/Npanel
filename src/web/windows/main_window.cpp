@@ -4,7 +4,9 @@ extern void server_status_frame();
 extern void bash_view_frame();
 extern void users_view_frame();
 extern void panel_settings_frame(bool);
-extern void tunnels_view_frame();
+extern void nodes_view_frame();
+extern void about_view_frame();
+
 extern bool live_data;
 static bool panel_settings_activated = false;
 void MainWindow::onFrame()
@@ -12,7 +14,7 @@ void MainWindow::onFrame()
 
     LeftSideBarWindow::on_tab_changed.connect(
         [this](int index)
-        {   
+        {
             panel_settings_activated = index == 2;
             this->running_index = index;
             live_data = true;
@@ -32,11 +34,14 @@ void MainWindow::onFrame()
         break;
     case 3:
         bash_view_frame();
-            break;
+        break;
 
     case 4:
-        tunnels_view_frame();
-            break;
+        nodes_view_frame();
+        break;
+    case 5:
+        about_view_frame();
+        break;
     default:
         break;
     }

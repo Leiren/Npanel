@@ -701,7 +701,7 @@ void error_popupframe()
     {
 
         has_error = false;
-        ImGui::TextWrapped(last_error_msg.c_str());
+        ImGui::TextWrapped("%s",last_error_msg.c_str());
 
         ImGui::EndPopup();
     }
@@ -798,7 +798,7 @@ void show_user_configs(User **_user)
             ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
             ImGui::TextUnformatted(buf);
             ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
-            sprintf(buf, "Protocol: TCP", user.name.c_str());
+            sprintf(buf, "Protocol: TCP");
             ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
             ImGui::TextUnformatted(buf);
             ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
@@ -836,7 +836,7 @@ void show_user_configs(User **_user)
             ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
             ImGui::TextUnformatted(buf);
             ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
-            sprintf(buf, "Protocol: WebSocket", user.name.c_str());
+            sprintf(buf, "Protocol: WebSocket");
             ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
             ImGui::TextUnformatted(buf);
             ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
