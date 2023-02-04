@@ -39,6 +39,8 @@ bool AUTH = false;
 bool FIRSTRUN = false;
 bool BEGIN = false;
 
+static bool show_app_metrics = false;
+
 EM_JS(int, canvas_get_width, (), {
     return Module.canvas.width;
 });
@@ -180,6 +182,9 @@ void loop()
 
         if (ImGui::BeginMenu("Tools"))
         {
+
+            ImGui::MenuItem("Metrics/Debugger", NULL, &show_app_metrics, true);
+            
             // ImGui::MenuItem("Metrics/Debugger", NULL, &show_app_metrics);
             // ImGui::MenuItem("Style Editor", NULL, &show_app_style_editor);
             // ImGui::MenuItem("About", NULL, &show_app_about);
@@ -223,10 +228,13 @@ void loop()
         else
             login_w.tick();
     }
+    
+    if (show_app_metrics)
+        ImGui::ShowMetricsWindow(&show_app_metrics);
 
     ImGui::ShowDemoWindow();
 
-    drawOverlay();
+    // drawOverlay();
     ///////////////////////////////
     ImGui::Render();
     int display_w, display_h;

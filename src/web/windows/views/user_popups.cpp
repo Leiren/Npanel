@@ -730,6 +730,7 @@ void view_notes_popupframe(User **_user)
 }
 void show_user_configs(User **_user)
 {
+    ImGui::PushStyleVar(ImGuiStyleVar_CellPadding,ImVec2(ImGui::GetStyle().CellPadding.x,0));
     static User user;
     static char tcpqtextbuf[150];
     static char wsqtextbuf[150];
@@ -859,4 +860,5 @@ void show_user_configs(User **_user)
         ImGui::EndPopup();
         // std::cout << "Writing Example QR code 3 (huge) to " << fileName << " with text: '" << qrText << "', size: " << imgSize << "x" << imgSize << ", qr module pixel size: " << minModulePixelSize << ". " << std::endl;
     }
+    ImGui::PopStyleVar();
 }
