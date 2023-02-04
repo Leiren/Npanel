@@ -1,7 +1,13 @@
 #include "login_window.h"
 #include "imgui.h"
 #include "connection.h"
-
+#include "customwidgets.h"
+static void samelinehelpmarker(const char *desc)
+{
+    ImGui::SameLine();
+    HelpMarker(desc);
+    ImGui::SameLine();
+}
 using std::string;
 
 extern bool AUTH;
@@ -67,7 +73,7 @@ void LoginWindow::onFrame()
         ImGui::Text("Password:");
         ImGui::SameLine();
         ImGui::SetNextItemWidth(TEXT_BASE_WIDTH * 25);
-        ImGui::InputText("##login_password", input_password, IM_ARRAYSIZE(input_password));
+        ImGui::InputText("##login_password", input_password, IM_ARRAYSIZE(input_password), ImGuiInputTextFlags_Password);
 
         ImGui::SetCursorPosX(x_pad);
         ImGui::SetNextItemWidth(x_pad);
@@ -131,10 +137,18 @@ static void wizard_window()
         break;
 
     case 1:
-        ImGui::Begin("Domain", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoResize);
-
+        ImGui::Begin("Domain", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize|ImGuiWindowFlags_NoResize);
+        static char input_domain[80];
+        static char input_cert_path[80];
+        static char input_private_key_path[80];
+        ImGui::Text("domain:");
+        samelinehelpmarker("Your website domain.\n"
+                           "example: sub.mydomain.com or mydomain.com ");
+        ImGui::InputText("##input_domain", input_domain, IM_ARRAYSIZE(input_domain));
         ImGui::Separator();
+         ImGui::SameLine();
         ImGui::NewLine();
+        Spinner("loading",10,1,IM_COL32(255,0,255,255) );
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 240 - ImGui::GetStyle().ItemSpacing.x);
         ImGui::Button("Back", ImVec2(120, 0));
         ImGui::SameLine();

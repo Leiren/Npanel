@@ -2,11 +2,11 @@
 #include <emscripten.h>
 #endif
 
-#define GLFW_INCLUDE_ES3
-#include <GLES3/gl3.h>
-#include <GLFW/glfw3.h>
 #include "imgui.h"
 #include "imgui_internal.h"
+#include "imgui_impl_sdl.h"
+#include <SDL.h>
+
 #include "implot.h"
 #include "imnodes.h"
 #include "imgui_impl_glfw.h"
@@ -22,13 +22,11 @@
 
 extern void apply_theme_default();
 extern void apply_theme_embraceTheDarkness();
+extern SDL_Window *g_Window;
+extern SDL_GLContext g_GLContext;
 
-extern GLFWwindow *g_window;
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 bool show_demo_window = true;
-bool show_another_window = false;
-int g_width;
-int g_height;
 
 ImGuiID dock_id_main;
 ImGuiID dock_id_left;
@@ -41,14 +39,6 @@ bool BEGIN = false;
 
 static bool show_app_metrics = false;
 
-EM_JS(int, canvas_get_width, (), {
-    return Module.canvas.width;
-});
-
-EM_JS(int, canvas_get_height, (), {
-    return Module.canvas.height;
-});
-
 static bool ShowStyleSelector(const char *label)
 {
     static int style_idx = 0;
@@ -59,32 +49,32 @@ static bool ShowStyleSelector(const char *label)
     {
         switch (style_idx)
         {
-        case 0://defailt
+        case 0: // defailt
             ImGui::StyleColorsDark();
             apply_theme_default();
             ImPlot::StyleColorsAuto();
             ImNodes::StyleColorsDark();
 
             break;
-        case 1://light
+        case 1: // light
             ImGui::StyleColorsLight();
             ImPlot::StyleColorsLight();
             ImNodes::StyleColorsLight();
 
             break;
-        case 2://classic
+        case 2: // classic
             ImGui::StyleColorsClassic();
             ImPlot::StyleColorsClassic();
             ImNodes::StyleColorsClassic();
-            
+
             break;
-        case 3://dark
+        case 3: // dark
             ImGui::StyleColorsDark();
             ImPlot::StyleColorsDark();
             ImNodes::StyleColorsDark();
-            
+
             break;
-        case 4://darker
+        case 4: // darker
             ImGui::StyleColorsDark();
             apply_theme_embraceTheDarkness();
             ImPlot::StyleColorsAuto();
@@ -96,27 +86,29 @@ static bool ShowStyleSelector(const char *label)
     }
     return false;
 }
-void on_size_changed()
-{
-    glfwSetWindowSize(g_window, g_width, g_height);
 
-    ImGui::SetCurrentContext(ImGui::GetCurrentContext());
-}
+bool g_done = false;
+int g_width;
+int g_height;
+
+
 
 void loop()
 {
-    int width = canvas_get_width();
-    int height = canvas_get_height();
+    
+    static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
-    if (width != g_width || height != g_height)
+    SDL_Event event;
+    while (SDL_PollEvent(&event))
     {
-        g_width = width;
-        g_height = height;
-        on_size_changed();
+        ImGui_ImplSDL2_ProcessEvent(&event);
+        if (event.type == SDL_QUIT)
+            g_done = true;
+        if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_CLOSE && event.window.windowID == SDL_GetWindowID(g_Window))
+            g_done = true;
     }
-    glfwPollEvents();
     ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
 
     static bool open = true;
@@ -184,7 +176,7 @@ void loop()
         {
 
             ImGui::MenuItem("Metrics/Debugger", NULL, &show_app_metrics, true);
-            
+
             // ImGui::MenuItem("Metrics/Debugger", NULL, &show_app_metrics);
             // ImGui::MenuItem("Style Editor", NULL, &show_app_style_editor);
             // ImGui::MenuItem("About", NULL, &show_app_about);
@@ -228,7 +220,7 @@ void loop()
         else
             login_w.tick();
     }
-    
+
     if (show_app_metrics)
         ImGui::ShowMetricsWindow(&show_app_metrics);
 
@@ -236,14 +228,12 @@ void loop()
 
     // drawOverlay();
     ///////////////////////////////
-    ImGui::Render();
-    int display_w, display_h;
-    glfwMakeContextCurrent(g_window);
-    glfwGetFramebufferSize(g_window, &display_w, &display_h);
-    glViewport(0, 0, display_w, display_h);
-    glClearColor(clear_color.x, clear_color.y, clear_color.z, clear_color.w);
-    glClear(GL_COLOR_BUFFER_BIT);
+    ImGuiIO &io = ImGui::GetIO();
 
+    ImGui::Render();
+    glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+    glClearColor(clear_color.x * clear_color.w, clear_color.y * clear_color.w, clear_color.z * clear_color.w, clear_color.w);
+    glClear(GL_COLOR_BUFFER_BIT);
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    glfwMakeContextCurrent(g_window);
+    SDL_GL_SwapWindow(g_Window);
 }

@@ -99,7 +99,9 @@ void Connection::_login()
         var token = getCookie("token");
         if (token == null) {
             return "";
-        } return token;);
+        } var buffer = Module._malloc(token.length + 1);
+        Module.writeStringToMemory(token, buffer);
+        return buffer;);
     if (strlen(cookie_token) > 5)
     {
         token = cookie_token; // dose it work?
@@ -109,13 +111,13 @@ void Connection::_login()
                                                          {
                                                              // loged in
                                                              token = result.info;
-                                                             EM_ASM({
-                                                            const str = UTF8ToString($0);
+                                                            //  EM_ASM({
+                                                            //      const str = UTF8ToString($0);
 
-                                                                 alert(str);
-                                                                 setCookie("token", str, 3);
-                                                             },
-                                                                    token.c_str());
+                                                            //      alert(str);
+                                                            //      setCookie("token", str, 3);
+                                                            //  },
+                                                            //         token.c_str());
 
                                                              AUTH = true;
                                                              BEGIN = true;
@@ -157,9 +159,7 @@ void Connection::_login()
                                                          //  go to login page
 
                                                          AUTH = false;
-                                                         BEGIN = true;
-                                                     }
-                                                 });
+                                                     } });
     }
 }
 EM_BOOL Connection::onopen(int eventType, const EmscriptenWebSocketOpenEvent *websocketEvent, void *userData)
@@ -189,6 +189,7 @@ EM_BOOL Connection::onopen(int eventType, const EmscriptenWebSocketOpenEvent *we
                                                  else
                                                  { // not first run, username and password present
                                                      FIRSTRUN = false;
+                                                     AUTH = false;
 
                                                      _login();
                                                  }

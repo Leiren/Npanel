@@ -701,7 +701,7 @@ void error_popupframe()
     {
 
         has_error = false;
-        ImGui::TextWrapped("%s",last_error_msg.c_str());
+        ImGui::TextWrapped("%s", last_error_msg.c_str());
 
         ImGui::EndPopup();
     }
@@ -730,7 +730,7 @@ void view_notes_popupframe(User **_user)
 }
 void show_user_configs(User **_user)
 {
-    ImGui::PushStyleVar(ImGuiStyleVar_CellPadding,ImVec2(ImGui::GetStyle().CellPadding.x,0));
+    ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, ImVec2(ImGui::GetStyle().CellPadding.x, 0));
     static User user;
     static char tcpqtextbuf[150];
     static char wsqtextbuf[150];
@@ -822,42 +822,46 @@ void show_user_configs(User **_user)
         if (user.protocol != 1)
         {
             ImGui::EndPopup();
-            return;
         }
-        ImGui::BeginChild("Child2", ImVec2(0, child_H + 2 * frame_pad), true);
-        if (ImGui::BeginTable("table_qr_ws", 2, ImGuiTableFlags_BordersInnerV, ImVec2(0.0f, 0), 0.0f))
+        else
         {
-            ImGui::TableNextRow();
-            ImGui::TableNextColumn();
 
-            ImGui::Image((void *)(intptr_t)ws_texture, ImVec2(my_image_width, my_image_height));
-            ImGui::TableNextColumn();
-            char buf[50];
-            sprintf(buf, "User %s", user.name.c_str());
-            ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
-            ImGui::TextUnformatted(buf);
-            ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
-            sprintf(buf, "Protocol: WebSocket");
-            ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
-            ImGui::TextUnformatted(buf);
-            ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
-
-            ImGui::Dummy(ImVec2(0, child_H - 5 * TEXT_BASE_HEIGHT));
-
-            if (ImGui::Button("Download QR-Code", ImVec2(-FLT_MIN, 0)))
+            ImGui::BeginChild("Child2", ImVec2(0, child_H + 2 * frame_pad), true);
+            if (ImGui::BeginTable("table_qr_ws", 2, ImGuiTableFlags_BordersInnerV, ImVec2(0.0f, 0), 0.0f))
             {
-                EM_ASM(
-                    offerFileAsDownload(("qr-ws.png"), ("mime/type")););
+                ImGui::TableNextRow();
+                ImGui::TableNextColumn();
+
+                ImGui::Image((void *)(intptr_t)ws_texture, ImVec2(my_image_width, my_image_height));
+                ImGui::TableNextColumn();
+                char buf[50];
+                sprintf(buf, "User %s", user.name.c_str());
+                ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
+                ImGui::TextUnformatted(buf);
+                ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
+                sprintf(buf, "Protocol: WebSocket");
+                ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
+                ImGui::TextUnformatted(buf);
+                ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
+
+                ImGui::Dummy(ImVec2(0, child_H - 5 * TEXT_BASE_HEIGHT));
+
+                if (ImGui::Button("Download QR-Code", ImVec2(-FLT_MIN, 0)))
+                {
+                    EM_ASM(
+                        offerFileAsDownload(("qr-ws.png"), ("mime/type")););
+                }
+                if (ImGui::Button("Copy Text Config", ImVec2(-FLT_MIN, 0)))
+                {
+                    ImGui::SetClipboardText(tcpqtextbuf);
+                }
+                ImGui::EndTable();
             }
-            if (ImGui::Button("Copy Text Config", ImVec2(-FLT_MIN, 0)))
-            {
-                ImGui::SetClipboardText(tcpqtextbuf);
-            }
-            ImGui::EndTable();
+            ImGui::EndChild();
+
+            ImGui::EndPopup();
         }
-        ImGui::EndChild();
 
-        ImGui::EndPopup();
         // std::cout << "Writing Example QR code 3 (huge) to " << fileName << " with text: '" << qrText << "', size: " << imgSize << "x" << imgSize << ", qr module pixel size: " << minModulePixelSize << ". " << std::endl;
     }
     ImGui::PopStyleVar();

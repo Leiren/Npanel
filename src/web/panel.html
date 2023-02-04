@@ -4,6 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Npanel</title>
   <style>
     body {
@@ -60,6 +61,7 @@
       totalDependencies: 0,
       monitorRunDependencies: function (left) { }
     };
+
     window.addEventListener('resize', js_resizeCanvas, false);
     function js_resizeCanvas() {
       document.getElementById('canvas').width = window.innerWidth;
@@ -117,6 +119,16 @@
       position: absolute;
       /*...*/
       z-index: 1000;
+    }
+
+    html,
+    body,
+    canvas {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      background-color: black;
     }
   </style>
 </body>
