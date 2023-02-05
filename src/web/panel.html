@@ -104,7 +104,23 @@
       }
       return null;
     }
+    window.addEventListener("keydown", (e) => {
+            if (e.code === "F11") {
+                e.preventDefault = function() {
+                  const element = document.getElementById('canvas');
+                  if(element.requestFullscreen) {
+                    element.requestFullscreen();
+                  }else if (element.mozRequestFullScreen) {
+                    element.mozRequestFullScreen();     // Firefox
+                  }else if (element.webkitRequestFullscreen) {
+                    element.webkitRequestFullscreen();  // Safari
+                  }else if(element.msRequestFullscreen) {
+                    element.msRequestFullscreen();      // IE/Edge
+                  }
 
+                };
+            }
+        }, { capture: true });
   </script>
   <script async type="text/javascript" src="panel.js"></script>
   <style>

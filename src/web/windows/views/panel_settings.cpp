@@ -192,7 +192,7 @@ void panel_settings_frame(bool tab_changed)
     ImGui::InputText("##input_websocket_path", input_ws_path, IM_ARRAYSIZE(input_ws_path));
 
     ImGui::Text("fakewebsite template:");
-    samelinehelpmarker("choose a template, when a stranger opens your domain it will see a fake website.\n"
+    samelinehelpmarker("choose a template, when a stranger opens your domain he will see a fake website.\n"
                        "this is why you should run this pannel on port 443, otherwise the browser will not show the fake website!\n"
                        "Note: you are recommended to customize the html/css , files are in\n /opt/Npanel/templates\n");
     const char *items[] = {"Social Media1", "Social Media2", "Pizza seler", "Direct TV", "Covido"};
@@ -214,7 +214,7 @@ void panel_settings_frame(bool tab_changed)
     samelinehelpmarker("Private key file path\n"
                        "Start your path with /  and as you know it's full path!\n"
                        "This key must match the domain you enetered.\n"
-                       "Examples: /etc/letsencrypt/live/my.domain.com/privkey.pem\n");
+                       "Examples: /etc/letsencrypt/live/my.domain.com/privkey.pem");
 
     cursor_pos();
     ImGui::InputText("##input_private_key_path", input_private_key_path, IM_ARRAYSIZE(input_private_key_path));

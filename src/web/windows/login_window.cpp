@@ -16,6 +16,9 @@ static char input_password[80];
 static bool has_error = false;
 static string error = "";
 
+static bool loading = false;
+static bool req_succeed = false;
+
 static void error_popupframe()
 {
     if (has_error)
@@ -110,12 +113,31 @@ void LoginWindow::onFrame()
     }
 }
 
+static void state_begin()
+{
+    has_error = false;
+    loading = false;
+    req_succeed = false;
+}
 static void wizard_window()
 {
+    const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("x").x;
+    const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
+    static char input_domain[80];
+    const char *items[] = {"Social Media1", "Social Media2", "Pizza seler", "Direct TV", "Covido"};
+
+    static int old_state = 0;
     static int state = 0;
+    if (state != old_state)
+    {
+        old_state = state;
+        state_begin();
+    }
+
     switch (state)
     {
     case 0:
+
         ImGui::Begin("Before we begin", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoResize);
         ImGui::Text("Thank you for using Npanel-UI.\n\n"
                     "   This UI is free and open source.\n"
@@ -137,26 +159,239 @@ static void wizard_window()
         break;
 
     case 1:
-        ImGui::Begin("Domain", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize|ImGuiWindowFlags_NoResize);
-        static char input_domain[80];
-        static char input_cert_path[80];
-        static char input_private_key_path[80];
+        ImGui::Begin("Domain", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
+
         ImGui::Text("domain:");
-        samelinehelpmarker("Your website domain.\n"
+        samelinehelpmarker("The Domain you want to use for trojan.\n"
                            "example: sub.mydomain.com or mydomain.com ");
         ImGui::InputText("##input_domain", input_domain, IM_ARRAYSIZE(input_domain));
         ImGui::Separator();
-         ImGui::SameLine();
         ImGui::NewLine();
-        Spinner("loading",10,1,IM_COL32(255,0,255,255) );
+        ImGui::SameLine();
+        if (loading)
+            Spinner("loading", 8, 2, IM_COL32(66, 150, 250, 255));
+        if (has_error)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, Color::red);
+            ImGui::TextUnformatted(error.c_str());
+            ImGui::PopStyleColor();
+        }
+        if (has_error)
+            ImGui::NewLine();
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 240 - ImGui::GetStyle().ItemSpacing.x);
-        ImGui::Button("Back", ImVec2(120, 0));
+        if (ImGui::Button("Back", ImVec2(120, 0)))
+            state--;
         ImGui::SameLine();
         if (ImGui::Button("Next", ImVec2(120, 0)))
+        {
+            loading = true;
+            Connection::send("wizard-1-domain", 1, input_domain)->connect([](Result res)
+                                                                          {
+                loading = false;
+                if(res.success)
+                    state++;
+                else{
+                    has_error = true;
+                    error = res.info;
+                } });
+        }
+        ImGui::End();
+        break;
+
+    case 2:
+        ImGui::Begin("Certificate", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
+        static char input_cert_path[80];
+        static char input_private_key_path[80];
+        ImGui::Text("certificate:");
+        samelinehelpmarker("Certificate file path\n"
+                           "Start your path with /  and as you know it's full path!\n"
+                           "This certificate must match the domain you enetered.\n"
+                           "Examples: /etc/letsencrypt/live/my.domain.com/fullchain.pem\n"
+                           "Examples: /etc/letsencrypt/live/my.domain.com/cert.pem");
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + TEXT_BASE_WIDTH);
+        ImGui::InputText("##input_cert", input_cert_path, IM_ARRAYSIZE(input_cert_path));
+
+        ImGui::Text("private key:");
+        samelinehelpmarker("Private key file path\n"
+                           "Start your path with /  and as you know it's full path!\n"
+                           "This key must match the domain you enetered.\n"
+                           "Examples: /etc/letsencrypt/live/my.domain.com/privkey.pem");
+        ImGui::InputText("##input_pkey", input_private_key_path, IM_ARRAYSIZE(input_private_key_path));
+        ImGui::NewLine();
+        if (ImGui::Button("How to get those?"))
+        {
+            EM_ASM(window.open("https://linuxiac.com/lets-encrypt-free-ssl-certificate/", '_blank').focus(););
+        }
+        samelinehelpmarker("Stop the Npanel to free port 80 before issuing a Let's Encrypt free SSL certificate.\n"
+                           "\"service npanel stop\"");
+        ImGui::NewLine();
+
+        ImGui::Separator();
+        ImGui::NewLine();
+        ImGui::SameLine();
+        if (loading)
+            Spinner("loading", 8, 2, IM_COL32(66, 150, 250, 255));
+        if (has_error)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, Color::red);
+            ImGui::TextUnformatted(error.c_str());
+            ImGui::PopStyleColor();
+        }
+        if (has_error)
+            ImGui::NewLine();
+
+        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 240 - ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::Button("Back", ImVec2(120, 0)))
+            state--;
+        ImGui::SameLine();
+        if (ImGui::Button("Next", ImVec2(120, 0)))
+        {
+            loading = true;
+            Connection::send("wizard-2-cp", 2, input_cert_path, input_private_key_path)->connect([](Result res)
+                                                                                                 {
+                loading = false;
+                if(res.success)
+                    state++;
+                else{
+                    has_error = true;
+                    error = res.info;
+                } });
+        }
+        ImGui::End();
+        break;
+    case 3:
+        ImGui::Begin("Notes", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoResize);
+        ImGui::Text("All certificates will expire after a period of time (3 months forexample) \n\n"
+                    "  It is your responsibility to renew it,  Let's Encrypt also sends you waringn email before it expires.\n\n");
+        ImGui::Separator();
+        ImGui::NewLine();
+        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 240 - ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::Button("Back", ImVec2(120, 0)))
+            state--;
+        ImGui::SameLine();
+        if (ImGui::Button("Understood", ImVec2(120, 0)))
         {
             state++;
         }
         ImGui::End();
+        break;
+
+    case 4:
+        static int input_fake_website_index = 0;
+        ImGui::Begin("FakeWebsite", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
+        ImGui::Text("Trojan-go (by default) will host all connections on port 443\n"
+                    "and it is required to host a kinda (real) looking website on that port as well, so when a stranger\n"
+                    "or a government worker opens the url, the fake website will be shown.\n\n"
+                    "you can also change the port 443 to other ports later. but that is highly discouraged!\n\n");
+        ImGui::Text("fakewebsite template:");
+        samelinehelpmarker("Note: you are recommended to customize the html/css , files are in\n /opt/Npanel/templates\n");
+        ImGui::Combo("##input_fake_website_index", &input_fake_website_index, items, IM_ARRAYSIZE(items));
+        ImGui::NewLine();
+
+        ImGui::Separator();
+        ImGui::NewLine();
+        ImGui::SameLine();
+        if (loading)
+            Spinner("loading", 8, 2, IM_COL32(66, 150, 250, 255));
+        if (has_error)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, Color::red);
+            ImGui::TextUnformatted(error.c_str());
+            ImGui::PopStyleColor();
+        }
+        if (has_error)
+            ImGui::NewLine();
+        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 240 - ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::Button("Back", ImVec2(120, 0)))
+            state--;
+        ImGui::SameLine();
+        if (ImGui::Button("Next", ImVec2(120, 0)))
+        {
+            loading = true;
+            char buf[10];
+            sprintf(buf, "%d", input_fake_website_index);
+            Connection::send("wizard-3-fi", 1, buf)->connect([](Result res)
+                                                             {
+                loading = false;
+                if(res.success)
+                    state++;
+                else{
+                    has_error = true;
+                    error = res.info;
+                } });
+        }
+        ImGui::End();
+        break;
+
+    case 5:
+        static char next_url_buf[120];
+
+        ImGui::Begin("Admin Login information", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
+        static char input_admin_username[80];
+        static char input_admin_password[80];
+        ImGui::Text("Read Hints!");
+        ImGui::NewLine();
+        ImGui::Text("Admin Username:");
+        samelinehelpmarker("After passing this stage, when ever you want to login to the npanel\n"
+                           "enter this url:  https://yourdomain/admin_username\n\n"
+                           "so it is clear that username is important same as password!");
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + TEXT_BASE_WIDTH);
+        ImGui::InputText("##input_au", input_admin_username, IM_ARRAYSIZE(input_admin_username));
+
+        ImGui::Text("Admin Password:");
+        samelinehelpmarker("After entering the correct url, you need the password to log-in\n");
+
+        ImGui::InputText("##input_ap", input_admin_password, IM_ARRAYSIZE(input_admin_password));
+        ImGui::NewLine();
+        ImGui::Text("url for Npanel: https://%s/%s",input_domain,input_admin_username);
+
+        ImGui::NewLine();
+
+        ImGui::Separator();
+        ImGui::NewLine();
+        ImGui::SameLine();
+        if (loading)
+            Spinner("loading", 8, 2, IM_COL32(66, 150, 250, 255));
+        if (has_error)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, Color::red);
+            ImGui::TextUnformatted(error.c_str());
+            ImGui::PopStyleColor();
+        }
+        if (has_error)
+            ImGui::NewLine();
+
+        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 240 - ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::Button("Back", ImVec2(120, 0)))
+            state--;
+        ImGui::SameLine();
+        if (ImGui::Button("Finish", ImVec2(120, 0)))
+        {
+            loading = true;
+            Connection::send("wizard-4-aup", 2, input_admin_username, input_admin_password)->connect([](Result res)
+                                                                                                     {
+                loading = false;
+                if(res.success)
+                    state++;
+                else{
+                    has_error = true;
+                    error = res.info;
+                } });
+        }
+        ImGui::End();
+
+        break;
+    case 6:
+        ImGui::Begin("Complete", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
+        ImGui::Text("The panel is restarting; if you made a mistake, the panel may not start, heres some debugging tips:\n\n"
+        "1- check panel logs \"service npanel status\"\n"
+        "2- correct your mistakes in /opt/Npanel/panel.json\n"
+        "3- restart \"service npanel restart\"\n"
+        );
+
+       
+        ImGui::End();
+
         break;
     default:
         break;
