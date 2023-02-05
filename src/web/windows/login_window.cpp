@@ -94,8 +94,9 @@ void LoginWindow::onFrame()
         }
         ImGui::SameLine();
 
-        if (ImGui::Button("Cancel", ImVec2(120, 0)))
+        if (ImGui::Button("Clear", ImVec2(120, 0)))
         {
+            input_password[0] = '\0';
             ImGui::CloseCurrentPopup();
         }
         error_popupframe();
@@ -124,7 +125,8 @@ static void wizard_window()
     const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("x").x;
     const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
     static char input_domain[80];
-    const char *items[] = {"Social Media1", "Social Media2", "Pizza seler", "Direct TV", "Covido"};
+    const char *items[] = {"Social Media1", "creative studio", "Pizza seler", "Direct TV", "Covido"};
+    static char panel_final_url[120] = "url for Npanel:";
 
     static int old_state = 0;
     static int state = 0;
@@ -204,18 +206,31 @@ static void wizard_window()
         static char input_private_key_path[80];
         ImGui::Text("certificate:");
         samelinehelpmarker("Certificate file path\n"
+#ifndef win_build
                            "Start your path with /  and as you know it's full path!\n"
                            "This certificate must match the domain you enetered.\n"
                            "Examples: /etc/letsencrypt/live/my.domain.com/fullchain.pem\n"
-                           "Examples: /etc/letsencrypt/live/my.domain.com/cert.pem");
+                           "Examples: /etc/letsencrypt/live/my.domain.com/cert.pem"
+#else
+                           "Examples: C:\\ssl\\fullchain.pem \n"
+                           "Examples: C:\\ssl\\cert.pem"
+#endif
+
+        );
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + TEXT_BASE_WIDTH);
         ImGui::InputText("##input_cert", input_cert_path, IM_ARRAYSIZE(input_cert_path));
 
         ImGui::Text("private key:");
         samelinehelpmarker("Private key file path\n"
+#ifndef win_build
                            "Start your path with /  and as you know it's full path!\n"
                            "This key must match the domain you enetered.\n"
-                           "Examples: /etc/letsencrypt/live/my.domain.com/privkey.pem");
+                           "Examples: /etc/letsencrypt/live/my.domain.com/privkey.pem"
+#else
+                           "Examples: C:\\ssl\\key.pem"
+#endif
+
+        );
         ImGui::InputText("##input_pkey", input_private_key_path, IM_ARRAYSIZE(input_private_key_path));
         ImGui::NewLine();
         if (ImGui::Button("How to get those?"))
@@ -262,7 +277,7 @@ static void wizard_window()
     case 3:
         ImGui::Begin("Notes", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoResize);
         ImGui::Text("All certificates will expire after a period of time (3 months forexample) \n\n"
-                    "  It is your responsibility to renew it,  Let's Encrypt also sends you waringn email before it expires.\n\n");
+                    "  It is your responsibility to renew it,  Let's Encrypt also sends you notify email before it expires.\n\n");
         ImGui::Separator();
         ImGui::NewLine();
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 240 - ImGui::GetStyle().ItemSpacing.x);
@@ -333,17 +348,21 @@ static void wizard_window()
         ImGui::NewLine();
         ImGui::Text("Admin Username:");
         samelinehelpmarker("After passing this stage, when ever you want to login to the npanel\n"
-                           "enter this url:  https://yourdomain/admin_username\n\n"
+                           "enter this url:  https://yourdomain/admin_username/\n\n"
                            "so it is clear that username is important same as password!");
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + TEXT_BASE_WIDTH);
         ImGui::InputText("##input_au", input_admin_username, IM_ARRAYSIZE(input_admin_username));
 
         ImGui::Text("Admin Password:");
         samelinehelpmarker("After entering the correct url, you need the password to log-in\n");
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 2 * TEXT_BASE_WIDTH -2);
 
-        ImGui::InputText("##input_ap", input_admin_password, IM_ARRAYSIZE(input_admin_password));
+        if (ImGui::InputText("##input_ap", input_admin_password, IM_ARRAYSIZE(input_admin_password)))
+        {
+            sprintf(panel_final_url, "url for Npanel: https://%s/%s/ \nNote: the last slash in url is important!", input_domain, input_admin_username);
+        }
         ImGui::NewLine();
-        ImGui::Text("url for Npanel: https://%s/%s",input_domain,input_admin_username);
+        ImGui::TextUnformatted(panel_final_url);
 
         ImGui::NewLine();
 
@@ -384,12 +403,22 @@ static void wizard_window()
     case 6:
         ImGui::Begin("Complete", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
         ImGui::Text("The panel is restarting; if you made a mistake, the panel may not start, heres some debugging tips:\n\n"
-        "1- check panel logs \"service npanel status\"\n"
-        "2- correct your mistakes in /opt/Npanel/panel.json\n"
-        "3- restart \"service npanel restart\"\n"
-        );
+#ifndef win_build
 
-       
+                    "1- check panel logs \"service npanel status\"\n"
+                    "2- correct your mistakes in /opt/Npanel/panel.json\n"
+                    "3- restart \"service npanel restart\"\n"
+#else
+                           "1- check panel logs from console window\n"
+                           "2- correct your mistakes in Npanel/panel.json\n"
+                           "3- restart the program"
+#endif
+);
+        if(ImGui::Button("Open Npanel")){
+            EM_ASM({window.location.href = UTF8ToString($0)},panel_final_url);
+
+             
+        }
         ImGui::End();
 
         break;

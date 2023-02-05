@@ -11,8 +11,15 @@ void server_status_frame()
     static double x_data[chart_with] = {0};
     static double cpu_y_data[chart_with] = {0};
     static double memory_used_y_data[chart_with] = {0};
+
+    static double users_upload_y_data[chart_with] = {0};
+    static double users_download_y_data[chart_with] = {0};
+
     static bool is_first_time = true;
     static double memory_total = 0;
+
+    static double server_total_upload;
+    static double server_total_download;
 
     int cores_count = ServerReportStore::last_report.cores;
     int uptime_hrs = ServerReportStore::last_report.uptime / 60;
@@ -32,6 +39,8 @@ void server_status_frame()
         ServerReportStore::signal.connect(
             [](ServerReport *report)
             {
+                server_total_upload = 0;
+                server_total_download = 0;
                 size_t i = 0;
                 for (; i < chart_with - 1; i++)
                 {
@@ -41,6 +50,26 @@ void server_status_frame()
                 cpu_y_data[i] = report->cpu_percent;
                 memory_used_y_data[i] = report->memory_used / (1024.0); // to gb
                 memory_total = round(report->memory_total / (1024.0));  // to gb
+
+                int sum_d = 0;
+                int sum_u = 0;
+                for (int ui = 0; ui < report->users_count; ui++)
+                {
+                    sum_d += report->users[ui].speed_current.download;
+                    sum_u += report->users[ui].speed_current.download;
+                    server_total_upload += report->users[ui].traffic_total.upload;
+                    server_total_download += report->users[ui].traffic_total.download;
+                }
+                i = 0;
+                for (; i < chart_with - 1; i++)
+                {
+                    users_upload_y_data[i] = users_upload_y_data[i + 1] / (1024.0) * 8;
+                    users_download_y_data[i] = users_download_y_data[i + 1] / (1024.0) * 8;
+
+                    
+                }
+                users_upload_y_data[i] = sum_u;
+                users_download_y_data[i] = sum_d; // to gb
             });
     }
 
@@ -124,13 +153,13 @@ void server_status_frame()
         ImGui::TableNextColumn();
         ImGui::Button("Total Server Upload", ImVec2(-FLT_MIN, 0.0f));
         ImGui::TableNextColumn();
-        sprintf(buf, "%d", active_users_count);
+        sprintf(buf, "%.2f", server_total_upload);
         ImGui::Button(buf, ImVec2(-FLT_MIN, 0.0f));
 
         ImGui::TableNextColumn();
         ImGui::Button("Total Server Download", ImVec2(-FLT_MIN, 0.0f));
         ImGui::TableNextColumn();
-        sprintf(buf, "%d", active_users_count);
+        sprintf(buf, "%.2f", server_total_download);
         ImGui::Button(buf, ImVec2(-FLT_MIN, 0.0f));
 
         ImGui::TableNextColumn();
@@ -197,19 +226,19 @@ void server_status_frame()
         // ImPlot::SetupAxes("", "",ImPlotAxisFlags_Lock | ImPlotAxisFlags_RangeFit ,ImPlotAxisFlags_Lock |  ImPlotAxisFlags_RangeFit );
         ImPlot::SetupAxes("", "", ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoMenus | ImPlotAxisFlags_NoHighlight, ImPlotAxisFlags_NoHighlight);
 
-        ImPlot::SetupAxesLimits(0, chart_with - 1, 0, 100, ImGuiCond_Always);
+        ImPlot::SetupAxesLimits(0, chart_with - 1, 0, 200, ImGuiCond_Always);
         ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
-        ImPlot::PlotShaded("Upload MBytes/s", x_data, cpu_y_data, chart_with, -INFINITY);
-        ImPlot::PlotShaded("Download MBytes/s", x_data, memory_used_y_data, chart_with, -INFINITY);
+        ImPlot::PlotShaded("Upload Mbits/s", x_data, users_upload_y_data, chart_with, -INFINITY);
+        ImPlot::PlotShaded("Download Mbits/s", x_data, users_download_y_data, chart_with, -INFINITY);
         ImPlot::PopStyleVar();
 
         ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(2));
-        ImPlot::PlotLine("Upload MBytes/s", x_data, cpu_y_data, chart_with);
+        ImPlot::PlotLine("Upload Mbits/s", x_data, users_upload_y_data, chart_with);
         ImPlot::PopStyleColor();
 
         ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(3));
 
-        ImPlot::PlotLine("Download MBytes/s", x_data, memory_used_y_data, chart_with);
+        ImPlot::PlotLine("Download Mbits/s", x_data, users_download_y_data, chart_with);
         ImPlot::PopStyleColor();
 
         ImPlot::EndPlot();

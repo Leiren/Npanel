@@ -26,7 +26,7 @@ void about_view_frame()
         EM_ASM(window.open("https://github.com/gfw-report/trojan-go", '_blank').focus(););
     }
     ImGui::Separator();
-    ImGui::Text("Contact Author for any reasons (bugs, helps, suggestions, etc..)");
+    ImGui::Text("Contact Author for any reasons (bugs, helps, suggestions etc..)");
     ImGui::SameLine();
     if (ImGui::SmallButton("Leiren"))
     {
@@ -34,6 +34,7 @@ void about_view_frame()
     }
     ImGui::SameLine();
     ImGui::Text("pm friendly :)");
+    ImGui::Text("If you like this panel, consider buying me a coffee! thanks.");
 
     ImGui::Text("If you find this panel useful please");
     ImGui::SameLine();

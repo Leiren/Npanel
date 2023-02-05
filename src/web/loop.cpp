@@ -26,7 +26,6 @@ extern SDL_Window *g_Window;
 extern SDL_GLContext g_GLContext;
 
 ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-bool show_demo_window = true;
 
 ImGuiID dock_id_main;
 ImGuiID dock_id_left;
@@ -224,7 +223,7 @@ void loop()
     if (show_app_metrics)
         ImGui::ShowMetricsWindow(&show_app_metrics);
 
-    ImGui::ShowDemoWindow();
+    // ImGui::ShowDemoWindow();
 
     // drawOverlay();
     ///////////////////////////////

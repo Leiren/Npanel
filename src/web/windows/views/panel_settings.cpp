@@ -79,21 +79,27 @@ void apply_panel_settingn()
         error = "cert path too low.";
         has_error = true;
     }
+    #ifndef win_build
     if (input_cert_path[0] != '/')
     {
         error = "cert path must begin with /";
         has_error = true;
     }
+    #endif
     if (strlen(input_private_key_path) < 4)
     {
         error = "private key path too low.";
         has_error = true;
     }
+    #ifndef win_build
+
     if (input_private_key_path[0] != '/')
     {
         error = "private key path must begin with /";
         has_error = true;
     }
+    #endif
+
     if (has_error)
         return;
     char main_domain_buf[10];
@@ -194,27 +200,40 @@ void panel_settings_frame(bool tab_changed)
     ImGui::Text("fakewebsite template:");
     samelinehelpmarker("choose a template, when a stranger opens your domain he will see a fake website.\n"
                        "this is why you should run this pannel on port 443, otherwise the browser will not show the fake website!\n"
-                       "Note: you are recommended to customize the html/css , files are in\n /opt/Npanel/templates\n");
-    const char *items[] = {"Social Media1", "Social Media2", "Pizza seler", "Direct TV", "Covido"};
+                       "Note: you are recommended to customize the html/css , files are in\n /opt/Npanel/templates\n\n"
+                       "More templates will come in next versions");
+    const char *items[] = {"Social Media1", "creative studio", "Pizza seler", "Direct TV", "Covido"};
     cursor_pos();
 
     ImGui::Combo("##input_fake_website_index", &input_fake_website_index, items, IM_ARRAYSIZE(items));
 
     ImGui::Text("certificate path:");
     samelinehelpmarker("Certificate file path\n"
+#ifndef win_build
                        "Start your path with /  and as you know it's full path!\n"
                        "This certificate must match the domain you enetered.\n"
                        "Examples: /etc/letsencrypt/live/my.domain.com/fullchain.pem\n"
-                       "Examples: /etc/letsencrypt/live/my.domain.com/cert.pem");
+                       "Examples: /etc/letsencrypt/live/my.domain.com/cert.pem"
+#else
+                       "Examples: C:\\ssl\\fullchain.pem \n"
+                       "Examples: C:\\ssl\\cert.pem"
+#endif
+    );
 
     cursor_pos();
     ImGui::InputText("##input_cert_path", input_cert_path, IM_ARRAYSIZE(input_cert_path));
 
     ImGui::Text("private key path:");
     samelinehelpmarker("Private key file path\n"
+#ifndef win_build
+
                        "Start your path with /  and as you know it's full path!\n"
                        "This key must match the domain you enetered.\n"
-                       "Examples: /etc/letsencrypt/live/my.domain.com/privkey.pem");
+                       "Examples: /etc/letsencrypt/live/my.domain.com/privkey.pem"
+#else
+                       "Examples: C:\\ssl\\key.pem"
+#endif
+    );
 
     cursor_pos();
     ImGui::InputText("##input_private_key_path", input_private_key_path, IM_ARRAYSIZE(input_private_key_path));
@@ -234,11 +253,17 @@ void panel_settings_frame(bool tab_changed)
 
     if (ImGui::BeginPopupModal("Confirm##apply_and_restart", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings))
     {
+        ImGui::Text("Panel will restart, and comes up with new settings.\nin-case panel did not start\n"
+#ifndef win_build
 
-        ImGui::Text("Panel will restart, and comes up with new settings.\n in-case panel did not start\n"
-                    "first check logs with \"service npanel status\" \n"
-                    "then change your wrong settings in /opt/Npanel/panel.json\n"
-                    "then \"service npanel restart\"\n"
+                    "1- check panel logs \"service npanel status\"\n"
+                    "2- correct your mistakes in /opt/Npanel/panel.json\n"
+                    "3- restart \"service npanel restart\"\n"
+#else
+                    "1- check panel logs from console window\n"
+                    "2- correct your mistakes in Npanel/panel.json\n"
+                    "3- restart the program"
+#endif
                     "\n You should backup before changing settings.\n\n"
                     "\n\n");
         ImGui::Separator();
@@ -271,11 +296,20 @@ void panel_settings_frame(bool tab_changed)
 
     if (ImGui::BeginPopupModal("Backup##how_to_backup", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings))
     {
+        ImGui::Text(
+#ifndef win_build
 
-        ImGui::Text("In order to backup your users: /opt/Npanel/users.db\n"
-                    "In order to backup your settings: /opt/Npanel/panel.json\n"
-                    "But I suggest you to Backup the folder /opt/Npanel entirely.\n\n"
-                    "For security reasons, you should download those files yourself, we don't provide you any links."
+            "In order to backup your users: /opt/Npanel/users.db\n"
+            "In order to backup your settings: /opt/Npanel/panel.json\n"
+            "But I suggest you to Backup the folder /opt/Npanel entirely.\n\n"
+            "For security reasons, you should download those files yourself, we don't provide you any links."
+#else
+            "In order to backup your users: Npanel/users.db\n"
+            "In order to backup your settings: panel/panel.json\n"
+            "But I suggest you to Backup the folder Npanel/ entirely.\n\n"
+            "For security reasons, you should download those files yourself, we don't provide you any links."
+#endif
+
 
         );
         ImGui::Separator();

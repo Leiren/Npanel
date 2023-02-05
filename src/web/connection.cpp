@@ -111,13 +111,13 @@ void Connection::_login()
                                                          {
                                                              // loged in
                                                              token = result.info;
-                                                            //  EM_ASM({
-                                                            //      const str = UTF8ToString($0);
+                                                             //  EM_ASM({
+                                                             //      const str = UTF8ToString($0);
 
-                                                            //      alert(str);
-                                                            //      setCookie("token", str, 3);
-                                                            //  },
-                                                            //         token.c_str());
+                                                             //      alert(str);
+                                                             //      setCookie("token", str, 3);
+                                                             //  },
+                                                             //         token.c_str());
 
                                                              AUTH = true;
                                                              BEGIN = true;
@@ -135,31 +135,8 @@ void Connection::_login()
     else
     {
         EM_ASM(setCookie("token", "", 3););
-
-        Connection::send("Auth", 1, "")->connect([](Result result)
-                                                 {
-                                                     if (result.success)
-                                                     {
-                                                         // loged in
-                                                         token = result.info;
-                                                         EM_ASM({
-                                                            const str = UTF8ToString($0);
-
-                                                             alert(str);
-                                                             setCookie("token", str, 3);
-                                                         },
-                                                                token.c_str());
-
-                                                         AUTH = true;
-                                                         BEGIN = true;
-                                                     }
-                                                     else
-                                                     {
-                                                         // token expired
-                                                         //  go to login page
-
-                                                         AUTH = false;
-                                                     } });
+        AUTH = false;
+        BEGIN = true;
     }
 }
 EM_BOOL Connection::onopen(int eventType, const EmscriptenWebSocketOpenEvent *websocketEvent, void *userData)
@@ -340,7 +317,6 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
             new_report.panelsettings.cert_path = resobj["panelsettings"].GetObject()["cert_path"].GetString();
             new_report.panelsettings.private_key_path = resobj["panelsettings"].GetObject()["private_key_path"].GetString();
             new_report.panelsettings.mux = resobj["panelsettings"].GetObject()["mux"].GetBool();
-            new_report.panelsettings.first_launch = resobj["panelsettings"].GetObject()["first_launch"].GetBool();
 
             ServerReportStore::last_report = new_report;
             (ServerReportStore::signal)(&new_report);
@@ -368,7 +344,7 @@ void Connection::init()
     }
 
     const char *origin = (const char *)EM_ASM_PTR({
-        var str = window.location.origin;
+        var str = window.location.href;
         var buffer = Module._malloc(str.length + 1);
         Module.writeStringToMemory(str, buffer);
         return buffer;
@@ -387,7 +363,7 @@ void Connection::init()
         emscripten_exit_with_live_runtime();
     }
     pure_origin = after_slashes;
-    snprintf(wsurl, 100, "ws%s://%s/stream", ssl ? "s" : "", after_slashes);
+    snprintf(wsurl, 100, "ws%s://%sstream", ssl ? "s" : "", after_slashes);
 
     EmscriptenWebSocketCreateAttributes ws_attrs = {
         wsurl,

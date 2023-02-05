@@ -768,8 +768,8 @@ void show_user_configs(User **_user)
         // ws:
         if (user.protocol == 1)
         {
-            sprintf(wsqtextbuf, "trojan://%s@%s:%d?security=tls&type=ws&path=%s&#%s", user.password.c_str(), ServerReportStore::last_report.panelsettings.domain.c_str(),
-                    ServerReportStore::last_report.panelsettings.mainport, ServerReportStore::last_report.panelsettings.websocket_path.c_str(), user.name.c_str());
+            sprintf(wsqtextbuf, "trojan://%s@%s:%d?security=tls&type=ws&sni=%s&path=%s&#%s", user.password.c_str(), ServerReportStore::last_report.panelsettings.domain.c_str(),
+                    ServerReportStore::last_report.panelsettings.mainport, ServerReportStore::last_report.panelsettings.domain.c_str(), ServerReportStore::last_report.panelsettings.websocket_path.c_str(), user.name.c_str());
             std::string qrText = wsqtextbuf;
             std::string fileName = "qr-ws.png";
             auto QrPng = QrToPng(fileName, imgSize, minModulePixelSize, qrText, true, qrcodegen::QrCode::Ecc::MEDIUM);
