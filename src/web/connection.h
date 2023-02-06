@@ -50,7 +50,7 @@ public:
     
     //user api
     static rocket::signal<void(Result)>* createUser(const User& user);
-    static rocket::signal<void(Result)>* updateUser(const User& user);
+    static rocket::signal<void(Result)>* updateUser(const User& user, bool reseting = false);
     static rocket::signal<void(Result)>* deleteUser(const User& user);
 };
 

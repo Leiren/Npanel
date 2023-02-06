@@ -239,21 +239,32 @@ void render_list()
                 char showbuf[25];
 
                 ImGui::TableNextColumn();
-                sprintf(showbuf, "%d KB/s", item->speed_current.upload);
+                if (item->speed_current.upload < 1024) // 1024 KB
+                    sprintf(showbuf, "%d KB/s", item->speed_current.upload);
+                else
+                    sprintf(showbuf, "%.2f MB/s", item->speed_current.upload / 1024.0);
+
                 ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 4).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * strlen(showbuf) / 2.0f - ImGui::GetStyle().FramePadding.x);
                 ImGui::AlignTextToFramePadding();
                 ImGui::TextUnformatted(showbuf);
                 ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 4).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * strlen(showbuf) / 2.0f - ImGui::GetStyle().FramePadding.x);
 
                 ImGui::TableNextColumn();
-                sprintf(showbuf, "%d KB/s", item->speed_current.download);
+                if (item->speed_current.download < 1024) // 1024 KB
+                    sprintf(showbuf, "%d KB/s", item->speed_current.download);
+                else
+                    sprintf(showbuf, "%.2f MB/s", item->speed_current.download / 1024.0);
                 ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 5).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * strlen(showbuf) / 2.0f - ImGui::GetStyle().FramePadding.x);
                 ImGui::AlignTextToFramePadding();
                 ImGui::TextUnformatted(showbuf);
                 ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 5).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * strlen(showbuf) / 2.0f - ImGui::GetStyle().FramePadding.x);
 
                 ImGui::TableNextColumn();
-                sprintf(showbuf, "%d KB/s", item->traffic_total.upload);
+                if (item->traffic_total.upload < 1024 * 1024) // 1024 mb
+                    sprintf(showbuf, "%.2f MB", item->traffic_total.upload / 1024.0);
+                else
+                    sprintf(showbuf, "%.2f GB", item->traffic_total.upload / (1024.0 * 1024.0));
+
                 ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 6).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * strlen(showbuf) / 2.0f - ImGui::GetStyle().FramePadding.x);
                 ImGui::AlignTextToFramePadding();
                 ImGui::TextUnformatted(showbuf);
@@ -261,14 +272,17 @@ void render_list()
 
                 ImGui::TableNextColumn();
                 ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 7).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * strlen(showbuf) / 2.0f - ImGui::GetStyle().FramePadding.x);
-                sprintf(showbuf, "%d KB/s", item->traffic_total.download);
+                if (item->traffic_total.upload < 1024 * 1024) // 1024 mb
+                    sprintf(showbuf, "%.2f MB", item->traffic_total.download / 1024.0);
+                else
+                    sprintf(showbuf, "%.2f GB", item->traffic_total.download / (1024.0 * 1024.0));
                 ImGui::AlignTextToFramePadding();
                 ImGui::TextUnformatted(showbuf);
                 ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 7).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * strlen(showbuf) / 2.0f - ImGui::GetStyle().FramePadding.x);
 
                 ImGui::TableNextColumn();
                 if (item->day_limit)
-                    sprintf(showbuf, "%d D %d H", item->days_left,item->minutes_left/60);
+                    sprintf(showbuf, "%d D %d H", item->days_left, item->minutes_left / 60);
                 else
                     sprintf(showbuf, "%s", "no-limit");
 
@@ -315,7 +329,7 @@ void user_opt_popup(User *user)
                 case 3:
                     user->traffic_total.download = 0;
                     user->traffic_total.upload = 0;
-                    Connection::updateUser(*user);
+                    Connection::updateUser(*user,true);
                     break;
                 }
             }

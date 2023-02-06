@@ -110,7 +110,7 @@ void Connection::_login()
                                                          if (result.success)
                                                          {
                                                              // loged in
-                                                             token = result.info;
+                                                             //  token = result.info; !!!!!!!!!!!!!!!!!!
                                                              //  EM_ASM({
                                                              //      const str = UTF8ToString($0);
 
@@ -386,8 +386,9 @@ rocket::signal<void(Result)> *Connection::createUser(const User &user)
 
     return result;
 }
-rocket::signal<void(Result)> *Connection::updateUser(const User &user)
+rocket::signal<void(Result)> *Connection::updateUser(const User &_user, bool reseting)
 {
+    User user = _user;
     char speed_limited_upload[16];
     char speed_limited_download[16];
     char traffic_limited_upload[16];
@@ -398,6 +399,16 @@ rocket::signal<void(Result)> *Connection::updateUser(const User &user)
     char duration_limited_bool[16];
     char protocol[16];
 
+
+    char traffic_total_upload[16];
+    char traffic_total_download[16];
+
+    if (!reseting)
+    {
+        user.traffic_total.upload = -1;
+        user.traffic_total.download = -1;
+    }
+
     sprintf(speed_limited_upload, "%d", user.speed_limit.upload);
     sprintf(speed_limited_download, "%d", user.speed_limit.download);
     sprintf(traffic_limited_upload, "%d", user.traffic_limit.upload);
@@ -407,7 +418,11 @@ rocket::signal<void(Result)> *Connection::updateUser(const User &user)
     sprintf(duration_limited_amount, "%d", user.days_left);
     sprintf(duration_limited_bool, "%d", user.day_limit ? 1 : 0);
     sprintf(protocol, "%d", user.protocol);
-    auto result = Connection::send("update-user", 12,
+
+    sprintf(traffic_total_upload, "%d", user.traffic_total.upload);
+    sprintf(traffic_total_download, "%d", user.traffic_total.download);
+
+    auto result = Connection::send("update-user", 14,
                                    user.name.c_str(),
                                    user.password.c_str(),
                                    speed_limited_upload,
@@ -419,7 +434,7 @@ rocket::signal<void(Result)> *Connection::updateUser(const User &user)
                                    duration_limited_amount,
                                    duration_limited_bool,
                                    protocol,
-                                   user.note.c_str());
+                                   user.note.c_str(),traffic_total_upload,traffic_total_download);
     result->connect([=](Result res)
                     { if(res.success) console.log("User %s updated.", user.name.c_str()); });
 

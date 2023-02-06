@@ -41,10 +41,17 @@ static void create_user(nup_state &cst)
     else
     {
         const char *err_msg = "Never Enter value 0 for a speed limit\n if you want to disable a config, use Enable/Disable button or enter a number higher than 0 like 1.";
-        if (cst.speed_limited_upload == 0 | cst.speed_limited_download == 0)
+        if (cst.speed_limited_upload == 0 || cst.speed_limited_download == 0)
         {
             has_error = true;
             last_error_msg = err_msg;
+            return;
+        }
+        const char *error_msg2 = "speed limit minimum is 512 (0.5 MByte/s)";
+        if (cst.speed_limited_upload <512 || cst.speed_limited_download < 512)
+        {
+            has_error = true;
+            last_error_msg = error_msg2;
             return;
         }
     }
@@ -58,7 +65,7 @@ static void create_user(nup_state &cst)
     {
         const char *err_msg = "Never Enter value 0 for a traffic limit\n if you want to disable a config, use Enable/Disable button or enter a number higher than 0 like 1.";
 
-        if (cst.traffic_limited_upload == 0 | cst.traffic_limited_download == 0)
+        if (cst.traffic_limited_upload == 0 || cst.traffic_limited_download == 0)
         {
             has_error = true;
             last_error_msg = err_msg;
@@ -96,21 +103,6 @@ static void create_user(nup_state &cst)
         }
     }
 
-    char speed_limited_upload[16];
-    char speed_limited_download[16];
-    char traffic_limited_upload[16];
-    char traffic_limited_download[16];
-    char duration_limited_amount[16];
-    char ip_limited_amount[16];
-    char protocol[16];
-
-    sprintf(speed_limited_upload, "%d", cst.speed_limited_upload);
-    sprintf(speed_limited_download, "%d", cst.speed_limited_download);
-    sprintf(traffic_limited_upload, "%d", cst.traffic_limited_upload);
-    sprintf(traffic_limited_download, "%d", cst.traffic_limited_download);
-    sprintf(duration_limited_amount, "%d", cst.duration_limited_amount);
-    sprintf(ip_limited_amount, "%d", cst.ip_limited_amount);
-    sprintf(protocol, "%d", cst.protocol);
     User cru;
     cru.name = cst.name;
     Connection::createUser(cru)->connect([=](Result res)
@@ -160,10 +152,17 @@ static void update_user(nup_state &cst, const char *user_password, bool user_ena
     else
     {
         const char *err_msg = "Never Enter value 0 for a speed limit\n if you want to disable a config, use Enable/Disable button or enter a number higher than 0 like 1.";
-        if (cst.speed_limited_upload == 0 | cst.speed_limited_download == 0)
+        if (cst.speed_limited_upload == 0 || cst.speed_limited_download == 0)
         {
             has_error = true;
             last_error_msg = err_msg;
+            return;
+        }
+        const char *error_msg2 = "speed limit minimum is 512 (0.5 MByte/s)";
+        if (cst.speed_limited_upload < 512 || cst.speed_limited_download < 512)
+        {
+            has_error = true;
+            last_error_msg = error_msg2;
             return;
         }
     }
@@ -177,7 +176,7 @@ static void update_user(nup_state &cst, const char *user_password, bool user_ena
     {
         const char *err_msg = "Never Enter value 0 for a traffic limit\n if you want to disable a config, use Enable/Disable button or enter a number higher than 0 like 1.";
 
-        if (cst.traffic_limited_upload == 0 | cst.traffic_limited_download == 0)
+        if (cst.traffic_limited_upload == 0 || cst.traffic_limited_download == 0)
         {
             has_error = true;
             last_error_msg = err_msg;
@@ -219,7 +218,7 @@ static void update_user(nup_state &cst, const char *user_password, bool user_ena
     upu.name = cst.name;
     upu.password = user_password;
     upu.speed_limit.upload = cst.speed_limited_upload;
-    upu.speed_limit.download = cst.speed_limited_download;
+    upu.speed_limit.download = cst.speed_limited_download ;
     upu.traffic_limit.upload = cst.traffic_limited_upload;
     upu.traffic_limit.download = cst.traffic_limited_download;
     upu.traffic_total.upload = -1;
@@ -311,7 +310,9 @@ void new_user_popup_frame(bool *new_state)
         ImGui::Text("Speed Limit:");
         ImGui::SameLine();
         HelpMarker("Maximum download / upload speed the user will be able to reach.\n"
-                   "Unit: (KBytes/sec)");
+                   "Unit: (KiloBytes/sec)\n"
+                   "1 MegaByte/sec = 1024\n"
+                   "1 MegaBit/sec = 1024 * 8 => 256");
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - TEXT_BASE_WIDTH * 22);
         ImGui::RadioButton("Unlimited##sl", &state.speed_limited, 0);
         ImGui::SameLine();
@@ -462,17 +463,22 @@ void edit_user_popupframe(User **_user)
         state.ip_limited_amount = user.ip_limit;
         state.protocol = user.protocol;
 
-        if (user.speed_limit.upload != 0 | user.speed_limit.download != 0)
+        if (user.speed_limit.upload != 0 || user.speed_limit.download != 0)
         {
-            state.speed_limited_upload = 1;
+            state.speed_limited = 1;
+            state.speed_limited_upload = user.speed_limit.upload;
+            state.speed_limited_download = user.speed_limit.download;
         }
-        if (user.traffic_limit.upload != 0 | user.traffic_limit.upload != 0)
+        if (user.traffic_limit.upload != 0 || user.traffic_limit.upload != 0)
         {
             state.traffic_limited = 1;
+            state.traffic_limited_upload = user.traffic_limit.upload;
+            state.traffic_limited_download = user.traffic_limit.download;
         }
         if (user.ip_limit != 0)
         {
             state.ip_limited = 1;
+            state.ip_limited_amount = user.ip_limit;
         }
         if (user.day_limit)
         {
@@ -518,7 +524,9 @@ void edit_user_popupframe(User **_user)
         ImGui::Text("Speed Limit:");
         ImGui::SameLine();
         HelpMarker("Maximum download / upload speed the user will be able to reach.\n"
-                   "Unit: (KBytes/sec)");
+                   "Unit: (KiloBytes/sec)\n"
+                  "1 MegaByte/sec = 1024\n"
+                   "1 MegaBit/sec = 1024 * 8 => 256");
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - TEXT_BASE_WIDTH * 22);
         ImGui::RadioButton("Unlimited##sl", &state.speed_limited, 0);
         ImGui::SameLine();

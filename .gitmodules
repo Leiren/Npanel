@@ -5,6 +5,3 @@
 [submodule "libs/stb"]
 	path = libs/stb
 	url = https://github.com/nothings/stb.git
-[submodule "libs/trojan-go"]
-	path = libs/trojan-go
-	url = https://github.com/gfw-report/trojan-go.git

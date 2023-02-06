@@ -56,20 +56,20 @@ void server_status_frame()
                 for (int ui = 0; ui < report->users_count; ui++)
                 {
                     sum_d += report->users[ui].speed_current.download;
-                    sum_u += report->users[ui].speed_current.download;
+                    sum_u += report->users[ui].speed_current.upload;
                     server_total_upload += report->users[ui].traffic_total.upload;
                     server_total_download += report->users[ui].traffic_total.download;
                 }
                 i = 0;
                 for (; i < chart_with - 1; i++)
                 {
-                    users_upload_y_data[i] = users_upload_y_data[i + 1] / (1024.0) * 8;
-                    users_download_y_data[i] = users_download_y_data[i + 1] / (1024.0) * 8;
-
-                    
+                    users_upload_y_data[i] = users_upload_y_data[i + 1];
+                    users_download_y_data[i] = users_download_y_data[i + 1];
                 }
-                users_upload_y_data[i] = sum_u;
-                users_download_y_data[i] = sum_d; // to gb
+                users_upload_y_data[i] = sum_u / (1024.0);
+                users_download_y_data[i] = sum_d / (1024.0); 
+                server_total_upload = server_total_upload / (1024.0 * 1024.0);//kb to gb
+                server_total_download = server_total_download / (1024.0 * 1024.0);//kb to gb
             });
     }
 
@@ -153,13 +153,13 @@ void server_status_frame()
         ImGui::TableNextColumn();
         ImGui::Button("Total Server Upload", ImVec2(-FLT_MIN, 0.0f));
         ImGui::TableNextColumn();
-        sprintf(buf, "%.2f", server_total_upload);
+        sprintf(buf, "%.2f GB", server_total_upload);
         ImGui::Button(buf, ImVec2(-FLT_MIN, 0.0f));
 
         ImGui::TableNextColumn();
         ImGui::Button("Total Server Download", ImVec2(-FLT_MIN, 0.0f));
         ImGui::TableNextColumn();
-        sprintf(buf, "%.2f", server_total_download);
+        sprintf(buf, "%.2f GB", server_total_download);
         ImGui::Button(buf, ImVec2(-FLT_MIN, 0.0f));
 
         ImGui::TableNextColumn();
@@ -226,19 +226,19 @@ void server_status_frame()
         // ImPlot::SetupAxes("", "",ImPlotAxisFlags_Lock | ImPlotAxisFlags_RangeFit ,ImPlotAxisFlags_Lock |  ImPlotAxisFlags_RangeFit );
         ImPlot::SetupAxes("", "", ImPlotAxisFlags_NoTickLabels | ImPlotAxisFlags_NoMenus | ImPlotAxisFlags_NoHighlight, ImPlotAxisFlags_NoHighlight);
 
-        ImPlot::SetupAxesLimits(0, chart_with - 1, 0, 200, ImGuiCond_Always);
+        ImPlot::SetupAxesLimits(0, chart_with - 1, 0, 125, ImGuiCond_Always);
         ImPlot::PushStyleVar(ImPlotStyleVar_FillAlpha, 0.25f);
-        ImPlot::PlotShaded("Upload Mbits/s", x_data, users_upload_y_data, chart_with, -INFINITY);
-        ImPlot::PlotShaded("Download Mbits/s", x_data, users_download_y_data, chart_with, -INFINITY);
+        ImPlot::PlotShaded("Upload MByte/s", x_data, users_upload_y_data, chart_with, -INFINITY);
+        ImPlot::PlotShaded("Download MByte/s", x_data, users_download_y_data, chart_with, -INFINITY);
         ImPlot::PopStyleVar();
 
         ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(2));
-        ImPlot::PlotLine("Upload Mbits/s", x_data, users_upload_y_data, chart_with);
+        ImPlot::PlotLine("Upload MByte/s", x_data, users_upload_y_data, chart_with);
         ImPlot::PopStyleColor();
 
         ImPlot::PushStyleColor(ImPlotCol_Line, ImPlot::GetColormapColor(3));
 
-        ImPlot::PlotLine("Download Mbits/s", x_data, users_download_y_data, chart_with);
+        ImPlot::PlotLine("Download MByte/s", x_data, users_download_y_data, chart_with);
         ImPlot::PopStyleColor();
 
         ImPlot::EndPlot();

@@ -19,12 +19,12 @@ void about_view_frame()
         EM_ASM(window.open("https://github.com/p4gefau1t/trojan-go", '_blank').focus(););
     }
 
-    ImGui::Text("And we use the special fork made by :");
-    ImGui::SameLine();
-    if (ImGui::SmallButton("gfw_report"))
-    {
-        EM_ASM(window.open("https://github.com/gfw-report/trojan-go", '_blank').focus(););
-    }
+    // ImGui::Text("And we use the special fork made by :");
+    // ImGui::SameLine();
+    // if (ImGui::SmallButton("gfw_report"))
+    // {
+    //     EM_ASM(window.open("https://github.com/gfw-report/trojan-go", '_blank').focus(););
+    // }
     ImGui::Separator();
     ImGui::Text("Contact Author for any reasons (bugs, helps, suggestions etc..)");
     ImGui::SameLine();
