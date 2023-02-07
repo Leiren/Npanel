@@ -22,7 +22,7 @@ rocket::signal<void(const char *)> Connection::bash_results;
 string Connection::pure_origin = "";
 string Connection::token = "";
 
-rocket::signal<void(Result)> *Connection::send(const char *req, int param_count, ...)
+rocket::signal<void(Result)> *Connection::send(const char *req, volatile int param_count, ...)
 {
     req_key++;
 
@@ -31,7 +31,6 @@ rocket::signal<void(Result)> *Connection::send(const char *req, int param_count,
     va_list args;
     va_start(args, param_count);
 
-    va_end(args);
     //  token: Ha0shedToken
     // req: string
     // params: seq[string]
@@ -53,6 +52,7 @@ rocket::signal<void(Result)> *Connection::send(const char *req, int param_count,
         writer.String(va_arg(args, char *));
     }
     writer.EndArray();
+    va_end(args);
 
     writer.Key("specialparam");
     writer.String("req");
@@ -72,7 +72,7 @@ rocket::signal<void(Result)> *Connection::send(const char *req, int param_count,
         result = emscripten_websocket_send_utf8_text(*socket, enc_ed);
         if (result == EMSCRIPTEN_RESULT_SUCCESS)
         {
-            console.log("[Socket] [Send] sent:%s", send_raw);
+            // console.log("[Socket] [Send] sent:%s", send_raw);
         }
         else
         {
@@ -179,14 +179,14 @@ EM_BOOL Connection::onopen(int eventType, const EmscriptenWebSocketOpenEvent *we
 EM_BOOL Connection::onerror(int eventType, const EmscriptenWebSocketErrorEvent *websocketEvent, void *userData)
 {
     Connection::socket = nullptr;
-    console.log("[Socket] Error !");
+    console.log("[Socket] Error !  Connection::onerror() is called! ");
 
     return EM_TRUE;
 }
 EM_BOOL Connection::onclose(int eventType, const EmscriptenWebSocketCloseEvent *websocketEvent, void *userData)
 {
     Connection::socket = nullptr;
-    console.log("[Socket] Closed !");
+    console.log("[Socket] Closed !      Npanel server crashed or no internet connection.");
 
     return EM_TRUE;
 }
@@ -215,7 +215,7 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
                 AUTH = false;
             }
 
-            console.log("[Socket] [Recv] message: %s", dec);
+            // console.log("[Socket] [Recv] message: %s", dec);
 
             if (strcmp(resobj["key"].GetString(), "bash") == 0)
             {
@@ -381,7 +381,7 @@ void Connection::init()
 rocket::signal<void(Result)> *Connection::createUser(const User &user)
 {
     auto result = Connection::send("create-user", 1, user.name.c_str());
-    result->connect([&](Result res)
+    result->connect([=](Result res)
                     { if(res.success) console.log("User %s created.", user.name.c_str()); });
 
     return result;

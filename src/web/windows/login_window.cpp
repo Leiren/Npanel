@@ -143,10 +143,10 @@ static void wizard_window()
         ImGui::Begin("Before we begin", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoResize);
         ImGui::Text("Thank you for using Npanel-UI.\n\n"
                     "   This UI is free and open source.\n"
-                    "But, You have to take permission from the Author in order to create more than 50 users! why?\n"
+                    "But, You have to take permission from the Author in order to create more than 30 users! why?\n"
                     "Because Backend Implementation is not part of Npanel-UI project.\n"
                     "You can build the UI from source code and Implement the server functions yourself \nto get rid of probably paying"
-                    " a very! small amount to help the author\nfor more features and improvements of this panel :(\n\n ");
+                    " a very small amount to help the author\nfor more features and improvements of this panel :(\n\n ");
         ImGui::Text("You will find the Author contact information in panel about page.\n\n");
         ImGui::Separator();
         ImGui::NewLine();
@@ -159,8 +159,34 @@ static void wizard_window()
         }
         ImGui::End();
         break;
-
     case 1:
+        ImGui::Begin("Notes##notes1", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoResize);
+        ImGui::Text("1- When you visit a url without https:// the browser will not allow you to use clipboard (CTRL + C or V)\n"
+                    "so don't use it untill you finish setup.\n\n"
+                    "2- Npanel always encrypts all packets with AES-256 regardless of the url protocol.\n\n"
+                    "3-Npanel always kills ports 80,443 (for global serving) and ports 2060,2061 for local listening at startup.\n"
+                    "to avoid problems.\n\n"
+#ifndef win_build
+
+                    "4-Npanel always disables ipv6 , enables bbr , disables ufw to avoid problems.\n\n"
+#endif
+                    "5-Npanel uses trojan-go for trojan protocol implementation, because indeed the author's experience confirms that it is the best way\n"
+                    "to bypass GFW.\n\n"
+                    "6-If you want to reduce the risk of your server getting blocked\ntell your users to use clients that support uTls. (lastest version of most clients do it)\n\n"
+                    "7-Npanel is under active development. you are welcome to report any bugs you found and i will fix that asap!\n\n");
+        ImGui::Separator();
+        ImGui::NewLine();
+        ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 240 - ImGui::GetStyle().ItemSpacing.x);
+        if (ImGui::Button("Back", ImVec2(120, 0)))
+            state--;
+        ImGui::SameLine();
+        if (ImGui::Button("Understood", ImVec2(120, 0)))
+        {
+            state++;
+        }
+        ImGui::End();
+        break;
+    case 2:
         ImGui::Begin("Domain", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
 
         ImGui::Text("domain:");
@@ -200,7 +226,7 @@ static void wizard_window()
         ImGui::End();
         break;
 
-    case 2:
+    case 3:
         ImGui::Begin("Certificate", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
         static char input_cert_path[80];
         static char input_private_key_path[80];
@@ -274,8 +300,8 @@ static void wizard_window()
         }
         ImGui::End();
         break;
-    case 3:
-        ImGui::Begin("Notes", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoResize);
+    case 4:
+        ImGui::Begin("Notes##notes2", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoResize);
         ImGui::Text("All certificates will expire after a period of time (3 months forexample) \n\n"
                     "  It is your responsibility to renew it,  Let's Encrypt also sends you notify email before it expires.\n\n");
         ImGui::Separator();
@@ -291,7 +317,7 @@ static void wizard_window()
         ImGui::End();
         break;
 
-    case 4:
+    case 5:
         static int input_fake_website_index = 0;
         ImGui::Begin("FakeWebsite", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
         ImGui::Text("Trojan-go (by default) will host all connections on port 443\n"
@@ -338,7 +364,7 @@ static void wizard_window()
         ImGui::End();
         break;
 
-    case 5:
+    case 6:
         static char next_url_buf[120];
 
         ImGui::Begin("Admin Login information", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
@@ -355,14 +381,14 @@ static void wizard_window()
 
         ImGui::Text("Admin Password:");
         samelinehelpmarker("After entering the correct url, you need the password to log-in\n");
-        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 2 * TEXT_BASE_WIDTH -2);
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 2 * TEXT_BASE_WIDTH - 2);
 
         if (ImGui::InputText("##input_ap", input_admin_password, IM_ARRAYSIZE(input_admin_password)))
         {
-            sprintf(panel_final_url, "url for Npanel: https://%s/%s/ \nNote: the last slash in url is important!", input_domain, input_admin_username);
+            sprintf(panel_final_url, "https://%s/%s/", input_domain, input_admin_username);
         }
         ImGui::NewLine();
-        ImGui::TextUnformatted(panel_final_url);
+        ImGui::Text("url for Npanel: %s %s", panel_final_url, "\nNote: the last slash in url is important!");
 
         ImGui::NewLine();
 
@@ -400,7 +426,7 @@ static void wizard_window()
         ImGui::End();
 
         break;
-    case 6:
+    case 7:
         ImGui::Begin("Complete", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoResize);
         ImGui::Text("The panel is restarting; if you made a mistake, the panel may not start, heres some debugging tips:\n\n"
 #ifndef win_build
@@ -409,15 +435,14 @@ static void wizard_window()
                     "2- correct your mistakes in /opt/Npanel/panel.json\n"
                     "3- restart \"service npanel restart\"\n"
 #else
-                           "1- check panel logs from console window\n"
-                           "2- correct your mistakes in Npanel/panel.json\n"
-                           "3- restart the program"
+                    "1- check panel logs from console window\n"
+                    "2- correct your mistakes in Npanel/panel.json\n"
+                    "3- restart the program"
 #endif
-);
-        if(ImGui::Button("Open Npanel")){
-            EM_ASM({window.location.href = UTF8ToString($0)},panel_final_url);
-
-             
+        );
+        if (ImGui::Button("Open Npanel"))
+        {
+            EM_ASM({window.location.href = UTF8ToString($0)}, panel_final_url);
         }
         ImGui::End();
 

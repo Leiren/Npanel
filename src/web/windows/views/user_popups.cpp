@@ -48,7 +48,7 @@ static void create_user(nup_state &cst)
             return;
         }
         const char *error_msg2 = "speed limit minimum is 512 (0.5 MByte/s)";
-        if (cst.speed_limited_upload <512 || cst.speed_limited_download < 512)
+        if (cst.speed_limited_upload < 512 || cst.speed_limited_download < 512)
         {
             has_error = true;
             last_error_msg = error_msg2;
@@ -105,6 +105,13 @@ static void create_user(nup_state &cst)
 
     User cru;
     cru.name = cst.name;
+    if (cru.name.find(' ') != std::string::npos)
+    {
+        has_error = true;
+        last_error_msg = "Name cannot have space!";
+        return;
+    }
+
     Connection::createUser(cru)->connect([=](Result res)
                                          {
         if (!res.success)
@@ -216,9 +223,16 @@ static void update_user(nup_state &cst, const char *user_password, bool user_ena
     }
     User upu;
     upu.name = cst.name;
+    if (upu.name.find(' ') != std::string::npos)
+    {
+        has_error = true;
+        last_error_msg = "Name cannot have space!";
+        return;
+    }
+
     upu.password = user_password;
     upu.speed_limit.upload = cst.speed_limited_upload;
-    upu.speed_limit.download = cst.speed_limited_download ;
+    upu.speed_limit.download = cst.speed_limited_download;
     upu.traffic_limit.upload = cst.traffic_limited_upload;
     upu.traffic_limit.download = cst.traffic_limited_download;
     upu.traffic_total.upload = -1;
@@ -290,7 +304,7 @@ void new_user_popup_frame(bool *new_state)
         ImGui::SameLine();
         ImGui::InputText("##name_input_text", state.name, IM_ARRAYSIZE(state.name));
         ImGui::SameLine();
-        HelpMarker("Enter the user name.\ncan have space.\nmultiple configs can have same names.");
+        HelpMarker("Enter the user name.\nMust not have space.\nmultiple configs can have same names.");
 
         // protocol
         ImGui::AlignTextToFramePadding();
@@ -311,8 +325,7 @@ void new_user_popup_frame(bool *new_state)
         ImGui::SameLine();
         HelpMarker("Maximum download / upload speed the user will be able to reach.\n"
                    "Unit: (KiloBytes/sec)\n"
-                   "1 MegaByte/sec = 1024\n"
-                   "1 MegaBit/sec = 1024 * 8 => 256");
+                   "1 MegaByte/sec = 1024\n");
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - TEXT_BASE_WIDTH * 22);
         ImGui::RadioButton("Unlimited##sl", &state.speed_limited, 0);
         ImGui::SameLine();
@@ -468,22 +481,30 @@ void edit_user_popupframe(User **_user)
             state.speed_limited = 1;
             state.speed_limited_upload = user.speed_limit.upload;
             state.speed_limited_download = user.speed_limit.download;
-        }
+        }else
+            state.speed_limited = 0;
+
         if (user.traffic_limit.upload != 0 || user.traffic_limit.upload != 0)
         {
             state.traffic_limited = 1;
             state.traffic_limited_upload = user.traffic_limit.upload;
             state.traffic_limited_download = user.traffic_limit.download;
-        }
+        }else
+            state.traffic_limited = 0;
+
         if (user.ip_limit != 0)
         {
             state.ip_limited = 1;
             state.ip_limited_amount = user.ip_limit;
-        }
+        }else
+            state.ip_limited = 0;
+
         if (user.day_limit)
         {
             state.duration_limited = 1;
-        }
+        }else
+            state.duration_limited = 0;
+
         const ImGuiViewport *viewport = ImGui::GetMainViewport();
         ImGui::SetNextWindowPos(viewport->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
         ImGui::SetNextWindowSize(ImVec2(600, -1));
@@ -504,7 +525,7 @@ void edit_user_popupframe(User **_user)
         ImGui::SameLine();
         ImGui::InputText("##name_input_text", state.name, IM_ARRAYSIZE(state.name));
         ImGui::SameLine();
-        HelpMarker("Enter the user name.\ncan have space.\nmultiple configs can have same names.");
+        HelpMarker("Enter the user name.\nMust not have space.\nmultiple configs can have same names.");
 
         // protocol
         ImGui::AlignTextToFramePadding();
@@ -525,8 +546,7 @@ void edit_user_popupframe(User **_user)
         ImGui::SameLine();
         HelpMarker("Maximum download / upload speed the user will be able to reach.\n"
                    "Unit: (KiloBytes/sec)\n"
-                  "1 MegaByte/sec = 1024\n"
-                   "1 MegaBit/sec = 1024 * 8 => 256");
+                   "1 MegaByte/sec = 1024\n");
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - TEXT_BASE_WIDTH * 22);
         ImGui::RadioButton("Unlimited##sl", &state.speed_limited, 0);
         ImGui::SameLine();
