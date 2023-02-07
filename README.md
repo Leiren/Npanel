@@ -3,7 +3,7 @@
 A user interface designed to implement the **[Trojan-Go](https://github.com/p4gefau1t/trojan-go) API** to manage users or monitor the server.
 
 written with C++ and compiles to webassembly which allows fast encryption/decryption of packets being 
-sent/received from server &  uses a  modern bloat free ui-  library [Dear ImGui](https://github.com/ocornut/imgui) which makes this UI crossplatform with all native requirements being provided by c++ and there without the need to use a js framework even for desktop releases
+sent/received from server &  uses a  modern bloat free ui-  library [Dear ImGui](https://github.com/ocornut/imgui) which makes this UI crossplatform with all native requirements being provided by c++ and without the need to use a js framework even for desktop releases.
 
  
 # Install
@@ -15,7 +15,8 @@ wget -c  "https://raw.githubusercontent.com/Leiren/Npanel/master/scripts/install
 ## Windows
 
 >**Tested on Windows 10**
-windows users only need to run the binary .exe , if you want to use it on your home windows pc rather than a windows server, you should configure your home router to forward ports 80,443
+
+>windows users only need to run the binary .exe , if you want to use it on your home windows pc rather than a windows server, you should configure your home router to forward ports 80,443 .
 
 
 
@@ -28,11 +29,11 @@ windows users only need to run the binary .exe , if you want to use it on your h
  on Windwos The Npanel folder is your backup indeed.
  # Transfer
 on Linux you should backup /opt/Npanel Folder on old server then
-- install npanel using install script on destination server
+- install npanel using install script on destination server.
 - replace /opt/Npanel with your backup, then
 - service npanel restart
 
-on Windows you can just copy the Npanel folder and move it to destination server since it is portable
+on Windows you can just copy the Npanel folder and move it to destination server since it is portable.
 
 
 # Uninstall
@@ -46,7 +47,7 @@ on linux:
  - current server support always disables ipv6 , enables bbr , disables ufw to avoid problems. (Linux only)
  
 -  current server support  always kills ports 80,443 (for global serving) and ports 2060,2061 for local listening at startup. 
-- during the setup wizard, you configure the server by connecting to port 2060; but after setup is finished only ports 80 , 443 are opened globaly and ports 2060,2061 are used locally
+- during the setup wizard, you configure the server by connecting to port 2060; but after setup is finished only ports 80 , 443 are opened globaly and ports 2060,2061 are used locally.
  - This project is under active development. you are welcome to report bugs.
  
 -  If you want to reduce the risk of your server getting blocked, tell your users to use clients that support uTls. (lastest version of most clients do it)
