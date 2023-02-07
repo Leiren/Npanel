@@ -1,6 +1,6 @@
 # *N*panel-UI
 
-A user interface designed to implement the **[Trojan-Go API](https://github.com/p4gefau1t/trojan-go)** to manage users or monitor the server.
+A user interface designed to implement the **[Trojan-Go](https://github.com/p4gefau1t/trojan-go) API** to manage users or monitor the server.
 
 written with C++ and compiles to webassembly which allows fast encryption/decryption of packets being 
 sent/received from server &  uses a  modern bloat free ui-  library [Dear ImGui](https://github.com/ocornut/imgui) which makes this UI crossplatform with all native requirements being provided by c++ and there without the need to use a js framework even for desktop releases
@@ -15,7 +15,7 @@ wget -c  "https://raw.githubusercontent.com/Leiren/Npanel/master/scripts/install
 ## Windows
 
 >**Tested on Windows 10**
->windows users only need to run the binary .exe , if you want to use it on your home windows pc rather than a windows server, you should configure your home router to forward ports 80,443
+windows users only need to run the binary .exe , if you want to use it on your home windows pc rather than a windows server, you should configure your home router to forward ports 80,443
 
 
 
