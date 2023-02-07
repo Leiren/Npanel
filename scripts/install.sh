@@ -37,22 +37,37 @@ sudo chmod +x Npanel
 cd linux
 sudo chmod +x trojan-go
 
+printf  "\n"
+printf  "\n"
 
 
 echo "start Npanel with:"
-echo "service npanel start"
+
+printf  "\n"
+echo "	service npanel start"
+
+printf  "\n"
+
 echo "after start open your ip with port 2060 example: http://1.2.3.4:2060"
+
 printf  "\n"
 
 echo "if you want to check logs:"
+
+printf  "\n"
 echo "service npanel status"
+
+printf  "\n"
 echo "if you really want to stop Npanel:"
+
+printf  "\n"
 echo "service npanel stop"
 printf  "\n"
 printf  "\n"
+echo "Installed at /opt/Npanel"
 
+printf  "\n"
 echo "Install completed. Npanel will auto start after system boot."
 printf  "\n"
 
-echo "if you want to disable start after boot:"
-printf  "\n"
+
