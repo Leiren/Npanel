@@ -1,9 +1,9 @@
 # *N*panel-UI
 
-A user interface designed to implement the **Trojan-Go API** to manage users or monitor the server.
+A user interface designed to implement the **[Trojan-Go API](https://github.com/p4gefau1t/trojan-go)** to manage users or monitor the server.
 
-written with C++ and compiles to webassembly which allows fast encryption/decryption of packtes being 
-sent/received from server &  uses a  modern bloat free ui lib (Dear ImGui) which makes this UI crossplatform with all native requirements being provided by c++ and there without the need to use a js framework even for desktop releases
+written with C++ and compiles to webassembly which allows fast encryption/decryption of packets being 
+sent/received from server &  uses a  modern bloat free ui-  library [Dear ImGui](https://github.com/ocornut/imgui) which makes this UI crossplatform with all native requirements being provided by c++ and there without the need to use a js framework even for desktop releases
 
  
 # Install
@@ -47,6 +47,6 @@ on linux:
  
 -  current server support  always kills ports 80,443 (for global serving) and ports 2060,2061 for local listening at startup. 
 - during the setup wizard, you configure the server by connecting to port 2060; but after setup is finished only ports 80 , 443 are opened globaly and ports 2060,2061 are used locally
- - This project is under active development. you are welcome to report any bugs
+ - This project is under active development. you are welcome to report bugs.
  
 -  If you want to reduce the risk of your server getting blocked, tell your users to use clients that support uTls. (lastest version of most clients do it)
