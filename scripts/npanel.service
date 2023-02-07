@@ -1,0 +1,11 @@
+[Unit]
+Description=Npanel server side application 0.0.7 alpha
+
+[Service]
+User=root
+WorkingDirectory=/opt/Npanel
+ExecStart=/opt/Npanel/Npanel
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
