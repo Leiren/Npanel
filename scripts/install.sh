@@ -21,7 +21,7 @@ if [ "" = "$PKG_OK" ]; then
 fi
 
 
-echo "This will remove old Npanel completely(if installed) and install latels version"
+echo "This will remove old Npanel completely(if installed) and install latest version"
 echo "continue?"
 read check__
 cd /opt
