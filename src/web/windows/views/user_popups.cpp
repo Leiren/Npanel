@@ -315,7 +315,7 @@ void new_user_popup_frame(bool *new_state)
         ImGui::SameLine();
         HelpMarker("Generate 2 configs: 1 for Tcp and 1 for Websocket.\n"
                    "The Websocket config is only used for CDN , otherwise it has no special difference or advantage over regular TCP.\n"
-                   "you should only use the Websockt config when you are using a CDN, becuse TCP won't work with CDN.");
+                   "you should only use the Websockt config when you are using a CDN.");
         ImGui::Unindent();
 
         ImGui::NewLine();
@@ -536,7 +536,7 @@ void edit_user_popupframe(User **_user)
         ImGui::SameLine();
         HelpMarker("Generate 2 configs: 1 for Tcp and 1 for Websocket.\n"
                    "The Websocket config is only used for CDN , otherwise it has no special difference or advantage over regular TCP.\n"
-                   "you should only use the Websockt config when you are using a CDN, becuse TCP won't work with CDN.");
+                   "you should only use the Websockt config when you are using a CDN.");
         ImGui::Unindent();
 
         ImGui::NewLine();

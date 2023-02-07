@@ -186,7 +186,7 @@ EM_BOOL Connection::onerror(int eventType, const EmscriptenWebSocketErrorEvent *
 EM_BOOL Connection::onclose(int eventType, const EmscriptenWebSocketCloseEvent *websocketEvent, void *userData)
 {
     Connection::socket = nullptr;
-    console.log("[Socket] Closed !      Npanel server crashed or no internet connection.");
+    console.log("[Socket] Closed !");
 
     return EM_TRUE;
 }
