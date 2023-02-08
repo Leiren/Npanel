@@ -2,10 +2,11 @@
 
 A user interface designed to implement the **[Trojan-Go](https://github.com/p4gefau1t/trojan-go) API** to manage users or monitor the server.
 
-written with C++ and compiles to webassembly which allows fast encryption/decryption of packets being 
-sent/received from server &  uses a  modern bloat free ui-  library [Dear ImGui](https://github.com/ocornut/imgui) which makes this UI crossplatform with all native requirements being provided by c++ and without the need to use a js framework even for desktop releases.
+![intro image](https://github.com/leiren/npanel/blob/master/images/intro.png?raw=true)
 
- 
+Written with C++ and compiles to webassembly which allows fast encryption/decryption of packets being 
+sent/received from server &  uses a  modern bloat free ui-  library [Dear ImGui](https://github.com/ocornut/imgui)
+
 # Install
 ## linux
 >**Tested on Ubuntu 20**
