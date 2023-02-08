@@ -2,7 +2,8 @@
 
 A user interface designed to implement the **[Trojan-Go](https://github.com/p4gefau1t/trojan-go) API** to manage users or monitor the server.
 
-![intro image](images/intro.png?raw=true)
+![intro](https://user-images.githubusercontent.com/123581768/217651701-c6e8a15f-4aca-4350-8650-636f7d8eb948.png)
+
 
 Written with C++ and compiles to webassembly which allows fast encryption/decryption of packets being 
 sent/received from server &  uses a  modern bloat free ui-  library [Dear ImGui](https://github.com/ocornut/imgui)
