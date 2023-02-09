@@ -17,9 +17,10 @@ wget  "https://raw.githubusercontent.com/Leiren/Npanel/master/scripts/install.sh
 ## Windows
 
 >**Tested on Windows 10**
+
 >Download the latest release and run .exe , if you want to use it on your home Windows pc rather than a Windows server, you should configure your home router to forward ports 80,443 .
 
->**TImportant Notice on Windows:**
+>**Important Notice on Windows:**
 on first startup of the program (wizard) you must allow ports 80,443,2060 in firewall settings by your self!
 then open http://yourip:2060 on your browser and finish the setup stage.
 then after finishing the wizard, only ports 80,443 are required to be allowed in firewal.
