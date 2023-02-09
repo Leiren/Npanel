@@ -9,7 +9,7 @@ Written with C++ and compiles to webassembly which allows fast encryption/decryp
 sent/received from server &  uses a  modern bloat free ui-  library [Dear ImGui](https://github.com/ocornut/imgui)
 
 # Install
-## linux
+## Linux
 >**Tested on Ubuntu 20**
 ```sh
 wget  "https://raw.githubusercontent.com/Leiren/Npanel/master/scripts/install.sh" -O install.sh && chmod +x install.sh && bash install.sh
@@ -17,13 +17,14 @@ wget  "https://raw.githubusercontent.com/Leiren/Npanel/master/scripts/install.sh
 ## Windows
 
 >**Tested on Windows 10**
+>Download the latest release and run .exe , if you want to use it on your home Windows pc rather than a Windows server, you should configure your home router to forward ports 80,443 .
 
->Important Notice on windwos:
+>**TImportant Notice on Windows:**
 on first startup of the program (wizard) you must allow ports 80,443,2060 in firewall settings by your self!
 then open http://yourip:2060 on your browser and finish the setup stage.
 then after finishing the wizard, only ports 80,443 are required to be allowed in firewal.
 
->windows users only need to run the binary .exe , if you want to use it on your home windows pc rather than a windows server, you should configure your home router to forward ports 80,443 .
+
 
 
 
@@ -33,7 +34,7 @@ then after finishing the wizard, only ports 80,443 are required to be allowed in
  - In order to backup your settings: /opt/Npanel/panel.json
  - But it is suggested to Backup the folder /opt/Npanel entirely.
  
- on Windwos The Npanel folder is your backup indeed.
+ on Windows The Npanel folder is your backup indeed.
  # Transfer
 on Linux you should backup /opt/Npanel Folder on old server then
 - install npanel using install script on destination server.
@@ -44,7 +45,7 @@ on Windows you can just copy the Npanel folder and move it to destination server
 
 
 # Uninstall
-on linux:
+on Linux:
 - service npanel stop
 - rm -rf /opt/Npanel
 - rm /etc/systemd/system/npanel.service
