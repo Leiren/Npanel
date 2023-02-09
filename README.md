@@ -12,7 +12,7 @@ sent/received from server &  uses a  modern bloat free ui-  library [Dear ImGui]
 ## linux
 >**Tested on Ubuntu 20**
 ```sh
-wget -c  "https://raw.githubusercontent.com/Leiren/Npanel/master/scripts/install.sh" -O install.sh && chmod +x install.sh && bash install.sh
+wget  "https://raw.githubusercontent.com/Leiren/Npanel/master/scripts/install.sh" -O install.sh && chmod +x install.sh && bash install.sh
 ```
 ## Windows
 
