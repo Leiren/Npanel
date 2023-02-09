@@ -377,16 +377,16 @@ static void wizard_window()
                            "enter this url:  https://yourdomain/admin_username/\n\n"
                            "so it is clear that username is important same as password!");
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + TEXT_BASE_WIDTH);
-        ImGui::InputText("##input_au", input_admin_username, IM_ARRAYSIZE(input_admin_username));
+        if (ImGui::InputText("##input_au", input_admin_username, IM_ARRAYSIZE(input_admin_username)))
+        {
+            sprintf(panel_final_url, "https://%s/%s/", input_domain, input_admin_username);
+        }
 
         ImGui::Text("Admin Password:");
         samelinehelpmarker("After entering the correct url, you need the password to log-in\n");
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 2 * TEXT_BASE_WIDTH - 2);
 
-        if (ImGui::InputText("##input_ap", input_admin_password, IM_ARRAYSIZE(input_admin_password)))
-        {
-            sprintf(panel_final_url, "https://%s/%s/", input_domain, input_admin_username);
-        }
+        ImGui::InputText("##input_ap", input_admin_password, IM_ARRAYSIZE(input_admin_password));
         ImGui::NewLine();
         ImGui::Text("url for Npanel: %s %s", panel_final_url, "\nNote: the last slash in url is important!");
 
