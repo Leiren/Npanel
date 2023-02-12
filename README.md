@@ -25,7 +25,7 @@ wget  "https://raw.githubusercontent.com/Leiren/Npanel/master/scripts/install.sh
 
 >to Install: download the latest release and run .exe
 
->to Update: download the last release and move Npanel.exe from the latest release to your old Npanel folder (replace with old Npanel.exe)
+>to Update: download the last release and move panel.json and users.db from old Npanel folder to new version.
 
 >if you want to use it on your home Windows pc rather than a Windows server, you should configure your home router to forward ports 80,443 .
 
