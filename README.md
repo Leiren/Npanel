@@ -17,7 +17,7 @@ sent/received from server &  uses a  modern bloat free ui-  library [Dear ImGui]
 wget  "https://raw.githubusercontent.com/Leiren/Npanel/master/scripts/install.sh" -O install.sh && chmod +x install.sh && bash install.sh
 ```
 
->If you want to update the panel, you should backup first and then install new version (above script) then place users.db and panel.json to /opt/Npanel
+>This script is also used to update. but you should always backup before executing.
 
 ## Windows
 
