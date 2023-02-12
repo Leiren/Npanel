@@ -11,6 +11,9 @@ sent/received from server &  uses a  modern bloat free ui-  library [Dear ImGui]
 # Install
 ## Linux
 >**Tested on Ubuntu 20**
+
+>Update Note: backup /opt/Npanel/users.db , /opt/Npanel/panel.json ; after installation completed. move them back to /opt/Npanel
+
 ```sh
 wget  "https://raw.githubusercontent.com/Leiren/Npanel/master/scripts/install.sh" -O install.sh && chmod +x install.sh && bash install.sh
 ```
