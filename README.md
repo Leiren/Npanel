@@ -21,7 +21,7 @@ wget  "https://raw.githubusercontent.com/Leiren/Npanel/master/scripts/install.sh
 
 ## Windows
 
->**Tested on Windows 10 & server 2022 **
+>**Tested on Windows 10 & server 2022**
 
 >to Install: download the latest release and run .exe
 
