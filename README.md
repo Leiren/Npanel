@@ -39,10 +39,10 @@ after that, only ports 80,443 are required to be allowed in firewall settings.
 
 
 #	Backup
- Npanel on Linux must be placed inside /opt folder so
+ Npanel on Linux is placed inside /opt folder so
  - In order to backup your users: /opt/Npanel/users.db
  - In order to backup your settings: /opt/Npanel/panel.json
- - But it is suggested to Backup the folder /opt/Npanel entirely.
+ - It is suggested to Backup the folder /opt/Npanel entirely.
  
  on Windows The Npanel folder is your backup indeed.
  # Transfer
