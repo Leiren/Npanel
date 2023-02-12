@@ -843,7 +843,7 @@ void show_user_configs(User **_user)
             }
             if (ImGui::Button("Copy Text Config", ImVec2(-FLT_MIN, 0)))
             {
-                ImGui::SetClipboardText(tcpqtextbuf);
+                ImGui::SetClipboardText(wsqtextbuf);
             }
             ImGui::EndTable();
         }
