@@ -20,17 +20,29 @@ if [ "" = "$PKG_OK" ]; then
   echo "No $REQUIRED_PKG. Setting up $REQUIRED_PKG."
   sudo apt-get --yes install $REQUIRED_PKG
 fi
+printf  "\n"
+printf  "\n"
 
+DIR=/opt/Npanel
+if [ -d "$DIR" ];
+then
+  service npanel stop
+  echo "This will update Npanel to the latest version. Always take backup before updating."
 
-echo "This will remove old Npanel completely (If installed), and installs the latest version"
+else
+	echo "This script will install Npanel."
+
+fi
+printf  "\n"
+
 echo "continue?"
 read check__
 cd /opt
-rm -rf Npanel
+# rm -rf Npanel
 mkdir -p Npanel
 cd Npanel
 wget "https://github.com/Leiren/Npanel/releases/download/v0.1.1alpha/linux-amid64.zip" -O npanel_linux_amd64.zip
-unzip npanel_linux_amd64.zip
+unzip -o npanel_linux_amd64.zip
 mv -f npanel.service /etc/systemd/system
 sudo systemctl daemon-reload
 sudo systemctl enable npanel
