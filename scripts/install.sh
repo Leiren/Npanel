@@ -21,14 +21,14 @@ if [ "" = "$PKG_OK" ]; then
 fi
 
 
-echo "This will remove old Npanel completely(if installed) and install latest version"
+echo "This will remove old Npanel completely (If installed), and installs the latest version"
 echo "continue?"
 read check__
 cd /opt
 rm -rf Npanel
 mkdir -p Npanel
 cd Npanel
-wget "https://github.com/Leiren/Npanel/releases/download/v0.0.9alpha/linux-amid64.zip" -O npanel_linux_amd64.zip
+wget "https://github.com/Leiren/Npanel/releases/download/v0.1.0alpha/linux-amid64.zip" -O npanel_linux_amd64.zip
 unzip npanel_linux_amd64.zip
 mv -f npanel.service /etc/systemd/system
 sudo systemctl daemon-reload

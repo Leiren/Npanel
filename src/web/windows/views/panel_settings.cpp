@@ -308,7 +308,7 @@ void panel_settings_frame(bool tab_changed)
             "For security reasons, you should download those files yourself, we don't provide you any links."
 #else
             "In order to backup your users: Npanel/users.db\n"
-            "In order to backup your settings: panel/panel.json\n"
+            "In order to backup your settings: Npanel/panel.json\n"
             "But I suggest you to Backup the folder Npanel/ entirely.\n\n"
             "For security reasons, you should download those files yourself, we don't provide you any links."
 #endif

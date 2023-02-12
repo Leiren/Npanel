@@ -425,7 +425,7 @@ void new_user_popup_frame(bool *new_state)
         {
             ImGui::AlignTextToFramePadding();
 
-            ImGui::Text("Ips:");
+            ImGui::Text("Ip count:");
             ImGui::SameLine();
             ImGui::SetNextItemWidth(-1);
 
@@ -433,7 +433,7 @@ void new_user_popup_frame(bool *new_state)
                 state.ip_limited_amount = abs(state.ip_limited_amount);
         }
         ImGui::AlignTextToFramePadding();
-
+        ImGui::NewLine();
         ImGui::Text("Optional Notes:");
         ImGui::SameLine();
         HelpMarker("If you want to remember something about this user, write it here, its just a note pad and you can leave it empty.");
@@ -638,6 +638,7 @@ void edit_user_popupframe(User **_user)
                    "Indeed, the user can connect multiple devices behind a NAT\n(wifi forexample) and all of them count as 1 device\n"
                    "because they have 1 ip.\n"
                    "Unit: (IP Count)");
+        
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - TEXT_BASE_WIDTH * 22);
         ImGui::RadioButton("Unlimited##il", &state.ip_limited, 0);
         ImGui::SameLine();
@@ -646,7 +647,7 @@ void edit_user_popupframe(User **_user)
         {
             ImGui::AlignTextToFramePadding();
 
-            ImGui::Text("Ips:");
+            ImGui::Text("Ip count:");
             ImGui::SameLine();
             ImGui::SetNextItemWidth(-1);
 
@@ -654,6 +655,7 @@ void edit_user_popupframe(User **_user)
                 state.ip_limited_amount = abs(state.ip_limited_amount);
         }
         ImGui::AlignTextToFramePadding();
+        ImGui::NewLine();
 
         ImGui::Text("Optional Notes:");
         ImGui::SameLine();

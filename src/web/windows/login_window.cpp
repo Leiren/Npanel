@@ -143,10 +143,8 @@ static void wizard_window()
         ImGui::Begin("Before we begin", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoResize);
         ImGui::Text("Thank you for using Npanel-UI.\n\n"
                     "   This UI is free and open source.\n"
-                    "But, You have to take permission from the Author in order to create more than 30 users! why?\n"
-                    "Because Backend Implementation is not part of Npanel-UI project.\n"
-                    "You can build the UI from source code and Implement the server functions yourself \nto get rid of probably paying"
-                    " a very small amount to help the author\nfor more features and improvements of this panel :(\n\n ");
+                    "But, You have to take permission from the Author in order to create more than 30 users.\n"
+                    "In order to remove this limit,you have to pay a very small amount to support the project.\n\n\n ");
         ImGui::Text("You will find the Author contact information in panel about page.\n\n");
         ImGui::Separator();
         ImGui::NewLine();
@@ -162,18 +160,26 @@ static void wizard_window()
     case 1:
         ImGui::Begin("Notes##notes1", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoResize);
         ImGui::Text("1- When you visit a url without https:// the browser will not allow you to use clipboard (CTRL + C or V)\n"
-                    "so don't use it untill you finish setup.\n\n"
+                    "   so don't use it untill you finish setup.\n\n"
                     "2- Npanel always encrypts all packets with AES-256 regardless of the url protocol.\n\n"
-                    "3-Npanel always kills ports 80,443 (for global serving) and ports 2060,2061 for local listening at startup.\n"
-                    "to avoid problems.\n\n"
+                    "3- Npanel always kills ports 80,443 (for global serving) and ports 2060,2061 for local listening at startup.\n"
+                    "   to avoid problems.\n\n"
 #ifndef win_build
-
-                    "4-Npanel always disables ipv6 , enables bbr , disables ufw to avoid problems.\n\n"
+                    "4- Npanel always disables ipv6 , enables bbr , disables ufw to avoid problems.\n\n"
+                    "5- Npanel uses a updated version of trojan-go for trojan protocol implementation.\n"
+                    "   details: a custom version with performance and security improvements and fixes on multiple data races.\n\n"
+                    "6- If you want to reduce the risk of your server getting blocked,\nask your users to use clients that support uTls.\n"
+                    "   (lastest version of most clients do it)\n\n"
+                    "7- Npanel is under active development. you are welcome to report any bugs you found and i will fix that asap!\n\n");
+#else
+                    "4- Npanel uses a updated version of trojan-go for trojan protocol implementation.\n"
+                    "   details: a custom version with performance and security improvements and fixes on multiple data races.\n\n"
+                    "5- If you want to reduce the risk of your server getting blocked,\nask your users to use clients that support uTls.\n"
+                    "   (lastest version of most clients do it)\n\n"
+                    "6- Npanel is under active development. you are welcome to report any bugs you found and i will fix that asap!\n\n");
 #endif
-                    "5-Npanel uses trojan-go for trojan protocol implementation, because indeed the author's experience confirms that it is the best way\n"
-                    "to bypass GFW.\n\n"
-                    "6-If you want to reduce the risk of your server getting blocked\ntell your users to use clients that support uTls. (lastest version of most clients do it)\n\n"
-                    "7-Npanel is under active development. you are welcome to report any bugs you found and i will fix that asap!\n\n");
+
+                  
         ImGui::Separator();
         ImGui::NewLine();
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - 240 - ImGui::GetStyle().ItemSpacing.x);

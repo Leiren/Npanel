@@ -281,7 +281,7 @@ void render_list()
                 ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 7).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * strlen(showbuf) / 2.0f - ImGui::GetStyle().FramePadding.x);
 
                 ImGui::TableNextColumn();
-                if (item->day_limit)
+                if (item->day_limit == 1)
                     sprintf(showbuf, "%d D %d H", item->days_left, item->minutes_left / 60);
                 else
                     sprintf(showbuf, "%s", "no-limit");
