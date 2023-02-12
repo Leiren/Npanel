@@ -1,3 +1,4 @@
+#v 0.1.0 alpha
 if [ "$EUID" -ne 0 ]
   then echo "Please run as root"
   exit
