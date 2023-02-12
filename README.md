@@ -23,7 +23,11 @@ wget  "https://raw.githubusercontent.com/Leiren/Npanel/master/scripts/install.sh
 
 >**Tested on Windows 10**
 
->Download the latest release and run .exe , if you want to use it on your home Windows pc rather than a Windows server, you should configure your home router to forward ports 80,443 .
+>to Install: download the latest release and run .exe
+
+>to Update: download the last release and move Npanel.exe from the latest release to your old Npanel folder (replace with old Npanel.exe)
+
+>if you want to use it on your home Windows pc rather than a Windows server, you should configure your home router to forward ports 80,443 .
 
 >**Important Notice on Windows:**
 on first startup of the program (setup stage) you must allow ports 80,443,2060 in firewall settings by your self!
