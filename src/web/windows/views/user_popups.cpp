@@ -481,7 +481,8 @@ void edit_user_popupframe(User **_user)
             state.speed_limited = 1;
             state.speed_limited_upload = user.speed_limit.upload;
             state.speed_limited_download = user.speed_limit.download;
-        }else
+        }
+        else
             state.speed_limited = 0;
 
         if (user.traffic_limit.upload != 0 || user.traffic_limit.upload != 0)
@@ -489,20 +490,23 @@ void edit_user_popupframe(User **_user)
             state.traffic_limited = 1;
             state.traffic_limited_upload = user.traffic_limit.upload;
             state.traffic_limited_download = user.traffic_limit.download;
-        }else
+        }
+        else
             state.traffic_limited = 0;
 
         if (user.ip_limit != 0)
         {
             state.ip_limited = 1;
             state.ip_limited_amount = user.ip_limit;
-        }else
+        }
+        else
             state.ip_limited = 0;
 
         if (user.day_limit)
         {
             state.duration_limited = 1;
-        }else
+        }
+        else
             state.duration_limited = 0;
 
         const ImGuiViewport *viewport = ImGui::GetMainViewport();
@@ -638,7 +642,7 @@ void edit_user_popupframe(User **_user)
                    "Indeed, the user can connect multiple devices behind a NAT\n(wifi forexample) and all of them count as 1 device\n"
                    "because they have 1 ip.\n"
                    "Unit: (IP Count)");
-        
+
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - TEXT_BASE_WIDTH * 22);
         ImGui::RadioButton("Unlimited##il", &state.ip_limited, 0);
         ImGui::SameLine();
@@ -767,7 +771,7 @@ void show_user_configs(User **_user)
     const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("x").x;
     const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
 
-    int imgSize = 300;
+    static constexpr int imgSize = 300;
     int minModulePixelSize = 3;
     static int my_image_width = 0;
     static int my_image_height = 0;
@@ -789,10 +793,9 @@ void show_user_configs(User **_user)
         std::string qrText = tcpqtextbuf;
         std::string fileName = "qr-tcp.png";
         auto QrPng = QrToPng(fileName, imgSize, minModulePixelSize, qrText, true, qrcodegen::QrCode::Ecc::MEDIUM);
-        if (QrPng.writeToPNG())
-            std::cout << "Success!" << std::endl;
-        else
+        if (!QrPng.writeToPNG())
             console.log("Failure in generating qr code!");
+        // else
         bool ret = LoadTextureFromFile("qr-tcp.png", &tcp_texture, &my_image_width, &my_image_height);
         IM_ASSERT(ret);
         // ws:
@@ -803,11 +806,10 @@ void show_user_configs(User **_user)
             std::string qrText = wsqtextbuf;
             std::string fileName = "qr-ws.png";
             auto QrPng = QrToPng(fileName, imgSize, minModulePixelSize, qrText, true, qrcodegen::QrCode::Ecc::MEDIUM);
-            if (QrPng.writeToPNG())
-                std::cout << "Success!" << std::endl;
-            else
+            if (!QrPng.writeToPNG())
                 console.log("Failure in generating qr code!");
-            bool ret = LoadTextureFromFile("qr-ws.png", &ws_texture, &my_image_width, &my_image_height);
+            int a,b;
+            bool ret = LoadTextureFromFile("qr-ws.png", &ws_texture, &a, &b);
             IM_ASSERT(ret);
         }
     }
@@ -815,8 +817,8 @@ void show_user_configs(User **_user)
 
     if (ImGui::BeginPopupModal("Configs##share_user_popup", &show, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoSavedSettings))
     {
-        const int child_H = my_image_height + 16;
-        ImGui::BeginChild("Child1", ImVec2(0, child_H + 2 * frame_pad), true);
+        const int child_H = my_image_height +2 * ImGui::GetStyle().WindowPadding.y;
+        ImGui::BeginChild("Child1##sup", ImVec2(0, child_H + 2 * frame_pad), true);
         if (ImGui::BeginTable("table_qr_tcp", 2, ImGuiTableFlags_BordersInnerV, ImVec2(0.0f, 0), 0.0f))
         {
             ImGui::TableNextRow();
@@ -848,49 +850,48 @@ void show_user_configs(User **_user)
             ImGui::EndTable();
         }
         ImGui::EndChild();
-
+        
         if (user.protocol != 1)
         {
             ImGui::EndPopup();
+            ImGui::PopStyleVar();
+            return;
         }
-        else
+
+        ImGui::BeginChild("Child2##sup", ImVec2(0, child_H + 2 * frame_pad), true);
+        if (ImGui::BeginTable("table_qr_ws", 2, ImGuiTableFlags_BordersInnerV, ImVec2(0.0f, 0), 0.0f))
         {
+            ImGui::TableNextRow();
+            ImGui::TableNextColumn();
 
-            ImGui::BeginChild("Child2", ImVec2(0, child_H + 2 * frame_pad), true);
-            if (ImGui::BeginTable("table_qr_ws", 2, ImGuiTableFlags_BordersInnerV, ImVec2(0.0f, 0), 0.0f))
+            ImGui::Image((void *)(intptr_t)ws_texture, ImVec2(my_image_width, my_image_height));
+            ImGui::TableNextColumn();
+            char buf[50];
+            sprintf(buf, "User %s", user.name.c_str());
+            ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
+            ImGui::TextUnformatted(buf);
+            ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
+            sprintf(buf, "Protocol: WebSocket");
+            ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
+            ImGui::TextUnformatted(buf);
+            ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
+
+            ImGui::Dummy(ImVec2(0, child_H - 5 * TEXT_BASE_HEIGHT));
+
+            if (ImGui::Button("Download QR-Code", ImVec2(-FLT_MIN, 0)))
             {
-                ImGui::TableNextRow();
-                ImGui::TableNextColumn();
-
-                ImGui::Image((void *)(intptr_t)ws_texture, ImVec2(my_image_width, my_image_height));
-                ImGui::TableNextColumn();
-                char buf[50];
-                sprintf(buf, "User %s", user.name.c_str());
-                ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
-                ImGui::TextUnformatted(buf);
-                ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
-                sprintf(buf, "Protocol: WebSocket");
-                ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
-                ImGui::TextUnformatted(buf);
-                ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 1).GetWidth() - frame_pad) / 2 - TEXT_BASE_WIDTH * strlen(buf) / 2);
-
-                ImGui::Dummy(ImVec2(0, child_H - 5 * TEXT_BASE_HEIGHT));
-
-                if (ImGui::Button("Download QR-Code", ImVec2(-FLT_MIN, 0)))
-                {
-                    EM_ASM(
-                        offerFileAsDownload(("qr-ws.png"), ("mime/type")););
-                }
-                if (ImGui::Button("Copy Text Config", ImVec2(-FLT_MIN, 0)))
-                {
-                    ImGui::SetClipboardText(wsqtextbuf);
-                }
-                ImGui::EndTable();
+                EM_ASM(
+                    offerFileAsDownload(("qr-ws.png"), ("mime/type")););
             }
-            ImGui::EndChild();
-
-            ImGui::EndPopup();
+            if (ImGui::Button("Copy Text Config", ImVec2(-FLT_MIN, 0)))
+            {
+                ImGui::SetClipboardText(wsqtextbuf);
+            }
+            ImGui::EndTable();
         }
+        ImGui::EndChild();
+
+        ImGui::EndPopup();
 
         // std::cout << "Writing Example QR code 3 (huge) to " << fileName << " with text: '" << qrText << "', size: " << imgSize << "x" << imgSize << ", qr module pixel size: " << minModulePixelSize << ". " << std::endl;
     }
