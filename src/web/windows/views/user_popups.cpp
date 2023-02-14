@@ -808,8 +808,8 @@ void show_user_configs(User **_user)
             auto QrPng = QrToPng(fileName, imgSize, minModulePixelSize, qrText, true, qrcodegen::QrCode::Ecc::MEDIUM);
             if (!QrPng.writeToPNG())
                 console.log("Failure in generating qr code!");
-            int a,b;
-            bool ret = LoadTextureFromFile("qr-ws.png", &ws_texture, &a, &b);
+
+            bool ret = LoadTextureFromFile("qr-ws.png", &ws_texture, &my_image_width, &my_image_height);
             IM_ASSERT(ret);
         }
     }
@@ -823,8 +823,7 @@ void show_user_configs(User **_user)
         {
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
-
-            ImGui::Image((void *)(intptr_t)tcp_texture, ImVec2(my_image_width, my_image_height));
+            ImGui::Image((void *)(intptr_t)tcp_texture, ImVec2(270, 260));
             ImGui::TableNextColumn();
             char buf[50];
             sprintf(buf, "User %s", user.name.c_str());
@@ -864,7 +863,7 @@ void show_user_configs(User **_user)
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
 
-            ImGui::Image((void *)(intptr_t)ws_texture, ImVec2(my_image_width, my_image_height));
+            ImGui::Image((void *)(intptr_t)ws_texture, ImVec2(270, 260));
             ImGui::TableNextColumn();
             char buf[50];
             sprintf(buf, "User %s", user.name.c_str());
