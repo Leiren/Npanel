@@ -205,14 +205,17 @@ void render_list()
                 ImGui::PushID(item->id);
 
                 ImGui::TableNextRow();
+                
                 ImGui::TableNextColumn();
                 static char id_buf[50];
-                int digits = sprintf(id_buf, "%d", item->id);
-
+                sprintf(id_buf, "%d", item->id);
+                float digits = (item->id) < 10 ? 1.0f : item->id < 100 ? 2.0f
+                                                                       : 3.0f;
                 ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 0).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * digits / 2.0f - ImGui::GetStyle().FramePadding.x);
                 ImGui::AlignTextToFramePadding();
                 ImGui::TextUnformatted(id_buf);
                 ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 0).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * digits / 2.0f - ImGui::GetStyle().FramePadding.x);
+                
                 ImGui::TableNextColumn();
                 // ImGui::Indent(ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(),1).GetWidth()/2 - TEXT_BASE_WIDTH*strlen(item->Name)/2 - ImGui::GetStyle().FramePadding.x);
                 ImGui::AlignTextToFramePadding();
@@ -271,11 +274,11 @@ void render_list()
                 ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 6).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * strlen(showbuf) / 2.0f - ImGui::GetStyle().FramePadding.x);
 
                 ImGui::TableNextColumn();
-                ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 7).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * strlen(showbuf) / 2.0f - ImGui::GetStyle().FramePadding.x);
                 if (item->traffic_total.upload < 1024 * 1024) // 1024 mb
                     sprintf(showbuf, "%.2f MB", item->traffic_total.download / 1024.0);
                 else
                     sprintf(showbuf, "%.2f GB", item->traffic_total.download / (1024.0 * 1024.0));
+                ImGui::Indent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 7).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * strlen(showbuf) / 2.0f - ImGui::GetStyle().FramePadding.x);
                 ImGui::AlignTextToFramePadding();
                 ImGui::TextUnformatted(showbuf);
                 ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 7).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * strlen(showbuf) / 2.0f - ImGui::GetStyle().FramePadding.x);
@@ -329,7 +332,7 @@ void user_opt_popup(User *user)
                 case 3:
                     user->traffic_total.download = 0;
                     user->traffic_total.upload = 0;
-                    Connection::updateUser(*user,true);
+                    Connection::updateUser(*user, true);
                     break;
                 }
             }

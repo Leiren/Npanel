@@ -286,26 +286,25 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
                 // console.log("E");
 
                 User user;
-                user.id = i;
-                user.name = resobj["users"].GetArray()[i].GetObject()["name"].GetString();
-                user.password = resobj["users"].GetArray()[i].GetObject()["password"].GetString();
-                user.speed_limit.upload = resobj["users"].GetArray()[i].GetObject()["speed_limit"].GetObject()["upload"].GetInt();
-                user.speed_limit.download = resobj["users"].GetArray()[i].GetObject()["speed_limit"].GetObject()["download"].GetInt();
-                user.speed_current.upload = resobj["users"].GetArray()[i].GetObject()["speed_current"].GetObject()["upload"].GetInt();
-                user.speed_current.download = resobj["users"].GetArray()[i].GetObject()["speed_current"].GetObject()["download"].GetInt();
-                user.traffic_limit.upload = resobj["users"].GetArray()[i].GetObject()["traffic_limit"].GetObject()["upload"].GetInt();
-                user.traffic_limit.download = resobj["users"].GetArray()[i].GetObject()["traffic_limit"].GetObject()["download"].GetInt();
-                user.traffic_total.upload = resobj["users"].GetArray()[i].GetObject()["traffic_total"].GetObject()["upload"].GetInt();
-                user.traffic_total.download = resobj["users"].GetArray()[i].GetObject()["traffic_total"].GetObject()["download"].GetInt();
-                user.ip_limit = resobj["users"].GetArray()[i].GetObject()["ip_limit"].GetInt();
-                user.enable = resobj["users"].GetArray()[i].GetObject()["enable"].GetBool();
-                user.days_left = resobj["users"].GetArray()[i].GetObject()["days_left"].GetInt();
-                user.day_limit = resobj["users"].GetArray()[i].GetObject()["day_limit"].GetBool();
-                user.minutes_left = resobj["users"].GetArray()[i].GetObject()["minutes_left"].GetInt();
-                user.protocol = resobj["users"].GetArray()[i].GetObject()["protocol"].GetInt();
-                user.note = resobj["users"].GetArray()[i].GetObject()["note"].GetString();
+                new_report.users[i].id = i;
+                new_report.users[i].name = resobj["users"].GetArray()[i].GetObject()["name"].GetString();
+                new_report.users[i].password = resobj["users"].GetArray()[i].GetObject()["password"].GetString();
+                new_report.users[i].speed_limit.upload = resobj["users"].GetArray()[i].GetObject()["speed_limit"].GetObject()["upload"].GetInt();
+                new_report.users[i].speed_limit.download = resobj["users"].GetArray()[i].GetObject()["speed_limit"].GetObject()["download"].GetInt();
+                new_report.users[i].speed_current.upload = resobj["users"].GetArray()[i].GetObject()["speed_current"].GetObject()["upload"].GetInt();
+                new_report.users[i].speed_current.download = resobj["users"].GetArray()[i].GetObject()["speed_current"].GetObject()["download"].GetInt();
+                new_report.users[i].traffic_limit.upload = resobj["users"].GetArray()[i].GetObject()["traffic_limit"].GetObject()["upload"].GetInt();
+                new_report.users[i].traffic_limit.download = resobj["users"].GetArray()[i].GetObject()["traffic_limit"].GetObject()["download"].GetInt();
+                new_report.users[i].traffic_total.upload = resobj["users"].GetArray()[i].GetObject()["traffic_total"].GetObject()["upload"].GetInt();
+                new_report.users[i].traffic_total.download = resobj["users"].GetArray()[i].GetObject()["traffic_total"].GetObject()["download"].GetInt();
+                new_report.users[i].ip_limit = resobj["users"].GetArray()[i].GetObject()["ip_limit"].GetInt();
+                new_report.users[i].enable = resobj["users"].GetArray()[i].GetObject()["enable"].GetBool();
+                new_report.users[i].days_left = resobj["users"].GetArray()[i].GetObject()["days_left"].GetInt();
+                new_report.users[i].day_limit = resobj["users"].GetArray()[i].GetObject()["day_limit"].GetBool();
+                new_report.users[i].minutes_left = resobj["users"].GetArray()[i].GetObject()["minutes_left"].GetInt();
+                new_report.users[i].protocol = resobj["users"].GetArray()[i].GetObject()["protocol"].GetInt();
+                new_report.users[i].note = resobj["users"].GetArray()[i].GetObject()["note"].GetString();
 
-                new_report.users[i] = user;
             }
 
             new_report.panelsettings.admin_username = resobj["panelsettings"].GetObject()["admin_username"].GetString();
