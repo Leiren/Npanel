@@ -817,13 +817,13 @@ void show_user_configs(User **_user)
 
     if (ImGui::BeginPopupModal("Configs##share_user_popup", &show, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoSavedSettings))
     {
-        const int child_H = my_image_height +2 * ImGui::GetStyle().WindowPadding.y;
+        const int child_H = 270 +2 * ImGui::GetStyle().WindowPadding.y;
         ImGui::BeginChild("Child1##sup", ImVec2(0, child_H + 2 * frame_pad), true);
         if (ImGui::BeginTable("table_qr_tcp", 2, ImGuiTableFlags_BordersInnerV, ImVec2(0.0f, 0), 0.0f))
         {
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
-            ImGui::Image((void *)(intptr_t)tcp_texture, ImVec2(270, 260));
+            ImGui::Image((void *)(intptr_t)tcp_texture, ImVec2(270, 270));
             ImGui::TableNextColumn();
             char buf[50];
             sprintf(buf, "User %s", user.name.c_str());
@@ -863,7 +863,7 @@ void show_user_configs(User **_user)
             ImGui::TableNextRow();
             ImGui::TableNextColumn();
 
-            ImGui::Image((void *)(intptr_t)ws_texture, ImVec2(270, 260));
+            ImGui::Image((void *)(intptr_t)ws_texture, ImVec2(270, 270));
             ImGui::TableNextColumn();
             char buf[50];
             sprintf(buf, "User %s", user.name.c_str());
