@@ -20,6 +20,7 @@ static User *delete_user = nullptr;
 static User *notes_user = nullptr;
 bool live_data = true;
 static ImGuiTextFilter Filter;
+static bool resort = true;
 enum UserRowModelColumnID
 {
     UserRowModelColumnID_ID,
@@ -131,6 +132,13 @@ void render_list()
             users[i] = &real_users[i];
         }
     }
+    static bool first_render = true;
+    if (first_render)
+    {
+        first_render = false;
+        ServerReportStore::signal.connect([&](ServerReport *)
+                                          { resort = true; });
+    }
 
     // Options
     static ImGuiTableFlags flags =
@@ -167,8 +175,9 @@ void render_list()
 
         // Sort our data if sort specs have been changed!
         if (ImGuiTableSortSpecs *sorts_specs = ImGui::TableGetSortSpecs())
-            if (sorts_specs->SpecsDirty)
+            if (resort)
             {
+                resort = false;
                 UserRowModel::s_current_sort_specs = sorts_specs; // Store in variable accessible by the sort function.
                 if (users_size > 1)
                     qsort(&users[0], (size_t)users_size, sizeof(users[0]), UserRowModel::CompareWithSortSpecs);
@@ -205,7 +214,7 @@ void render_list()
                 ImGui::PushID(item->id);
 
                 ImGui::TableNextRow();
-                
+
                 ImGui::TableNextColumn();
                 static char id_buf[50];
                 sprintf(id_buf, "%d", item->id);
@@ -215,7 +224,7 @@ void render_list()
                 ImGui::AlignTextToFramePadding();
                 ImGui::TextUnformatted(id_buf);
                 ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 0).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * digits / 2.0f - ImGui::GetStyle().FramePadding.x);
-                
+
                 ImGui::TableNextColumn();
                 // ImGui::Indent(ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(),1).GetWidth()/2 - TEXT_BASE_WIDTH*strlen(item->Name)/2 - ImGui::GetStyle().FramePadding.x);
                 ImGui::AlignTextToFramePadding();

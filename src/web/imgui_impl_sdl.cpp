@@ -129,7 +129,15 @@ static void ImGui_ImplSDL2_ShutdownPlatformInterface();
 EM_JS(char *, js_read_clipboard_impl, (), {
     return Asyncify.handleAsync(async() => {
         document.getElementById("clipping").focus();
-        const str = await navigator.clipboard.readText();
+        let str = "";
+        try {
+         str = await navigator.clipboard.readText();
+        } catch (error) {
+        console.error(error);
+            // Expected output: ReferenceError: nonExistentFunction is not defined
+            // (Note: the exact output may be browser-dependent)
+        }
+
         document.getElementById("canvas").focus();
         const size = lengthBytesUTF8(str) + 1;
         const rtn = _malloc(size);
