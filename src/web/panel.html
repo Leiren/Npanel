@@ -38,9 +38,9 @@
 
 <body>
   <div class="emscripten_border">
-    <textarea id="clipping" style="width:0;height:0;border:0" aria-hidden="true"></textarea>
+    <textarea id="clipping" style="width:0;height:0;border:0"  aria-hidden="true"></textarea>
 
-    <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+    <canvas class="emscripten" id="canvas" contenteditable="true" oncontextmenu="event.preventDefault()"></canvas>
   </div>
 
   <script type='text/javascript'>
@@ -105,22 +105,28 @@
       return null;
     }
     window.addEventListener("keydown", (e) => {
-            if (e.code === "F11") {
-                e.preventDefault = function() {
-                  const element = document.getElementById('canvas');
-                  if(element.requestFullscreen) {
-                    element.requestFullscreen();
-                  }else if (element.mozRequestFullScreen) {
-                    element.mozRequestFullScreen();     // Firefox
-                  }else if (element.webkitRequestFullscreen) {
-                    element.webkitRequestFullscreen();  // Safari
-                  }else if(element.msRequestFullscreen) {
-                    element.msRequestFullscreen();      // IE/Edge
-                  }
+      if (e.code === "F11") {
+        e.preventDefault = function () {
+          const element = document.getElementById('canvas');
+          if (element.requestFullscreen) {
+            element.requestFullscreen();
+          } else if (element.mozRequestFullScreen) {
+            element.mozRequestFullScreen();     // Firefox
+          } else if (element.webkitRequestFullscreen) {
+            element.webkitRequestFullscreen();  // Safari
+          } else if (element.msRequestFullscreen) {
+            element.msRequestFullscreen();      // IE/Edge
+          }
 
-                };
-            }
-        }, { capture: true });
+        };
+      }
+    }, { capture: true });
+
+    // if ('virtualKeyboard' in navigator) {
+    //   navigator.virtualKeyboard.overlaysContent = true;
+    // } else
+    //   alert("virtualKeyboard not supported. (use latest chrome)")
+
   </script>
   <script async type="text/javascript" src="panel.js"></script>
   <style>

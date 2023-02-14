@@ -87,17 +87,19 @@ void LoginWindow::onFrame()
         if (ImGui::Button("OK", ImVec2(120, 0)) || (ImGui::IsKeyPressed(ImGuiKey_Enter)))
         {
             try_login();
-            if (!has_error)
-            {
-                ImGui::CloseCurrentPopup();
-            }
+            // if (!has_error)
+            // {
+            //     ImGui::CloseCurrentPopup();
+            // }
         }
         ImGui::SameLine();
 
         if (ImGui::Button("Clear", ImVec2(120, 0)))
         {
             input_password[0] = '\0';
-            ImGui::CloseCurrentPopup();
+            // EM_ASM(document.getElementById("clipping").focus(););
+            
+            // ImGui::CloseCurrentPopup();
         }
         error_popupframe();
     }

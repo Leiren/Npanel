@@ -27,6 +27,9 @@ Index of this file:
 // [SECTION] Widgets: Columns, BeginColumns, EndColumns, etc.
 
 */
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 #if defined(_MSC_VER) && !defined(_CRT_SECURE_NO_WARNINGS)
 #define _CRT_SECURE_NO_WARNINGS
@@ -4108,6 +4111,10 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
         SetActiveID(id, window);
         SetFocusID(id, window);
         FocusWindow(window);
+        // #ifdef __EMSCRIPTEN__
+        // EM_ASM(document.getElementById("clipping").focus(););
+
+        // #endif
     }
     if (g.ActiveId == id)
     {
@@ -4606,8 +4613,10 @@ bool ImGui::InputTextEx(const char* label, const char* hint, char* buf, int buf_
     }
 
     // Release active ID at the end of the function (so e.g. pressing Return still does a final application of the value)
-    if (clear_active_id && g.ActiveId == id)
+    if (clear_active_id && g.ActiveId == id){
         ClearActiveID();
+
+    }
 
     // Render frame
     if (!is_multiline)

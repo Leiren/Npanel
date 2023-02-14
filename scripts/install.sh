@@ -41,7 +41,7 @@ cd /opt
 # rm -rf Npanel
 mkdir -p Npanel
 cd Npanel
-wget "https://github.com/Leiren/Npanel/releases/download/v0.1.2alpha/linux-amid64.zip" -O npanel_linux_amd64.zip
+wget "https://github.com/Leiren/Npanel/releases/download/v0.1.3alpha/linux-amid64.zip" -O npanel_linux_amd64.zip
 unzip -o npanel_linux_amd64.zip
 mv -f npanel.service /etc/systemd/system
 sudo systemctl daemon-reload
