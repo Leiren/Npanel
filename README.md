@@ -49,7 +49,7 @@ after that, only ports 80,443 are required to be allowed in firewall settings.
  # Transfer
 on Linux you should backup /opt/Npanel Folder on old server then
 - install npanel using install script on destination server.
-- replace /opt/Npanel with your backup, then
+- on destination server replace /opt/Npanel with your backup from old server
 - service npanel restart
 
 on Windows you can just copy the Npanel folder and move it to destination server since it is portable.
