@@ -223,7 +223,7 @@ void loop()
     if (show_app_metrics)
         ImGui::ShowMetricsWindow(&show_app_metrics);
 
-    // ImGui::ShowDemoWindow();
+    ImGui::ShowDemoWindow();
 
     // drawOverlay();
     ///////////////////////////////

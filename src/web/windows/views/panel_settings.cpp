@@ -301,10 +301,10 @@ void panel_settings_frame(bool tab_changed)
 
             "In order to backup your users: /opt/Npanel/users.db\n"
             "In order to backup your settings: /opt/Npanel/panel.json\n"
-            "But it is suggested to Backup the folder /opt/Npanel entirely.\n"
-            "  you can transfer that folder to your new server without any problem, but \n"
-            "before that install npanel from github script, then replace the /opt/Npanel folder.\n"
-            "then service npanel start.\n\n"
+            "But it is suggested to Backup the folder /opt/Npanel entirely.\n\n"
+            // "You can transfer that folder to your new server without any problem, but \n"
+            // "before that install npanel from github script, then move users.db and panel.jso from your backup\n to destination server.\n"
+            // "then service npanel start.\n\n"
             "For security reasons, you should download those files yourself, we don't provide you any links."
 #else
             "In order to backup your users: Npanel/users.db\n"
