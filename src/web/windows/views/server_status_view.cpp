@@ -206,10 +206,10 @@ void server_status_frame()
         ImGui::Button("Software Version", ImVec2(-FLT_MIN, 0.0f));
         ImGui::TableNextColumn();
         // ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.246f, 0.836f, 0.051f, 0.65f));
-        ImGui::Button("0.1.4 Alpha", ImVec2(-FLT_MIN, 0.0f));
+        ImGui::Button("0.1.5 Alpha", ImVec2(-FLT_MIN, 0.0f));
         // ImGui::PopStyleColor();
 
-        // ImGui::TableNextColumn();
+        // ImGui::TableNextColumn();.
         // ImGui::Button("Software Release Date", ImVec2(-FLT_MIN, 0.0f));
         // ImGui::TableNextColumn();
         // ImGui::Button("Thu, 26 Jan 2023 19:31:16", ImVec2(-FLT_MIN, 0.0f));
