@@ -21,8 +21,7 @@ struct nup_state
     int speed_limited_upload = 0;
     int speed_limited_download = 0;
     int traffic_limited = 0; // 0 - 1
-    int traffic_limited_upload = 0;
-    int traffic_limited_download = 0;
+    int traffic_limited_max = 0;
     int duration_limited = 0; // 0 - 1
     int duration_limited_amount = 0;
     int ip_limited = 0; // 0 - 1
@@ -58,14 +57,13 @@ static void create_user(nup_state &cst)
 
     if (cst.traffic_limited == 0)
     {
-        cst.traffic_limited_upload = 0;
-        cst.traffic_limited_download = 0;
+        cst.traffic_limited_max = 0;
     }
     else
     {
         const char *err_msg = "Never Enter value 0 for a traffic limit\n if you want to disable a config, use Enable/Disable button or enter a number higher than 0 like 1.";
 
-        if (cst.traffic_limited_upload == 0 || cst.traffic_limited_download == 0)
+        if (cst.traffic_limited_max == 0)
         {
             has_error = true;
             last_error_msg = err_msg;
@@ -125,8 +123,7 @@ static void create_user(nup_state &cst)
         upu.password = res.info;
         upu.speed_limit.upload = cst.speed_limited_upload;
         upu.speed_limit.download = cst.speed_limited_download;
-        upu.traffic_limit.upload = cst.traffic_limited_upload;
-        upu.traffic_limit.download = cst.traffic_limited_download;
+        upu.traffic_limit.max = cst.traffic_limited_max;
         upu.ip_limit = cst.ip_limited_amount;
         upu.enable = "1";//enable
         upu.days_left = cst.duration_limited_amount;
@@ -176,14 +173,13 @@ static void update_user(nup_state &cst, const char *user_password, bool user_ena
 
     if (cst.traffic_limited == 0)
     {
-        cst.traffic_limited_upload = 0;
-        cst.traffic_limited_download = 0;
+        cst.traffic_limited_max = 0;
     }
     else
     {
         const char *err_msg = "Never Enter value 0 for a traffic limit\n if you want to disable a config, use Enable/Disable button or enter a number higher than 0 like 1.";
 
-        if (cst.traffic_limited_upload == 0 || cst.traffic_limited_download == 0)
+        if (cst.traffic_limited_max == 0)
         {
             has_error = true;
             last_error_msg = err_msg;
@@ -233,8 +229,7 @@ static void update_user(nup_state &cst, const char *user_password, bool user_ena
     upu.password = user_password;
     upu.speed_limit.upload = cst.speed_limited_upload;
     upu.speed_limit.download = cst.speed_limited_download;
-    upu.traffic_limit.upload = cst.traffic_limited_upload;
-    upu.traffic_limit.download = cst.traffic_limited_download;
+    upu.traffic_limit.max = cst.traffic_limited_max;
     upu.traffic_total.upload = -1;
     upu.traffic_total.download = -1;
     upu.ip_limit = cst.ip_limited_amount;
@@ -359,7 +354,7 @@ void new_user_popup_frame(bool *new_state)
         ImGui::AlignTextToFramePadding();
         ImGui::Text("Traffic Limit:");
         ImGui::SameLine();
-        HelpMarker("Maximum download / upload total traffic the user will be able to reach.\n"
+        HelpMarker("Maximum download + upload total traffic the user will be able to reach.\n"
                    "Unit: (GBytes)");
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - TEXT_BASE_WIDTH * 22);
         ImGui::RadioButton("Unlimited##tl", &state.traffic_limited, 0);
@@ -369,23 +364,13 @@ void new_user_popup_frame(bool *new_state)
         {
             ImVec2 content_avail = ImGui::GetContentRegionAvail();
             const float space = ImGui::GetStyle().ItemSpacing.x / 2;
-            if (ImGui::BeginTable("table##tl", 2))
-            {
-                ImGui::TableNextRow();
-                ImGui::TableSetColumnIndex(0);
-                ImGui::AlignTextToFramePadding();
-                ImGui::Text("Upload:");
-                ImGui::SameLine();
-                if (ImGui::InputInt("##table_tl_up", &state.traffic_limited_upload, 0))
-                    state.traffic_limited_upload = abs(state.traffic_limited_upload);
-                ImGui::TableSetColumnIndex(1);
-                ImGui::AlignTextToFramePadding();
-                ImGui::Text("Download:");
-                ImGui::SameLine();
-                if (ImGui::InputInt("##table_tl_dl", &state.traffic_limited_download, 0))
-                    state.traffic_limited_download = abs(state.traffic_limited_download);
-                ImGui::EndTable();
-            }
+
+            ImGui::AlignTextToFramePadding();
+            ImGui::Text("Max:");
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(-1);
+            if (ImGui::InputInt("##table_tl_mx", &state.traffic_limited_max, 0))
+                state.traffic_limited_max = abs(state.traffic_limited_max);
         }
 
         ImGui::NewLine();
@@ -470,8 +455,8 @@ void edit_user_popupframe(User **_user)
         strncpy(state.notes, user.note.c_str(), sizeof(state.notes));
         state.speed_limited_upload = user.speed_limit.upload;
         state.speed_limited_download = user.speed_limit.download;
-        state.traffic_limited_upload = user.traffic_limit.upload;
-        state.traffic_limited_download = user.traffic_limit.download;
+        state.traffic_limited_max = user.traffic_limit.max;
+
         state.duration_limited_amount = user.days_left;
         state.ip_limited_amount = user.ip_limit;
         state.protocol = user.protocol;
@@ -485,11 +470,10 @@ void edit_user_popupframe(User **_user)
         else
             state.speed_limited = 0;
 
-        if (user.traffic_limit.upload != 0 || user.traffic_limit.upload != 0)
+        if (user.traffic_limit.max != 0)
         {
             state.traffic_limited = 1;
-            state.traffic_limited_upload = user.traffic_limit.upload;
-            state.traffic_limited_download = user.traffic_limit.download;
+            state.traffic_limited_max = user.traffic_limit.max;
         }
         else
             state.traffic_limited = 0;
@@ -584,7 +568,7 @@ void edit_user_popupframe(User **_user)
         ImGui::AlignTextToFramePadding();
         ImGui::Text("Traffic Limit:");
         ImGui::SameLine();
-        HelpMarker("Maximum download / upload total traffic the user will be able to reach.\n"
+        HelpMarker("Maximum download + upload total traffic the user will be able to reach.\n"
                    "Unit: (GBytes)");
         ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - TEXT_BASE_WIDTH * 22);
         ImGui::RadioButton("Unlimited##tl", &state.traffic_limited, 0);
@@ -594,23 +578,13 @@ void edit_user_popupframe(User **_user)
         {
             ImVec2 content_avail = ImGui::GetContentRegionAvail();
             const float space = ImGui::GetStyle().ItemSpacing.x / 2;
-            if (ImGui::BeginTable("table##tl", 2))
-            {
-                ImGui::TableNextRow();
-                ImGui::TableSetColumnIndex(0);
-                ImGui::AlignTextToFramePadding();
-                ImGui::Text("Upload:");
-                ImGui::SameLine();
-                if (ImGui::InputInt("##table_tl_up", &state.traffic_limited_upload, 0))
-                    state.traffic_limited_upload = abs(state.traffic_limited_upload);
-                ImGui::TableSetColumnIndex(1);
-                ImGui::AlignTextToFramePadding();
-                ImGui::Text("Download:");
-                ImGui::SameLine();
-                if (ImGui::InputInt("##table_tl_dl", &state.traffic_limited_download, 0))
-                    state.traffic_limited_download = abs(state.traffic_limited_download);
-                ImGui::EndTable();
-            }
+
+            ImGui::AlignTextToFramePadding();
+            ImGui::Text("Max:");
+            ImGui::SameLine();
+            ImGui::SetNextItemWidth(-1);
+            if (ImGui::InputInt("##table_tl_mx", &state.traffic_limited_max, 0))
+                state.traffic_limited_max = abs(state.traffic_limited_max);
         }
 
         ImGui::NewLine();
@@ -817,7 +791,7 @@ void show_user_configs(User **_user)
 
     if (ImGui::BeginPopupModal("Configs##share_user_popup", &show, ImGuiWindowFlags_NoResize | ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoSavedSettings))
     {
-        const int child_H = 270 +2 * ImGui::GetStyle().WindowPadding.y;
+        const int child_H = 270 + 2 * ImGui::GetStyle().WindowPadding.y;
         ImGui::BeginChild("Child1##sup", ImVec2(0, child_H + 2 * frame_pad), true);
         if (ImGui::BeginTable("table_qr_tcp", 2, ImGuiTableFlags_BordersInnerV, ImVec2(0.0f, 0), 0.0f))
         {
@@ -849,7 +823,7 @@ void show_user_configs(User **_user)
             ImGui::EndTable();
         }
         ImGui::EndChild();
-        
+
         if (user.protocol != 1)
         {
             ImGui::EndPopup();

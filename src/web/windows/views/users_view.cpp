@@ -272,7 +272,7 @@ void render_list()
                 ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 5).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * strlen(showbuf) / 2.0f - ImGui::GetStyle().FramePadding.x);
 
                 ImGui::TableNextColumn();
-                if (item->traffic_total.upload < 1024 * 1024) // 1024 mb
+                if (item->traffic_total.upload < (1024 * 1024)) // 1024 mb
                     sprintf(showbuf, "%.2f MB", item->traffic_total.upload / 1024.0);
                 else
                     sprintf(showbuf, "%.2f GB", item->traffic_total.upload / (1024.0 * 1024.0));
@@ -283,7 +283,7 @@ void render_list()
                 ImGui::Unindent((ImGui::TableGetCellBgRect(ImGui::GetCurrentTable(), 6).GetWidth() - 8.0f) / 2.0f - TEXT_BASE_WIDTH * strlen(showbuf) / 2.0f - ImGui::GetStyle().FramePadding.x);
 
                 ImGui::TableNextColumn();
-                if (item->traffic_total.upload < 1024 * 1024) // 1024 mb
+                if (item->traffic_total.download < (1024 * 1024)) // 1024 mb
                     sprintf(showbuf, "%.2f MB", item->traffic_total.download / 1024.0);
                 else
                     sprintf(showbuf, "%.2f GB", item->traffic_total.download / (1024.0 * 1024.0));

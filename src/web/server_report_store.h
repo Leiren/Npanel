@@ -10,8 +10,7 @@ struct TrafficTotal
 };
 struct TrafficLimit
 {
-    int upload;
-    int download;
+    int max;
 };
 struct SpeedCurrent
 {
