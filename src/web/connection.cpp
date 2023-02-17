@@ -195,11 +195,13 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
     // console.log("onmessage");
     if (websocketEvent->isText)
     {
-        char buf[websocketEvent->numBytes + 1];
+        static char *buf = (char*)malloc(300000);
+ 
+        
         memcpy(buf, (char *)websocketEvent->data, websocketEvent->numBytes);
         buf[websocketEvent->numBytes] = 0;
         char *dec = decrypt(buf);
-
+        // console.log("%s",dec);
         Document resobj;
         if (resobj.Parse<0, ASCII<>>(dec).HasParseError())
         {
@@ -285,7 +287,6 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
             {
                 // console.log("E");
 
-                User user;
                 new_report.users[i].id = i;
                 new_report.users[i].name = resobj["users"].GetArray()[i].GetObject()["name"].GetString();
                 new_report.users[i].password = resobj["users"].GetArray()[i].GetObject()["password"].GetString();
@@ -321,7 +322,7 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
             (ServerReportStore::signal)(&new_report);
         }
 
-        delete dec;
+        // delete dec;
     }
 
     // EMSCRIPTEN_RESULT result;
