@@ -294,8 +294,7 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
                 new_report.users[i].speed_limit.download = resobj["users"].GetArray()[i].GetObject()["speed_limit"].GetObject()["download"].GetInt();
                 new_report.users[i].speed_current.upload = resobj["users"].GetArray()[i].GetObject()["speed_current"].GetObject()["upload"].GetInt();
                 new_report.users[i].speed_current.download = resobj["users"].GetArray()[i].GetObject()["speed_current"].GetObject()["download"].GetInt();
-                new_report.users[i].traffic_limit.upload = resobj["users"].GetArray()[i].GetObject()["traffic_limit"].GetObject()["upload"].GetInt();
-                new_report.users[i].traffic_limit.download = resobj["users"].GetArray()[i].GetObject()["traffic_limit"].GetObject()["download"].GetInt();
+                new_report.users[i].traffic_limit.max = resobj["users"].GetArray()[i].GetObject()["traffic_limit"].GetObject()["max"].GetInt();
                 new_report.users[i].traffic_total.upload = resobj["users"].GetArray()[i].GetObject()["traffic_total"].GetObject()["upload"].GetInt();
                 new_report.users[i].traffic_total.download = resobj["users"].GetArray()[i].GetObject()["traffic_total"].GetObject()["download"].GetInt();
                 new_report.users[i].ip_limit = resobj["users"].GetArray()[i].GetObject()["ip_limit"].GetInt();
@@ -391,8 +390,7 @@ rocket::signal<void(Result)> *Connection::updateUser(const User &_user, bool res
     User user = _user;
     char speed_limited_upload[16];
     char speed_limited_download[16];
-    char traffic_limited_upload[16];
-    char traffic_limited_download[16];
+    char traffic_limited_max[16];
     char ip_limited_amount[16];
     char enable[16];
     char duration_limited_amount[16];
@@ -411,8 +409,7 @@ rocket::signal<void(Result)> *Connection::updateUser(const User &_user, bool res
 
     sprintf(speed_limited_upload, "%d", user.speed_limit.upload);
     sprintf(speed_limited_download, "%d", user.speed_limit.download);
-    sprintf(traffic_limited_upload, "%d", user.traffic_limit.upload);
-    sprintf(traffic_limited_download, "%d", user.traffic_limit.download);
+    sprintf(traffic_limited_max, "%d", user.traffic_limit.max);
     sprintf(ip_limited_amount, "%d", user.ip_limit);
     sprintf(enable, "%d", user.enable ? 1 : 0);
     sprintf(duration_limited_amount, "%d", user.days_left);
@@ -422,13 +419,12 @@ rocket::signal<void(Result)> *Connection::updateUser(const User &_user, bool res
     sprintf(traffic_total_upload, "%d", user.traffic_total.upload);
     sprintf(traffic_total_download, "%d", user.traffic_total.download);
 
-    auto result = Connection::send("update-user", 14,
+    auto result = Connection::send("update-user", 13,
                                    user.name.c_str(),
                                    user.password.c_str(),
                                    speed_limited_upload,
                                    speed_limited_download,
-                                   traffic_limited_upload,
-                                   traffic_limited_download,
+                                   traffic_limited_max,
                                    ip_limited_amount,
                                    enable, // enable
                                    duration_limited_amount,
