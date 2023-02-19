@@ -19,6 +19,7 @@
 #include "windows/log_window.h"
 #include "windows/login_window.h"
 #include "views/simpleoverlay.h"
+#include "keyboard.h"
 
 extern void apply_theme_default();
 extern void apply_theme_embraceTheDarkness();
@@ -224,7 +225,10 @@ void loop()
         ImGui::ShowMetricsWindow(&show_app_metrics);
 
     // ImGui::ShowDemoWindow();
-
+    static bool fframe = true;
+ 
+    
+    ImHotKey::Edit("mini keyboard##keyboard");
     // drawOverlay();
     ///////////////////////////////
     ImGuiIO &io = ImGui::GetIO();

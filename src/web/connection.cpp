@@ -207,7 +207,7 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
         {
             console.log("[ERROR] Could not parse server message. Something is definitely wrong!");
             console.log("%d", resobj.GetParseError());
-            return;
+            return EM_TRUE;
         }
 
         Result result;
