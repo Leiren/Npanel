@@ -228,7 +228,7 @@ void loop()
     static bool fframe = true;
  
     
-    ImHotKey::Edit("mini keyboard##keyboard");
+    // ImHotKey::Edit("mini keyboard##keyboard");
     // drawOverlay();
     ///////////////////////////////
     ImGuiIO &io = ImGui::GetIO();
