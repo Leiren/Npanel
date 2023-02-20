@@ -1,51 +1,22 @@
 
 #pragma once
-/*
-How to use it?
-
-// Get some hotkeys composed of:
-// - hotkey name
-// - hotkey comment/lib
-// - hotkey scancodes. Computed by the editor. Store that value in your app.
-
-static std::vector<ImHotKey::HotKey> hotkeys = { { "Layout", "Reorder nodes in a simpler layout", 0xFFFF261D}
-        ,{"Save", "Save the current graph", 0xFFFF1F1D}
-        ,{"Load", "Load an existing graph file", 0xFFFF181D}
-        ,{"Play/Stop", "Play or stop the animation from the current graph", 0xFFFFFF3F}
-        ,{"SetKey", "Make a new animation key with the current parameters values at the current time", 0xFFFFFF1F}
-        };
-
-// The editor is a modal window. bring it with something like that
- if (ImGui::Button("Edit Hotkeys"))
-{
-    ImGui::OpenPopup("HotKeys Editor");
-}
-ImHotKey::Edit(hotkeys.data(), hotkeys.size(), "HotKeys Editor");
-
-// ImHotKey also provides a way to retrieve HotKey
-int hotkey = ImHotKey::GetHotKey(hotkeys.data(), hotkeys.size());
-if (hotkey != -1)
-{
-    // handle the hotkey index!
-}
-
-Awesome, you are done!
-To help you integrate in your app, you can get a text (like "Ctrl + O") to integrate in your menu
-static void GetHotKeyLib(unsigned int functionKeys, char* buffer, size_t bufferSize);
-
-*/
 
 #include "imgui.h"
-#include "imgui_internal.h"
 
-namespace ImHotKey
+#include "imgui_internal.h"
+#define SDL_h_
+namespace OSK
 {
-    struct HotKey
+
+    static inline ImVec2 operator-(const ImVec2 &lhs, const ImVec2 &rhs) { return ImVec2(lhs.x - rhs.x, lhs.y - rhs.y); }
+    static inline ImVec2 operator+(const ImVec2 &lhs, const ImVec2 &rhs) { return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y); }
+
+    static const char *GetInputSourceName(ImGuiInputSource source)
     {
-        const char *functionName;
-        const char *functionLib;
-        unsigned int functionKeys;
-    };
+        const char *input_source_names[] = {"None", "Mouse", "Keyboard", "Gamepad", "Nav", "Clipboard"};
+        IM_ASSERT(IM_ARRAYSIZE(input_source_names) == ImGuiInputSource_COUNT && source >= 0 && source < ImGuiInputSource_COUNT);
+        return input_source_names[source];
+    }
 
     struct Key
     {
@@ -55,9 +26,10 @@ namespace ImHotKey
         unsigned int scanCodePage7 = 0; // HID (SDL,...)
         float offset = 0;
         float width = 40;
+        bool hold = false;
     };
 
-    static const Key Keys[5][18] = {
+    static Key Keys[5][18] = {
 
         {{"~", 20, 0x29, 0x35}, {"1", 21, 0x2, 0x1E}, {"2", 22, 0x3, 0x1F}, {"3", 23, 0x4, 0x20}, {"4", 24, 0x5, 0x21}, {"5", 25, 0x6, 0x22}, {"6", 26, 0x7, 0x23}, {"7", 27, 0x8, 0x24}, {"8", 28, 0x9, 0x25}, {"9", 29, 0xA, 0x26}, {"0", 30, 0xB, 0x27}, {"-", 31, 0xC, 0x2D}, {"+", 32, 0xD, 0x2E}, {"<", 33, 0xE, 0x2A, 0, 80}},
         {{"Tab", 3, 0xF, 0x2B, 0, 60}, {"Q", 37, 0x10, 0x14}, {"W", 38, 0x11, 0x1A}, {"E", 39, 0x12, 0x08}, {"R", 40, 0x13, 0x15}, {"T", 41, 0x14, 0x17}, {"Y", 42, 0x15, 0x1C}, {"U", 43, 0x16, 0x18}, {"I", 44, 0x17, 0x0C}, {"O", 45, 0x18, 0x12}, {"P", 46, 0x19, 0x13}, {"[", 47, 0x1A, 0x2F}, {"]", 48, 0x1B, 0x30}, {"|", 49, 0x2B, 0x31, 0, 60}},
@@ -98,55 +70,86 @@ namespace ImHotKey
     //         }
     //         return Keys[0][0];
     //     }
-
-    static void Edit(const char *popupModal)
+    static bool thisframe = false;
+    static void show()
     {
+        const char *wname = "mini keyboard##keyboard";
+        if (!thisframe)
+            return;
+        thisframe = false;
+        // ImGui::uponaframe
 
-        static bool fire = false;
-
-       
+        static ImGuiID mywid = 0;
         static ImGuiID lastid = 0;
-        static ImGuiWindow *lastid_w = 0;
+        static ImGuiID lastid_w = 0;
 
-
-         if (fire)
+        ImGuiContext &g = *ImGui::GetCurrentContext();
+        // ImGui::is
+        if (g.ActiveId != 0x0)
         {
-            fire = false;
-            if (lastid != 0)
+            if (ImGui::FindWindowByName(wname)->ID != g.ActiveIdWindow->ID && g.ActiveIdTimer > 0.5)
             {
-
-                ImGui::SetActiveID(lastid, lastid_w);
-                ImGui::GetIO().AddInputCharacter('x');
-
-                lastid = 0;
+                // ImGui::Find
+                lastid = g.ActiveId;
+                lastid_w = g.ActiveIdWindow->ID;
             }
         }
-
-
-        if (ImGui::IsAnyItemActive())
-        {
-            ImGuiContext *g = ImGui::GetCurrentContext();
-            lastid = g->ActiveId;
-            lastid_w = g->ActiveIdWindow;
-        }
-
+        static int shitstate = 0;
         static int editingHotkey = -1;
-        // if (!hotkeyCount)
-        //     return;
+
         static bool keyDown[512] = {};
 
-        ImGui::SetNextWindowSize(ImVec2(680, 275));
-        // ImGuiWindowClass window_class;
-        // window_class.ViewportFlagsOverrideClear = ImGuiViewportFlags_NoFocusOnClick|ImGuiViewportFlags_NoTaskBarIcon|ImGuiViewportFlags_TopMost|ImGuiViewportFlags_NoAutoMerge;
-        // // window_class.ViewportFlagsOverrideSet = ImGuiViewportFlags_NoFocusOnClick|ImGuiViewportFlags_NoTaskBarIcon|ImGuiViewportFlags_TopMost|ImGuiViewportFlags_NoAutoMerge;
-        // ImGui::SetNextWindowClass(&window_class);
-        if (!ImGui::Begin(popupModal, NULL, ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoNavInputs | ImGuiWindowFlags_NoResize))
+        ImGui::SetNextWindowSize(ImVec2(680, 0));
+        ImGuiWindowClass window_class;
+        // window_class.DockNodeFlagsOverrideSet = ImGuiViewportFlags_NoFocusOnClick|ImGuiViewportFlags_NoTaskBarIcon|ImGuiViewportFlags_TopMost|ImGuiViewportFlags_NoAutoMerge;
+        window_class.ViewportFlagsOverrideSet = ImGuiViewportFlags_TopMost | ImGuiViewportFlags_NoFocusOnClick | ImGuiViewportFlags_NoTaskBarIcon | ImGuiViewportFlags_TopMost | ImGuiViewportFlags_NoAutoMerge;
+        ImGui::SetNextWindowClass(&window_class);
+        if (!ImGui::Begin(wname, NULL, ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoNavInputs | ImGuiWindowFlags_NoResize))
         {
             ImGui::End();
             return;
         }
+        // ImGui::Text("mywid: %u", mywid);
+        // ImGui::Text("lastid: %u", lastid);
+        // ImGui::Text("lastid_w: %u", lastid_w);
 
-        ImGui::SameLine();
+        // ImGui::Text("WINDOWING");
+        // ImGui::Indent();
+        // ImGui::Text("HoveredWindow: '%s'", g.HoveredWindow ? g.HoveredWindow->Name : "NULL");
+        // ImGui::Text("HoveredWindow->Root: '%s'", g.HoveredWindow ? g.HoveredWindow->RootWindowDockTree->Name : "NULL");
+        // ImGui::Text("HoveredWindowUnderMovingWindow: '%s'", g.HoveredWindowUnderMovingWindow ? g.HoveredWindowUnderMovingWindow->Name : "NULL");
+        // ImGui::Text("HoveredDockNode: 0x%08X", g.DebugHoveredDockNode ? g.DebugHoveredDockNode->ID : 0);
+        // ImGui::Text("MovingWindow: '%s'", g.MovingWindow ? g.MovingWindow->Name : "NULL");
+        // ImGui::Text("MouseViewport: 0x%08X (UserHovered 0x%08X, LastHovered 0x%08X)", g.MouseViewport->ID, g.IO.MouseHoveredViewport, g.MouseLastHoveredViewport ? g.MouseLastHoveredViewport->ID : 0);
+        // ImGui::Unindent();
+
+        // ImGui::Indent();
+        // ImGui::Text("ITEMS");
+        // ImGui::Text("ActiveId: 0x%08X/0x%08X (%.2f sec), AllowOverlap: %d, Source: %s", g.ActiveId, g.ActiveIdPreviousFrame, g.ActiveIdTimer, g.ActiveIdAllowOverlap, GetInputSourceName(g.ActiveIdSource));
+        // ImGui::DebugLocateItemOnHover(g.ActiveId);
+        // ImGui::Text("ActiveIdWindow: '%s'", g.ActiveIdWindow ? g.ActiveIdWindow->Name : "NULL");
+        // ImGui::Text("ActiveIdUsing: AllKeyboardKeys: %d, NavDirMask: %X", g.ActiveIdUsingAllKeyboardKeys, g.ActiveIdUsingNavDirMask);
+        // ImGui::Text("HoveredId: 0x%08X (%.2f sec), AllowOverlap: %d", g.HoveredIdPreviousFrame, g.HoveredIdTimer, g.HoveredIdAllowOverlap); // Not displaying g.HoveredId as it is update mid-frame
+        // ImGui::Text("HoverDelayId: 0x%08X, Timer: %.2f, ClearTimer: %.2f", g.HoverDelayId, g.HoverDelayTimer, g.HoverDelayClearTimer);
+        // ImGui::Text("DragDrop: %d, SourceId = 0x%08X, Payload \"%s\" (%d bytes)", g.DragDropActive, g.DragDropPayload.SourceId, g.DragDropPayload.DataType, g.DragDropPayload.DataSize);
+        // ImGui::DebugLocateItemOnHover(g.DragDropPayload.SourceId);
+        // ImGui::Unindent();
+
+        // ImGui::Text("NAV,FOCUS");
+        // ImGui::Indent();
+        // ImGui::Text("NavWindow: '%s'", g.NavWindow ? g.NavWindow->Name : "NULL");
+        // ImGui::Text("NavId: 0x%08X, NavLayer: %d", g.NavId, g.NavLayer);
+        // ImGui::DebugLocateItemOnHover(g.NavId);
+        // ImGui::Text("NavInputSource: %s", GetInputSourceName(g.NavInputSource));
+        // ImGui::Text("NavActive: %d, NavVisible: %d", g.IO.NavActive, g.IO.NavVisible);
+        // ImGui::Text("NavActivateId/DownId/PressedId/InputId: %08X/%08X/%08X/%08X", g.NavActivateId, g.NavActivateDownId, g.NavActivatePressedId, g.NavActivateInputId);
+        // ImGui::Text("NavActivateFlags: %04X", g.NavActivateFlags);
+        // ImGui::Text("NavDisableHighlight: %d, NavDisableMouseHover: %d", g.NavDisableHighlight, g.NavDisableMouseHover);
+        // ImGui::Text("NavFocusScopeId = 0x%08X", g.NavFocusScopeId);
+        // ImGui::Text("NavWindowingTarget: '%s'", g.NavWindowingTarget ? g.NavWindowingTarget->Name : "NULL");
+        // ImGui::Unindent();
+
+        // ImGui::SameLine();
         ImGui::BeginGroup();
 
         for (int i = 0; i < 512; i++)
@@ -170,7 +173,7 @@ namespace ImHotKey
             ImGui::BeginGroup();
             while (Keys[y][x].lib)
             {
-                const Key &key = Keys[y][x];
+                Key &key = Keys[y][x];
                 const float ofs = key.offset + (x ? 4.f : 0.f);
 
                 const float width = key.width;
@@ -192,14 +195,62 @@ namespace ImHotKey
 #else
 #error
 #endif
-                ImGui::PushStyleColor(ImGuiCol_Button, 0x80000000);
+                ImGui::PushStyleColor(ImGuiCol_Button, key.hold ? 0xFF1040FF : 0x80000000);
                 if (ImGui::Button(Keys[y][x].lib, ImVec2(width, 40)))
                 {
-                    // ImGui::GetIO().AddFocusEvent(true);
+                    ImGui::SetActiveID(lastid, ImGui::FindWindowByID(lastid_w));
 
-                    fire = true;
-                    // butSwtch = !butSwtch;
+                    // ImGui::GetIO().AddKeyEvent((ImGuiKey)key.scanCodePage7,true);
+                    // ImGui::GetIO().AddKeyEvent((ImGuiKey)key.scanCodePage7,false);
+                    if (strlen(key.lib) == 1)
+                    {
+                        if (key.scanCodePage7 == 0x2A)
+                        {
+                            ImGui::GetIO().AddKeyEvent(ImGuiKey_Backspace, true);
+                            ImGui::GetIO().AddKeyEvent(ImGuiKey_Backspace, false);
+                        }
+                        else
+                            ImGui::GetIO().AddInputCharacter(shitstate > 0 ? toupper(*key.lib) : tolower(*key.lib));
+                    }
+                    if (key.scanCodePage7 == 0X2c)
+                    {
+                        ImGui::GetIO().AddInputCharacter(shitstate > 0 ? toupper(' ') : tolower(' '));
+                    }
+
+                    if (shitstate == 1)
+                        shitstate = 0;
+
+                    Keys[3][0].hold = false;
+                    Keys[3][11].hold = false;
+                    if (key.scanCodePage7 == 0xE1 || key.scanCodePage7 == 0xE5)
+                    { // shift
+                        key.hold = !key.hold;
+                        shitstate = 1;
+                    }
+
+                    if (key.scanCodePage7 == 0x39)
+                    { // caps
+                        key.hold = !key.hold;
+                        shitstate = key.hold ? 2 : 0;
+                    }
+
+                    ImGui::DebugLocateItem(lastid);
+                    ImGui::GetForegroundDrawList(g.CurrentWindow)->AddRect(g.LastItemData.Rect.Min - ImVec2(3.0f, 3.0f), g.LastItemData.Rect.Max + ImVec2(3.0f, 3.0f), IM_COL32(0, 255, 0, 255));
                 }
+                // if(ImGui::IsItemClicked((ImGuiMouseButton)0)){
+                //     if (key.hold == false)
+                //     {
+                //         ImGui::SetActiveID(lastid, ImGui::FindWindowByID(lastid_w));
+                //         ImGui::GetIO().AddKeyEvent((ImGuiKey)key.scanCodePage1,true);
+
+                //     }
+
+                //     key.hold = true;
+
+                // }else if( key.hold){
+                //     ImGui::GetIO().AddKeyEvent((ImGuiKey)key.scanCodePage1,false);
+                // }
+
                 ImGui::PopStyleColor();
                 x++;
             }
@@ -254,5 +305,4 @@ namespace ImHotKey
         ImGui::EndGroup();
         ImGui::End();
     }
-
 };

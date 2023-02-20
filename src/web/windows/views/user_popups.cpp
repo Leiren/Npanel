@@ -9,6 +9,8 @@
 #include "imageloader.h"
 #include "emscripten/bind.h"
 #include "customwidgets.h"
+#include "keyboard.h"
+
 void error_popupframe();
 
 static bool has_error = false;
@@ -291,6 +293,10 @@ void new_user_popup_frame(bool *new_state)
 
     if (ImGui::BeginPopupModal("Enter Information##new_user_popup", &show, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoSavedSettings))
     {
+        OSK::show();
+        ImGui::Begin("hello");
+        ImGui::End();
+        
         ImGui::SetWindowSize(ImVec2(600, -1), ImGuiCond_Once);
         // ImGui::SetNextWindowPos(ImVec2(-1,-1),ImGuiCond_Once);
         // name
@@ -504,6 +510,7 @@ void edit_user_popupframe(User **_user)
 
     if (ImGui::BeginPopupModal("Enter Information##edit_user_popup", &show, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoSavedSettings))
     {
+        OSK::show();
 
         ImGui::SetWindowSize(ImVec2(600, -1), ImGuiCond_Once);
         // ImGui::SetNextWindowPos(ImVec2(-1,-1),ImGuiCond_Once);

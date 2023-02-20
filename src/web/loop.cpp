@@ -91,11 +91,9 @@ bool g_done = false;
 int g_width;
 int g_height;
 
-
-
 void loop()
 {
-    
+
     static ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
 
     SDL_Event event;
@@ -209,6 +207,9 @@ void loop()
     static MainWindow main_w;
     static LogWindow log_w;
     static LoginWindow login_w;
+    OSK::thisframe = true;
+
+
     if (BEGIN)
     {
         if (AUTH && !FIRSTRUN)
@@ -226,9 +227,8 @@ void loop()
 
     // ImGui::ShowDemoWindow();
     static bool fframe = true;
- 
-    
-    // ImHotKey::Edit("mini keyboard##keyboard");
+
+    OSK::show();
     // drawOverlay();
     ///////////////////////////////
     ImGuiIO &io = ImGui::GetIO();
