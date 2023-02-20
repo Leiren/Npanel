@@ -2,12 +2,14 @@
 #pragma once
 
 #include "imgui.h"
-
 #include "imgui_internal.h"
+
+#include "log.h"
 #define SDL_h_
+extern bool PHONE;
+
 namespace OSK
 {
-
     static inline ImVec2 operator-(const ImVec2 &lhs, const ImVec2 &rhs) { return ImVec2(lhs.x - rhs.x, lhs.y - rhs.y); }
     static inline ImVec2 operator+(const ImVec2 &lhs, const ImVec2 &rhs) { return ImVec2(lhs.x + rhs.x, lhs.y + rhs.y); }
 
@@ -70,13 +72,16 @@ namespace OSK
     //         }
     //         return Keys[0][0];
     //     }
-    static bool thisframe = false;
-    static void show()
+    static void show(const char *wname)
     {
-        const char *wname = "mini keyboard##keyboard";
-        if (!thisframe)
+
+        if (!::PHONE)
             return;
-        thisframe = false;
+
+        // static ImGuiOnceUponAFrame oaf;
+        // if (!oaf)
+        //     return;
+
         // ImGui::uponaframe
 
         static ImGuiID mywid = 0;
@@ -85,7 +90,7 @@ namespace OSK
 
         ImGuiContext &g = *ImGui::GetCurrentContext();
         // ImGui::is
-        if (g.ActiveId != 0x0)
+        if (g.ActiveId != 0x0 && ImGui::FindWindowByName(wname)->ID != 0)
         {
             if (ImGui::FindWindowByName(wname)->ID != g.ActiveIdWindow->ID && g.ActiveIdTimer > 0.5)
             {
@@ -99,12 +104,12 @@ namespace OSK
 
         static bool keyDown[512] = {};
 
-        ImGui::SetNextWindowSize(ImVec2(680, 0));
+        ImGui::SetNextWindowSize(ImVec2(340, 0));
         ImGuiWindowClass window_class;
         // window_class.DockNodeFlagsOverrideSet = ImGuiViewportFlags_NoFocusOnClick|ImGuiViewportFlags_NoTaskBarIcon|ImGuiViewportFlags_TopMost|ImGuiViewportFlags_NoAutoMerge;
         window_class.ViewportFlagsOverrideSet = ImGuiViewportFlags_TopMost | ImGuiViewportFlags_NoFocusOnClick | ImGuiViewportFlags_NoTaskBarIcon | ImGuiViewportFlags_TopMost | ImGuiViewportFlags_NoAutoMerge;
         ImGui::SetNextWindowClass(&window_class);
-        if (!ImGui::Begin(wname, NULL, ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoNavInputs | ImGuiWindowFlags_NoResize))
+        if (!ImGui::Begin(wname, NULL, ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoFocusOnAppearing | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoNavInputs | ImGuiWindowFlags_NoResize))
         {
             ImGui::End();
             return;
@@ -148,8 +153,8 @@ namespace OSK
         // ImGui::Text("NavFocusScopeId = 0x%08X", g.NavFocusScopeId);
         // ImGui::Text("NavWindowingTarget: '%s'", g.NavWindowingTarget ? g.NavWindowingTarget->Name : "NULL");
         // ImGui::Unindent();
-
         // ImGui::SameLine();
+
         ImGui::BeginGroup();
 
         for (int i = 0; i < 512; i++)
@@ -174,9 +179,9 @@ namespace OSK
             while (Keys[y][x].lib)
             {
                 Key &key = Keys[y][x];
-                const float ofs = key.offset + (x ? 4.f : 0.f);
+                const float ofs = key.offset / 2 + (x ? 2.f : 0.f);
 
-                const float width = key.width;
+                const float width = key.width / 2;
                 if (x)
                 {
                     ImGui::SameLine(0.f, ofs);
@@ -196,7 +201,8 @@ namespace OSK
 #error
 #endif
                 ImGui::PushStyleColor(ImGuiCol_Button, key.hold ? 0xFF1040FF : 0x80000000);
-                if (ImGui::Button(Keys[y][x].lib, ImVec2(width, 40)))
+                ImGui::PushFont(ImGui::GetIO().Fonts->Fonts[1]);
+                if (ImGui::Button(Keys[y][x].lib, ImVec2(width, 20)))
                 {
                     ImGui::SetActiveID(lastid, ImGui::FindWindowByID(lastid_w));
 
@@ -208,6 +214,11 @@ namespace OSK
                         {
                             ImGui::GetIO().AddKeyEvent(ImGuiKey_Backspace, true);
                             ImGui::GetIO().AddKeyEvent(ImGuiKey_Backspace, false);
+                        }
+                        else if (key.scanCodePage7 == 0X28)
+                        {
+                            ImGui::GetIO().AddKeyEvent(ImGuiKey_Enter, true);
+                            ImGui::GetIO().AddKeyEvent(ImGuiKey_Enter, false);
                         }
                         else
                             ImGui::GetIO().AddInputCharacter(shitstate > 0 ? toupper(*key.lib) : tolower(*key.lib));
@@ -250,7 +261,7 @@ namespace OSK
                 // }else if( key.hold){
                 //     ImGui::GetIO().AddKeyEvent((ImGuiKey)key.scanCodePage1,false);
                 // }
-
+                ImGui::PopFont();
                 ImGui::PopStyleColor();
                 x++;
             }

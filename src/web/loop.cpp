@@ -36,7 +36,7 @@ ImGuiID dock_id_bottom;
 bool AUTH = false;
 bool FIRSTRUN = false;
 bool BEGIN = false;
-
+bool PHONE = false;
 static bool show_app_metrics = false;
 
 static bool ShowStyleSelector(const char *label)
@@ -207,9 +207,8 @@ void loop()
     static MainWindow main_w;
     static LogWindow log_w;
     static LoginWindow login_w;
-    OSK::thisframe = true;
-
-
+    if (!ImGui::IsPopupOpen((ImGuiID)0, ImGuiPopupFlags_AnyPopupId))
+        OSK::show("mini keyboard##1ux");
     if (BEGIN)
     {
         if (AUTH && !FIRSTRUN)
@@ -219,16 +218,28 @@ void loop()
             log_w.tick();
         }
         else
+        {
             login_w.tick();
+        }
     }
 
     if (show_app_metrics)
         ImGui::ShowMetricsWindow(&show_app_metrics);
 
     // ImGui::ShowDemoWindow();
-    static bool fframe = true;
+    static bool first_frame = true;
+    if (first_frame)
+    {
+        first_frame = false;
+        if (ImGui::GetIO().DisplaySize.x < ImGui::GetIO().DisplaySize.y)
+            EM_ASM({
+                alert("Please use landscape mode.");
+                window.location.reload();
+            });
+        if (ImGui::GetIO().DisplaySize.x < 1000)
+            PHONE = true;
+    }
 
-    OSK::show();
     // drawOverlay();
     ///////////////////////////////
     ImGuiIO &io = ImGui::GetIO();
