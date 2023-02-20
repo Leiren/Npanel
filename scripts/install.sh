@@ -31,8 +31,6 @@ then
   echo "This will update Npanel to the latest version. Always take backup before updating."
   printf  "\n"
 
-  echo "This update has database structure changes. You should definitely backup users.db if you need the users configs you have created."
-
 else
 	echo "This script will install Npanel."
 
@@ -45,7 +43,7 @@ cd /opt
 # rm -rf Npanel
 mkdir -p Npanel
 cd Npanel
-wget "https://github.com/Leiren/Npanel/releases/download/v0.1.8alpha/linux-amd64.zip" -O npanel_linux_amd64.zip
+wget "https://github.com/Leiren/Npanel/releases/download/v0.1.9alpha/linux-amd64.zip" -O npanel_linux_amd64.zip
 unzip -o npanel_linux_amd64.zip
 mv -f npanel.service /etc/systemd/system
 sudo systemctl daemon-reload

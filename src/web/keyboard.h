@@ -217,12 +217,12 @@ namespace OSK
                         }
                         else if (key.scanCodePage7 == 0X28)
                         {
-                            ImGui::GetIO().AddKeyEvent(ImGuiKey_Enter, true);
-                            ImGui::GetIO().AddKeyEvent(ImGuiKey_Enter, false);
+                            ImGui::GetIO().AddKeyEvent(ImGuiKey_KeypadEnter, true);
+                            ImGui::GetIO().AddKeyEvent(ImGuiKey_KeypadEnter, false);
                         }
                         else
                             ImGui::GetIO().AddInputCharacter(shitstate > 0 ? toupper(*key.lib) : tolower(*key.lib));
-                    }
+                    }   
                     if (key.scanCodePage7 == 0X2c)
                     {
                         ImGui::GetIO().AddInputCharacter(shitstate > 0 ? toupper(' ') : tolower(' '));
