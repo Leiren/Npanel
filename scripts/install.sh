@@ -30,7 +30,7 @@ then
   service npanel stop
   echo "This will update Npanel to the latest version. Always take backup before updating."
   printf  "\n"
-  SUPDATE = 1
+  SUPDATE=1
 
 else
 	echo "This script will install Npanel."
