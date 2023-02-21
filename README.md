@@ -2,6 +2,7 @@
 
 A user interface designed to implement the **[Trojan-Go](https://github.com/p4gefau1t/trojan-go) API** to manage users or monitor the server.
 
+I am currently working on telegram bot with many features. it will be available in next few days!
 
 ![intro](https://user-images.githubusercontent.com/123581768/217651701-c6e8a15f-4aca-4350-8650-636f7d8eb948.png)
 
