@@ -28,6 +28,7 @@ void LeftSideBarWindow::onFrame()
         "Panel Settings",
         "Bash",
         "Nodes & Routers",
+        "Telegram Bot",
         "About"
 
     };

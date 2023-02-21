@@ -39,7 +39,11 @@ void MainWindow::onFrame()
     case 4:
         nodes_view_frame();
         break;
+
     case 5:
+
+        break;
+    case 6:
         about_view_frame();
         break;
     default:
