@@ -30,6 +30,7 @@ then
   service npanel stop
   echo "This will update Npanel to the latest version. Always take backup before updating."
   printf  "\n"
+  SUPDATE = 1
 
 else
 	echo "This script will install Npanel."
@@ -63,7 +64,14 @@ echo "	service npanel start"
 
 printf  "\n"
 
-echo "after start open your ip with port 2060 example: http://1.2.3.4:2060"
+if [[ -v SUPDATE ]];
+then
+    echo "after that nothing else should be done. open your domain and use the panel."
+else
+    echo "after start open your ip with port 2060 example: http://1.2.3.4:2060"
+fi
+
+
 
 printf  "\n"
 
