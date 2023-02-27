@@ -19,7 +19,7 @@ Features:
 - User limits possible: speed , ip count , traffic total , duration(days)
 - Panel and backend developed with native programing languages without any scripting language, allows a fast and cheap server side with less cpu usage
 - Panel omits any identifiable resource with the name Npanel even in html,js contents (thanks to webassembly)
-- Panel uses 1 additional layer of AES-256 encryption for all kinds of data being transfered
+- Panel uses 1 additional layer of AES-256 encryption for all kinds of data being transfered (only from the web-ui to server, not affecting torjan-go  tls strategy)
 - Panel uses multiple separated process which allows the user configs to work even if Npanel crashes by a bug!
 - Real time server resources monitoring with fast update rate 
 - Active support and fast bug fixes, just create a issue or dm me in telegram (link provided in about-page)
