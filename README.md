@@ -4,11 +4,24 @@ A user interface designed to implement the **[Trojan-Go](https://github.com/p4ge
 
 I am currently working on telegram bot with many features.general testing is done. it will be released today!
 
-![intro](https://user-images.githubusercontent.com/123581768/217651701-c6e8a15f-4aca-4350-8650-636f7d8eb948.png)
-
+![image](https://user-images.githubusercontent.com/123581768/221713162-05470cbf-f118-44f5-ac91-af825c42a229.png)
 
 Written with C++ and compiles to webassembly which allows fast encryption/decryption of packets being 
 sent/received from server &  uses a  modern bloat free ui-  library [Dear ImGui](https://github.com/ocornut/imgui)
+
+Features:
+- all users on same port
+- reverse proxy with customizable pre-made templates
+- panel and reverse-proxy and users all on same port
+- real-time data such as speed, traffic usage (sortable)
+- telegram bot with admin notifications and users status support
+- by the telegram bot , you can change domain/ip when ever you needed and the bot sends the latest updated configs
+  to all users
+- user limits possible: speed , ip count , traffic total , duration(days)
+- panel and backend developed with native programing languages without any scripting language, allows a fast and cheap server side with less cpu usage
+- panel omits any identifiable resource with the name Npanel even in html,js contents (thanks to webassembly)
+- panel uses 1 additional layer of AES-256 encryption for all kinds of data being transfered
+- panel uses multiple separated process which allows the user configs to work even if Npanel crashes by a bug!
 
 # Install
 ## Linux
