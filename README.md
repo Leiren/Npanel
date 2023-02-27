@@ -8,20 +8,31 @@ Written with C++ and compiles to webassembly which allows fast encryption/decryp
 sent/received from server &  uses a  modern bloat free ui-  library [Dear ImGui](https://github.com/ocornut/imgui)
 
 Features:
-- All users on same port
 - Reverse proxy with customizable pre-made templates
+
 - Panel and reverse-proxy and users all on same port
+
 - Real-time data such as speed, traffic usage (sortable)
+
 - Telegram bot with admin notifications and users status support
+
 - By using the telegram bot, you can change domain/ip when ever you needed and the bot sends the latest updated configs
   to all users with 1 click
+  
 - By using the telegram bot, you can broadcast messages to all users , or even singe user
+
 - User limits possible: speed , ip count , traffic total , duration(days)
+
 - Panel and backend developed with native programing languages without any scripting language, allows a fast and cheap server side with less cpu usage
+
 - Panel omits any identifiable resource with the name Npanel even in html,js contents (thanks to webassembly)
-- Panel uses 1 additional layer of AES-256 encryption for all kinds of data being transfered (only from the web-ui to server, not affecting torjan-go  tls strategy)
+
+- Panel uses 1 additional layer of AES-256 encryption for all kinds of data being transfered (only from the web-ui to server, not affecting trojan-go  tls strategy)
+
 - Panel uses multiple separated process which allows the user configs to work even if Npanel crashes by a bug!
+
 - Real time server resources monitoring with fast update rate 
+
 - Active support and fast bug fixes, just create a issue or dm me in telegram (link provided in about-page)
 
 
