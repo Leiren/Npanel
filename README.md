@@ -10,18 +10,22 @@ Written with C++ and compiles to webassembly which allows fast encryption/decryp
 sent/received from server &  uses a  modern bloat free ui-  library [Dear ImGui](https://github.com/ocornut/imgui)
 
 Features:
-- all users on same port
-- reverse proxy with customizable pre-made templates
-- panel and reverse-proxy and users all on same port
-- real-time data such as speed, traffic usage (sortable)
-- telegram bot with admin notifications and users status support
-- by the telegram bot , you can change domain/ip when ever you needed and the bot sends the latest updated configs
-  to all users
-- user limits possible: speed , ip count , traffic total , duration(days)
-- panel and backend developed with native programing languages without any scripting language, allows a fast and cheap server side with less cpu usage
-- panel omits any identifiable resource with the name Npanel even in html,js contents (thanks to webassembly)
-- panel uses 1 additional layer of AES-256 encryption for all kinds of data being transfered
-- panel uses multiple separated process which allows the user configs to work even if Npanel crashes by a bug!
+- All users on same port
+- Reverse proxy with customizable pre-made templates
+- Panel and reverse-proxy and users all on same port
+- Real-time data such as speed, traffic usage (sortable)
+- Telegram bot with admin notifications and users status support
+- By using the telegram bot, you can change domain/ip when ever you needed and the bot sends the latest updated configs
+  to all users with 1 click
+- By using the telegram bot, you can broadcast messages to all users , or even singe user
+- User limits possible: speed , ip count , traffic total , duration(days)
+- Panel and backend developed with native programing languages without any scripting language, allows a fast and cheap server side with less cpu usage
+- Panel omits any identifiable resource with the name Npanel even in html,js contents (thanks to webassembly)
+- Panel uses 1 additional layer of AES-256 encryption for all kinds of data being transfered
+- Panel uses multiple separated process which allows the user configs to work even if Npanel crashes by a bug!
+- real time server resource monitoring with fast update rate 
+- Active support and fast bug fixes, just create a issue or dm me in telegram (link provided in about-page)
+
 
 # Install
 ## Linux
