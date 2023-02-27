@@ -24,7 +24,7 @@ struct SpeedLimit
 };
 struct User
 {
-    int id; //only client
+    int id; // only client
     string name;
     string password;
     SpeedCurrent speed_current;
@@ -40,6 +40,40 @@ struct User
     string note;
 };
 
+struct EandN
+{
+    bool enable;
+    bool notify;
+    // EandN(bool e,bool n):enable(e),notify(n){}
+};
+struct SellerOptions
+{
+    EandN notif_panel_login_fail;
+    EandN notif_panel_login_success;
+    EandN notif_panel_information_changed;
+    EandN notif_panel_cpu_usage_high;
+    EandN notif_panel_mem_usage_high;
+    EandN notif_panel_server_reboot;
+    EandN notif_panel_start;
+    EandN notif_user_reach_duration_limit;
+    EandN notif_user_reach_traffic_limit;
+    EandN notif_user_added;
+    EandN notif_user_disabled;
+    EandN notif_user_enable;
+    EandN notif_user_removed;
+    EandN notif_user_support;
+};
+struct BotUserOptions
+{
+    bool can_ask_info;
+    bool info_include_traffic_used;
+    bool info_include_ip_limit;
+    bool info_include_speed_limit;
+    bool info_include_traffic_limit;
+    bool info_include_days_left;
+    bool info_include_user_note;
+};
+
 struct PanelConfStructure
 {
     string admin_username;
@@ -52,6 +86,7 @@ struct PanelConfStructure
     string private_key_path;
     bool mux;
     bool first_launch;
+    string telegram_bot_key;
 };
 
 struct ServerReport
@@ -67,9 +102,10 @@ struct ServerReport
     User *users = nullptr;
     PanelConfStructure panelsettings;
     int days_left;
-
+    SellerOptions selleroptions;
+    BotUserOptions useroptions;
 };
-class   ServerReportStore
+class ServerReportStore
 {
 private:
     /* data */

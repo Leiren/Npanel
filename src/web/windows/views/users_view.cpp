@@ -13,11 +13,18 @@ extern void edit_user_popupframe(User **_user);
 extern void delete_user_popupframe(User **_user);
 extern void view_notes_popupframe(User **_user);
 extern void show_user_configs(User **_user);
+extern void bot_singe_message_popup_frame(const char *passwd);
+extern void bot_broadcast_message_popup_frame();
+extern void bot_singe_message_popup_frame(User **_user);
 extern void error_popupframe();
 static User *share_user = nullptr;
 static User *edit_user = nullptr;
 static User *delete_user = nullptr;
 static User *notes_user = nullptr;
+static bool popup_broadcast = false;
+static User *popup_single_user = nullptr;
+
+static char bot_usernam[80];
 bool live_data = true;
 static ImGuiTextFilter Filter;
 static bool resort = true;
@@ -315,6 +322,44 @@ void render_list()
     ImGui::PopStyleVar();
 }
 
+void bot_acts_popup()
+{
+    if (ImGui::BeginPopup("bot_acts_popup"))
+    {
+        const char *names[] = {"send latest configs to all", "send message to all"};
+
+        // ImGui::Text("user options:");
+        // ImGui::Separator();
+        for (int i = 0; i < IM_ARRAYSIZE(names); i++)
+        {
+            if (ImGui::Selectable(names[i]))
+            {
+                switch (i)
+                {
+                case 0:
+
+                    Connection::send("bot-send-config-users", 1, "");
+
+                    break;
+                case 1:
+                    popup_broadcast = true;
+
+                    break;
+                }
+            }
+            ImGui::SameLine();
+            HelpMarker("delay 250ms for each send (telegram limit) !");
+        }
+
+        ImGui::EndPopup();
+    }
+
+    // if (ImGui::BeginPopup("bot_acts_popup_cfg_done"))
+    // {
+    //     ImGui::Text("configs are being sent to users.");
+    //     ImGui::Text("if you have 50+ users, configs will be sent to one user per seccond (telegram limitation).");
+    // }
+}
 void user_opt_popup(User *user)
 {
     if (ImGui::BeginPopup("user_opt_popup"))
@@ -351,6 +396,30 @@ void user_opt_popup(User *user)
                 HelpMarker("This will reset Traffics used.\nIt is useful when the user has reached the traffic limit.");
             }
         }
+        if (ServerReportStore::last_report.panelsettings.telegram_bot_key != "")
+        {
+            if (ImGui::BeginMenu("Telegram Bot"))
+            {
+                if (ImGui::MenuItem("copy bot-invite link"))
+                {
+                    char user_link[120] = {0};
+                    sprintf(user_link, "https://telegram.me/%s?start=%s", bot_usernam, user->password.c_str());
+                    ImGui::SetClipboardText((const char *)user_link);
+                }
+                ImGui::Separator();
+
+                if (ImGui::MenuItem("send config"))
+                {
+                    Connection::send("bot-send-config-user", 1, user->password.c_str());
+                }
+                if (ImGui::MenuItem("send message"))
+                {
+                    popup_single_user = user;
+                }
+
+                ImGui::EndMenu();
+            }
+        }
         ImGui::Separator();
         ImGui::PushStyleColor(ImGuiCol_Text, Color::red);
         if (ImGui::Selectable(names[IM_ARRAYSIZE(names) - 1]))
@@ -365,6 +434,18 @@ void user_opt_popup(User *user)
 
 void users_view_frame()
 {
+    static bool fframe = true;
+    if (fframe && ServerReportStore::last_report.panelsettings.telegram_bot_key != "")
+    {
+        fframe = false;
+        Connection::send("bot-name", 0)->connect([&](Result res)
+                                                 {
+                if(res.success)
+                {
+                    strcpy(bot_usernam,res.info);
+                 
+                } });
+    }
     static bool new_state_for_nup = false;
 
     ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 3.0f);
@@ -382,6 +463,18 @@ void users_view_frame()
     {
         live_data = !live_data;
     }
+
+    if (ServerReportStore::last_report.panelsettings.telegram_bot_key != "")
+    {
+        ImGui::SameLine();
+
+        if (ImGui::Button("Bot Actions", ImVec2(140, 0)))
+        {
+            ImGui::OpenPopup("bot_acts_popup");
+        }
+        bot_acts_popup();
+    }
+
     ImGui::SameLine();
 
     // if (ImGui::Button("Order"))
@@ -409,6 +502,17 @@ void users_view_frame()
     if (notes_user != nullptr)
         ImGui::OpenPopup("Notes##show_notes_user_popup");
     view_notes_popupframe(&notes_user);
+
+    if (popup_broadcast == true)
+    {
+        popup_broadcast = false;
+        ImGui::OpenPopup("Enter Message##brodcast_msg");
+    }
+    bot_broadcast_message_popup_frame();
+
+    if (popup_single_user != nullptr)
+        ImGui::OpenPopup("Enter Message##single_msg");
+    bot_singe_message_popup_frame(&popup_single_user);
 
     error_popupframe();
 

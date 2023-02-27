@@ -49,10 +49,12 @@ void about_view_frame()
 
     auto content_avail = ImGui::GetContentRegionAvail();
     ImGui::Dummy(ImVec2(0, content_avail.y - TEXT_BASE_HEIGHT * 1));
-    ImGui::Text("made with");
+    ImGui::Text("Official discussion & help group");
     ImGui::SameLine();
-    if (ImGui::SmallButton("Dear ImGui"))
+    if (ImGui::SmallButton("Persian language (IRAN)"))
     {
-        EM_ASM(window.open("https://github.com/ocornut/imgui", '_blank').focus(););
+        EM_ASM(window.open("https://t.me/Npanel_IR", '_blank').focus(););
     }
+    ImGui::SameLine();
+    ImGui::Text(", special thanks to MRX for reporting bugs and managing this group.");
 }

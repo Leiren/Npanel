@@ -271,6 +271,30 @@ static void delete_user(User &user)
         has_error = false; });
 }
 
+static void broadcast_msg(const char *msg)
+{
+    Connection::send("bot-send-message-users", 1, msg)->connect([](Result res)
+                                                                {
+                if(res.success)
+                {
+                
+                }
+                else{
+                    has_error = true;
+                } });
+}
+static void send_single_msg(const char *upass, const char *msg)
+{
+    Connection::send("bot-send-message-user", 2, upass, msg)->connect([](Result res)
+                                                                      {
+                if(res.success)
+                {
+                
+                }
+                else{
+                } });
+}
+
 void new_user_popup_frame(bool *new_state)
 {
     const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
@@ -874,4 +898,87 @@ void show_user_configs(User **_user)
         // std::cout << "Writing Example QR code 3 (huge) to " << fileName << " with text: '" << qrText << "', size: " << imgSize << "x" << imgSize << ", qr module pixel size: " << minModulePixelSize << ". " << std::endl;
     }
     ImGui::PopStyleVar();
+}
+
+void bot_broadcast_message_popup_frame()
+{
+    const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
+    const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
+    static char bmsg[512] = {0};
+    bool show = true;
+
+    const ImGuiViewport *viewport = ImGui::GetMainViewport();
+    ImGui::SetNextWindowPos(viewport->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+    ImGui::SetNextWindowSize(ImVec2(600, -1));
+    if (ImGui::BeginPopupModal("Enter Message##brodcast_msg", &show, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoSavedSettings))
+    {
+        ImGui::AlignTextToFramePadding();
+        ImGui::Text("Message:");
+        ImGui::SameLine();
+        HelpMarker("will be sent to all users that have the bot.");
+        ImGui::InputTextMultiline("##bsg_msg", bmsg, IM_ARRAYSIZE(bmsg), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 4));
+
+        ImGui::Separator();
+        // ImGui::SetItemDefaultFocus();
+        if (ImGui::Button("Send", ImVec2(120, 0)) && 0 < strlen(bmsg))
+        {
+            broadcast_msg(bmsg);
+            if (!has_error)
+                ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel", ImVec2(120, 0)))
+        {
+            ImGui::CloseCurrentPopup();
+        }
+
+        error_popupframe();
+
+        ImGui::EndPopup();
+    }
+}
+
+void bot_singe_message_popup_frame(User **_user)
+{
+    static User user;
+    if (_user != nullptr && *_user != nullptr)
+    {
+        user = **_user;
+        *_user = nullptr;
+        const ImGuiViewport *viewport = ImGui::GetMainViewport();
+        ImGui::SetNextWindowPos(viewport->GetCenter(), ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+        ImGui::SetNextWindowSize(ImVec2(600, -1));
+    }
+
+    const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("A").x;
+    const float TEXT_BASE_HEIGHT = ImGui::GetTextLineHeightWithSpacing();
+    bool show = true;
+    static char smsg[512] = {0};
+    if (ImGui::BeginPopupModal("Enter Message##single_msg", &show, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoSavedSettings))
+    {
+
+        ImGui::AlignTextToFramePadding();
+        ImGui::Text("Message:");
+        ImGui::SameLine();
+        HelpMarker("will be sent to 1 user if they have the bot.");
+        ImGui::InputTextMultiline("##smsg_msg", smsg, IM_ARRAYSIZE(smsg), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 4));
+
+        ImGui::Separator();
+        // ImGui::SetItemDefaultFocus();
+        if (ImGui::Button("Send", ImVec2(120, 0)) && 0 < strlen(smsg))
+        {
+            send_single_msg(user.password.c_str(), smsg);
+            if (!has_error)
+                ImGui::CloseCurrentPopup();
+        }
+        ImGui::SameLine();
+        if (ImGui::Button("Cancel", ImVec2(120, 0)))
+        {
+            ImGui::CloseCurrentPopup();
+        }
+
+        error_popupframe();
+
+        ImGui::EndPopup();
+    }
 }

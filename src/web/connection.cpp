@@ -195,7 +195,7 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
     // console.log("onmessage");
     if (websocketEvent->isText)
     {
-        static char *buf = (char*)malloc(300000);
+        static char *buf = (char*)malloc(400000);
  
         
         memcpy(buf, (char *)websocketEvent->data, websocketEvent->numBytes);
@@ -308,6 +308,49 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
 
             }
 
+
+            
+            new_report.selleroptions.notif_panel_login_fail.enable=  resobj["selleroptions"].GetObject()["notif_panel_login_fail"].GetObject()["enable"].GetBool();
+            new_report.selleroptions.notif_panel_login_fail.notify = resobj["selleroptions"].GetObject()["notif_panel_login_fail"].GetObject()["notify"].GetBool();
+            new_report.selleroptions.notif_panel_login_success.enable  = resobj["selleroptions"].GetObject()["notif_panel_login_success"].GetObject()["enable"].GetBool();
+            new_report.selleroptions.notif_panel_login_success.notify = resobj["selleroptions"].GetObject()["notif_panel_login_success"].GetObject()["notify"].GetBool();;
+            new_report.selleroptions.notif_panel_information_changed.enable  =resobj["selleroptions"].GetObject()["notif_panel_information_changed"].GetObject()["enable"].GetBool(); 
+            new_report.selleroptions.notif_panel_information_changed.notify = resobj["selleroptions"].GetObject()["notif_panel_information_changed"].GetObject()["notify"].GetBool();
+            new_report.selleroptions.notif_panel_cpu_usage_high.enable  = resobj["selleroptions"].GetObject()["notif_panel_cpu_usage_high"].GetObject()["enable"].GetBool(); 
+            new_report.selleroptions.notif_panel_cpu_usage_high.notify = resobj["selleroptions"].GetObject()["notif_panel_cpu_usage_high"].GetObject()["notify"].GetBool();
+            new_report.selleroptions.notif_panel_mem_usage_high.enable  = resobj["selleroptions"].GetObject()["notif_panel_mem_usage_high"].GetObject()["enable"].GetBool();
+            new_report.selleroptions.notif_panel_mem_usage_high.notify = resobj["selleroptions"].GetObject()["notif_panel_mem_usage_high"].GetObject()["notify"].GetBool(); 
+            new_report.selleroptions.notif_panel_server_reboot.enable  = resobj["selleroptions"].GetObject()["notif_panel_server_reboot"].GetObject()["enable"].GetBool();
+            new_report.selleroptions.notif_panel_server_reboot.notify = resobj["selleroptions"].GetObject()["notif_panel_server_reboot"].GetObject()["notify"].GetBool(); 
+            new_report.selleroptions.notif_panel_start.enable  = resobj["selleroptions"].GetObject()["notif_panel_start"].GetObject()["enable"].GetBool();
+            new_report.selleroptions.notif_panel_start.notify = resobj["selleroptions"].GetObject()["notif_panel_start"].GetObject()["notify"].GetBool(); 
+            new_report.selleroptions.notif_user_reach_duration_limit.enable  = resobj["selleroptions"].GetObject()["notif_user_reach_duration_limit"].GetObject()["enable"].GetBool();
+            new_report.selleroptions.notif_user_reach_duration_limit.notify = resobj["selleroptions"].GetObject()["notif_user_reach_duration_limit"].GetObject()["notify"].GetBool(); 
+            new_report.selleroptions.notif_user_reach_traffic_limit.enable  = resobj["selleroptions"].GetObject()["notif_user_reach_traffic_limit"].GetObject()["enable"].GetBool();
+            new_report.selleroptions.notif_user_reach_traffic_limit.notify = resobj["selleroptions"].GetObject()["notif_user_reach_traffic_limit"].GetObject()["notify"].GetBool(); 
+            new_report.selleroptions.notif_user_added.enable  = resobj["selleroptions"].GetObject()["notif_user_added"].GetObject()["enable"].GetBool();
+            new_report.selleroptions.notif_user_added.notify = resobj["selleroptions"].GetObject()["notif_user_added"].GetObject()["notify"].GetBool(); 
+            new_report.selleroptions.notif_user_disabled.enable  = resobj["selleroptions"].GetObject()["notif_user_disabled"].GetObject()["enable"].GetBool();
+            new_report.selleroptions.notif_user_disabled.notify = resobj["selleroptions"].GetObject()["notif_user_disabled"].GetObject()["notify"].GetBool(); 
+            new_report.selleroptions.notif_user_enable.enable  = resobj["selleroptions"].GetObject()["notif_user_enable"].GetObject()["enable"].GetBool(); 
+            new_report.selleroptions.notif_user_enable.notify = resobj["selleroptions"].GetObject()["notif_user_enable"].GetObject()["notify"].GetBool();
+            new_report.selleroptions.notif_user_removed.enable  = resobj["selleroptions"].GetObject()["notif_user_removed"].GetObject()["enable"].GetBool();
+            new_report.selleroptions.notif_user_removed.notify = resobj["selleroptions"].GetObject()["notif_user_removed"].GetObject()["notify"].GetBool();
+            new_report.selleroptions.notif_user_support.enable  = resobj["selleroptions"].GetObject()["notif_user_support"].GetObject()["enable"].GetBool();
+            new_report.selleroptions.notif_user_support.notify = resobj["selleroptions"].GetObject()["notif_user_support"].GetObject()["notify"].GetBool();
+            new_report.useroptions.can_ask_info = resobj["useroptions"].GetObject()["can_ask_info"].GetBool(); 
+            new_report.useroptions.info_include_traffic_used = resobj["useroptions"].GetObject()["info_include_traffic_used"].GetBool();
+            new_report.useroptions.info_include_ip_limit = resobj["useroptions"].GetObject()["info_include_ip_limit"].GetBool();
+            new_report.useroptions.info_include_speed_limit = resobj["useroptions"].GetObject()["info_include_speed_limit"].GetBool();
+            new_report.useroptions.info_include_traffic_limit = resobj["useroptions"].GetObject()["info_include_traffic_limit"].GetBool();
+            new_report.useroptions.info_include_days_left = resobj["useroptions"].GetObject()["info_include_days_left"].GetBool();
+            new_report.useroptions.info_include_user_note = resobj["useroptions"].GetObject()["info_include_user_note"].GetBool();
+
+
+
+
+
+
             new_report.panelsettings.admin_username = resobj["panelsettings"].GetObject()["admin_username"].GetString();
             new_report.panelsettings.admin_password = resobj["panelsettings"].GetObject()["admin_password"].GetString();
             new_report.panelsettings.domain = resobj["panelsettings"].GetObject()["domain"].GetString();
@@ -317,6 +360,11 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
             new_report.panelsettings.cert_path = resobj["panelsettings"].GetObject()["cert_path"].GetString();
             new_report.panelsettings.private_key_path = resobj["panelsettings"].GetObject()["private_key_path"].GetString();
             new_report.panelsettings.mux = resobj["panelsettings"].GetObject()["mux"].GetBool();
+            new_report.panelsettings.telegram_bot_key = resobj["panelsettings"].GetObject()["telegram_bot_key"].GetString();
+
+
+
+
 
             ServerReportStore::last_report = new_report;
             (ServerReportStore::signal)(&new_report);

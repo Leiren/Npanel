@@ -79,26 +79,26 @@ void apply_panel_settingn()
         error = "cert path too low.";
         has_error = true;
     }
-    #ifndef win_build
+#ifndef win_build
     if (input_cert_path[0] != '/')
     {
         error = "cert path must begin with /";
         has_error = true;
     }
-    #endif
+#endif
     if (strlen(input_private_key_path) < 4)
     {
         error = "private key path too low.";
         has_error = true;
     }
-    #ifndef win_build
+#ifndef win_build
 
     if (input_private_key_path[0] != '/')
     {
         error = "private key path must begin with /";
         has_error = true;
     }
-    #endif
+#endif
 
     if (has_error)
         return;
