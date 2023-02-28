@@ -29,7 +29,7 @@ Features:
 
 - Panel omits any identifiable resource with the name Npanel even in html,js contents (thanks to webassembly)
 
-- Panel uses 1 additional layer of AES-256 encryption for all kinds of data being transfered (only from the web-ui to server, not affecting trojan-go  tls strategy)
+- Panel uses 1 additional layer of AES-256 encryption for all kinds of data being transfered (only between the web-ui and server, not affecting trojan-go  tls strategy)
 
 - Panel uses multiple separated process which allows the user configs to work even if Npanel crashes by a bug!
 
