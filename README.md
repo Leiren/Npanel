@@ -35,6 +35,8 @@ Features:
 
 - Real time server resources monitoring with fast update rate 
 
+- Supports windows server or even home pc
+
 - Active support and fast bug fixes, just create a issue or dm me in telegram (link provided in about-page)
 
 
@@ -83,6 +85,10 @@ on Linux you should backup /opt/Npanel Folder on old server then
 
 on Windows you can just copy the Npanel folder and move it to destination server since it is portable.
 
+# discussion and groups
+Official group for Persian language (IRAN) is [available](https://t.me/Npanel_IR) !
+
+> other languages groups will be added when they reach minimum 100 users.
 
 # Uninstall
 on Linux:
