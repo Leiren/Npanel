@@ -27,7 +27,7 @@ printf  "\n"
 DIR=/opt/Npanel
 if [ -d "$DIR" ];
 then
-  service npanel stop
+  
   echo "This will update Npanel to the latest version. Always take backup before updating."
   printf  "\n"
 
@@ -43,11 +43,14 @@ printf  "\n"
 
 echo "continue?"
 read check__
+
+service npanel stop
+
 cd /opt
 # rm -rf Npanel
 mkdir -p Npanel
 cd Npanel
-wget "https://github.com/Leiren/Npanel/releases/download/v0.2.1alpha/linux-amd64.zip" -O npanel_linux_amd64.zip
+wget "https://github.com/Leiren/Npanel/releases/download/v0.2.2alpha/linux-amd64.zip" -O npanel_linux_amd64.zip
 unzip -o npanel_linux_amd64.zip
 mv -f npanel.service /etc/systemd/system
 sudo systemctl daemon-reload
