@@ -28,10 +28,9 @@ DIR=/opt/Npanel
 if [ -d "$DIR" ];
 then
   
-  echo "This will update Npanel to the latest version. Always take backup before updating."
+  echo "This will update Npanel to the latest version."
   printf  "\n"
 
-  echo "This is a major update, please backup /opt/Npanel/users.db and /opt/Npanel/panel.json !"
 
   SUPDATE=1
 
