@@ -49,7 +49,7 @@ Features:
 wget  "https://raw.githubusercontent.com/Leiren/Npanel/master/scripts/install.sh" -O install.sh && chmod +x install.sh && bash install.sh
 ```
 
->This script is also used to update. but you should always backup before executing.
+>This command is also used to update. 
 
 ## Windows
 
