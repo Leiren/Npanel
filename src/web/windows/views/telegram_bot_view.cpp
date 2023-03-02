@@ -71,9 +71,11 @@ void not_activated_view()
         }
 
         ImGui::Text("\n");
-        ImGui::Text("Note that telegram bot should not be connected to 2 servers as same time, disconnect it from old server first, then connect it to new server.");
-        ImGui::Text("\n");
-        ImGui::Text("\n");
+        ImGui::PushStyleColor(ImGuiCol_Text, Color::orange);
+
+        ImGui::Text("Note that 1 telegram bot token should not be connected to 2 servers as same time\ndisconnect it from old server first, then connect it to new server.");
+        ImGui::PopStyleColor();
+
         ImGui::Text("Bot features:");
         ImGui::BulletText("Users can check their stats and take their configs with latest domain that this server is runnig on.");
         ImGui::BulletText("You can change server domain and re-send updated configs to users.");
@@ -139,7 +141,7 @@ void not_activated_view()
         if (ImGui::Button("copy", ImVec2(120, 0)))
         {
             char admin_link[120] = {0};
-            sprintf(admin_link, "https://telegram.me/%s?start=%s", bot_name,  ServerReportStore::last_report.panelsettings.admin_password.c_str());
+            sprintf(admin_link, "https://telegram.me/%s?start=%s", bot_name, ServerReportStore::last_report.panelsettings.admin_password.c_str());
             ImGui::SetClipboardText((const char *)admin_link);
         }
         ImGui::NewLine();

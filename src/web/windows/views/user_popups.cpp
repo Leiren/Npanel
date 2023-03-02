@@ -146,7 +146,8 @@ static void create_user(nup_state &cst)
                 has_error = false;
 
                                                           }); });
-    cst = {};
+    // cst = {};
+    cst.name[0] = 0;
 }
 static void update_user(nup_state &cst, const char *user_password, bool user_enable)
 {
