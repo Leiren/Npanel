@@ -71,7 +71,9 @@ void not_activated_view()
         }
 
         ImGui::Text("\n");
-        ImGui::Text("Note that Bot-token is a secret. keep it in a safe place.");
+        ImGui::Text("Note that telegram bot should not be connected to 2 servers as same time, disconnect it from old server first, then connect it to new server.");
+        ImGui::Text("\n");
+        ImGui::Text("\n");
         ImGui::Text("Bot features:");
         ImGui::BulletText("Users can check their stats and take their configs with latest domain that this server is runnig on.");
         ImGui::BulletText("You can change server domain and re-send updated configs to users.");
