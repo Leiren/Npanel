@@ -73,7 +73,7 @@ after that, only ports 80,443 are required to be allowed in firewall settings.
 #	Backup
  > Npanel has auto backup and restore, it is safe to backup but not required
 
- - on Linux is all the data you can backup are in /opt/Npanel/AutoBackup
+ - on Linux all the data you can backup are in /opt/Npanel/AutoBackup
  
  - on Windows The Npanel folder is your backup indeed.
  
