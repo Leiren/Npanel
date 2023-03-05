@@ -206,7 +206,7 @@ void server_status_frame()
         ImGui::Button("Software Version", ImVec2(-FLT_MIN, 0.0f));
         ImGui::TableNextColumn();
         // ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.246f, 0.836f, 0.051f, 0.65f));
-        ImGui::Button("0.2.5 Alpha", ImVec2(-FLT_MIN, 0.0f));
+        ImGui::Button("0.2.6 Alpha", ImVec2(-FLT_MIN, 0.0f));
         // ImGui::PopStyleColor();
 
         // ImGui::TableNextColumn();.

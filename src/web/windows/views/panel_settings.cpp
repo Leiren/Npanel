@@ -253,7 +253,7 @@ void panel_settings_frame(bool tab_changed)
 
     if (ImGui::BeginPopupModal("Confirm##apply_and_restart", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoSavedSettings))
     {
-        ImGui::Text("Panel will restart, and comes up with new settings.\nin-case panel did not start\n"
+        ImGui::Text("Panel will restart, and comes up with new settings;  in-case panel did not start\n"
 #ifndef win_build
 
                     "1- check panel logs \"service npanel status\"\n"
@@ -264,7 +264,7 @@ void panel_settings_frame(bool tab_changed)
                     "2- correct your mistakes in Npanel/panel.json\n"
                     "3- restart the program"
 #endif
-                    "\n You should backup before changing settings.\n\n"
+             
                     "\n\n");
         ImGui::Separator();
 
@@ -299,17 +299,22 @@ void panel_settings_frame(bool tab_changed)
         ImGui::Text(
 #ifndef win_build
 
-            "In order to backup your users: /opt/Npanel/users.db\n"
-            "In order to backup your settings: /opt/Npanel/panel.json\n"
-            "But it is suggested to Backup the folder /opt/Npanel entirely.\n\n"
+            "In order to backup, take a copy of: /opt/Npanel/AutoBackup/*\n\n"
+            "In order to resotre, first stop the panel : service npanel stop\n"
+            "Then, place your backup files into : /opt/Npanel/*\n"
+
+            "Npanel has auto backup and restore, it is safe to backup but not required.\n"
+            "If you want to transfer to a new server, read Transfer section in github page.\n\n"
             // "You can transfer that folder to your new server without any problem, but \n"
             // "before that install npanel from github script, then move users.db and panel.jso from your backup\n to destination server.\n"
             // "then service npanel start.\n\n"
             "For security reasons, you should download those files yourself, we don't provide you any links."
 #else
-            "In order to backup your users: Npanel/users.db\n"
-            "In order to backup your settings: Npanel/panel.json\n"
-            "But I suggest you to Backup the folder Npanel/ entirely.\n\n"
+            "In order to backup, take a copy of: Npanel/AutoBackup/*\n\n"
+            "In order to resotre, place your backup files into : Npanel/*\n"
+
+            "Npanel has auto backup and restore, it is safe to backup but not required.\n\n"
+
             "For security reasons, you should download those files yourself, we don't provide you any links."
 #endif
 
