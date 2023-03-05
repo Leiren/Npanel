@@ -174,6 +174,7 @@ void loop()
         {
 
             ImGui::MenuItem("Metrics/Debugger", NULL, &show_app_metrics, true);
+            ImGui::MenuItem("Mini Keyboard", NULL, &PHONE, true);
 
             // ImGui::MenuItem("Metrics/Debugger", NULL, &show_app_metrics);
             // ImGui::MenuItem("Style Editor", NULL, &show_app_style_editor);
