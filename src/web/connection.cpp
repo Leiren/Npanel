@@ -67,9 +67,12 @@ rocket::signal<void(Result)> *Connection::send(const char *req, volatile int par
     if (socket != nullptr)
     {
         char *send_raw = (char *)strrep;
+        int raw_len = strlen(send_raw);
+        int addic = (16 - (raw_len % 16)) == 16 ? 0 : (16 - (raw_len % 16));
+        raw_len = raw_len + addic;
         char *enc_ed = encrypt(send_raw);
         EMSCRIPTEN_RESULT result;
-        result = emscripten_websocket_send_utf8_text(*socket, enc_ed);
+        result = emscripten_websocket_send_binary(*socket, enc_ed, raw_len);
         if (result == EMSCRIPTEN_RESULT_SUCCESS)
         {
             // console.log("[Socket] [Send] sent:%s", send_raw);
@@ -180,7 +183,7 @@ EM_BOOL Connection::onerror(int eventType, const EmscriptenWebSocketErrorEvent *
 {
     Connection::socket = nullptr;
     console.log("[Socket] Error !  Connection::onerror() is called! ");
-
+    // console.log("%s",(char*)userData);
     return EM_TRUE;
 }
 EM_BOOL Connection::onclose(int eventType, const EmscriptenWebSocketCloseEvent *websocketEvent, void *userData)
@@ -193,13 +196,13 @@ EM_BOOL Connection::onclose(int eventType, const EmscriptenWebSocketCloseEvent *
 EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEvent *websocketEvent, void *userData)
 {
     // console.log("onmessage");
-    if (websocketEvent->isText)
+    if (websocketEvent->isText == false)
     {
         static char *buf = (char *)malloc(400000);
 
         memcpy(buf, (char *)websocketEvent->data, websocketEvent->numBytes);
         buf[websocketEvent->numBytes] = 0;
-        char *dec = decrypt(buf);
+        char *dec = decrypt(buf, websocketEvent->numBytes);
         // console.log("%s",dec);
         Document resobj;
         if (resobj.Parse<0, ASCII<>>(dec).HasParseError())
@@ -414,11 +417,10 @@ void Connection::init()
     {
         char before_last_slash_buf[100];
         strcpy(before_last_slash_buf, after_slashes);
-        int first_s_i = (int) (strchr(before_last_slash_buf, '/') - before_last_slash_buf);
-        int second_s_i = (int) first_s_i+ (strchr(before_last_slash_buf+first_s_i+1, '/') - (before_last_slash_buf+first_s_i+1) );
+        int first_s_i = (int)(strchr(before_last_slash_buf, '/') - before_last_slash_buf);
+        int second_s_i = (int)first_s_i + (strchr(before_last_slash_buf + first_s_i + 1, '/') - (before_last_slash_buf + first_s_i + 1));
 
-
-        before_last_slash_buf[second_s_i+1] = 0;
+        before_last_slash_buf[second_s_i + 1] = 0;
 
         snprintf(wsurl, 100, "ws%s://%ss", ssl ? "s" : "", before_last_slash_buf);
     }
