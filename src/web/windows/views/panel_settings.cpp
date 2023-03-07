@@ -239,7 +239,8 @@ void panel_settings_frame(bool tab_changed)
     ImGui::InputText("##input_private_key_path", input_private_key_path, IM_ARRAYSIZE(input_private_key_path));
 
     ImGui::Text("Mux:");
-    samelinehelpmarker("my suggestion: keep it on (server side) \n but on client side it should be off(better speed)");
+    // samelinehelpmarker("my suggestion: keep it on (server side) \n but on client side it should be off(better speed)");
+    samelinehelpmarker("you should read about it in trojan-go docs...");
     cursor_pos();
     ToggleButton("##input_mux", &input_mux);
     ImGui::NewLine();
@@ -301,7 +302,7 @@ void panel_settings_frame(bool tab_changed)
 
             "In order to backup, take a copy of: /opt/Npanel/AutoBackup/*\n\n"
             "In order to resotre, first stop the panel : service npanel stop\n"
-            "Then, place your backup files into : /opt/Npanel/*\n"
+            "Then, place your backup files into : /opt/Npanel/*\n\n"
 
             "Npanel has auto backup and restore, it is safe to backup but not required.\n"
             "If you want to transfer to a new server, read Transfer section in github page.\n\n"
@@ -311,7 +312,7 @@ void panel_settings_frame(bool tab_changed)
             "For security reasons, you should download those files yourself, we don't provide you any links."
 #else
             "In order to backup, take a copy of: Npanel/AutoBackup/*\n\n"
-            "In order to resotre, place your backup files into : Npanel/*\n"
+            "In order to resotre, place your backup files into : Npanel/*\n\n"
 
             "Npanel has auto backup and restore, it is safe to backup but not required.\n\n"
 
