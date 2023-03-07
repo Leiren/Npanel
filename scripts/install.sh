@@ -43,7 +43,13 @@ printf  "\n"
 echo "continue?"
 read check__
 
-service npanel stop
+
+if [[ -v SUPDATE ]];
+then
+    service npanel stop
+fi
+
+
 
 cd /opt
 # rm -rf Npanel
