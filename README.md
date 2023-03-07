@@ -2,7 +2,9 @@
 
 A user interface designed to implement the **[Trojan-Go](https://github.com/p4gefau1t/trojan-go) API** to manage users or monitor the server,
 
-supports trojan-tcp and trojan-ws
+* Supports trojan-tcp and trojan-ws
+
+* My current task: checking the core for bug chances, probably doing some changes to it in a few days
 
 ![image](https://user-images.githubusercontent.com/123581768/221713162-05470cbf-f118-44f5-ac91-af825c42a229.png)
 
