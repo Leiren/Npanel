@@ -4,8 +4,6 @@ A user interface designed to implement the **[Trojan-Go](https://github.com/p4ge
 
 * Supports trojan-tcp and trojan-ws
 
-* My current task: checking the core for bug chances, probably doing some changes to it in a few days
-
 ![image](https://user-images.githubusercontent.com/123581768/221713162-05470cbf-f118-44f5-ac91-af825c42a229.png)
 
 Written with C++ and compiles to webassembly which allows fast encryption/decryption of packets being 
@@ -100,7 +98,7 @@ on Linux:
 # Notes
  - This UI is only a front-end application and it is useless by it self, you must implement your server side functions by your favorite language like python/c/etc.. or use the provided server which has conditions.
  
- - current server support always disables ipv6 , enables bbr , disables ufw to avoid problems. (Linux only)
+ - current server support always enables bbr , disables ufw to avoid problems. (Linux only)
  
 -  current server support  always kills ports 80,443 (for global serving) and ports 2060,2061 for local listening at startup. 
 - during the setup wizard, you configure the server by connecting to port 2060; but after setup is finished only ports 80 , 443 are opened globaly and ports 2060,2061 are used locally.
