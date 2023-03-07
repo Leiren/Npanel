@@ -167,7 +167,7 @@ static void wizard_window()
                     "3- Npanel always kills ports 80,443 (for global serving) and ports 2060,2061 for local listening at startup.\n"
                     "       to avoid problems.\n\n"
 #ifndef win_build
-                    "4- Npanel always disables ipv6 , enables bbr , disables ufw to avoid problems.\n\n"
+                    "4- Npanel always enables bbr , disables ufw to avoid problems. (on startup) \n\n"
                     "5- Npanel uses a updated version of trojan-go for trojan protocol implementation.\n"
                     "       details: a custom version with performance and security improvements and fixes on multiple data races.\n\n"
                     "6- If you want to reduce the risk of your server getting blocked,\n        ask your users to use clients that support uTls.\n"
