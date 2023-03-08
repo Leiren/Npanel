@@ -346,6 +346,8 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
             new_report.useroptions.info_include_days_left = resobj["useroptions"].GetObject()["info_include_days_left"].GetBool();
             new_report.useroptions.info_include_user_note = resobj["useroptions"].GetObject()["info_include_user_note"].GetBool();
 
+
+
             new_report.panelsettings.admin_username = resobj["panelsettings"].GetObject()["admin_username"].GetString();
             new_report.panelsettings.admin_password = resobj["panelsettings"].GetObject()["admin_password"].GetString();
             new_report.panelsettings.domain = resobj["panelsettings"].GetObject()["domain"].GetString();
@@ -356,6 +358,11 @@ EM_BOOL Connection::onmessage(int eventType, const EmscriptenWebSocketMessageEve
             new_report.panelsettings.private_key_path = resobj["panelsettings"].GetObject()["private_key_path"].GetString();
             new_report.panelsettings.mux = resobj["panelsettings"].GetObject()["mux"].GetBool();
             new_report.panelsettings.telegram_bot_key = resobj["panelsettings"].GetObject()["telegram_bot_key"].GetString();
+
+            new_report.panelsettings.botoverrides.domain = resobj["panelsettings"].GetObject()["botoverrides"].GetObject()["domain"].GetString();
+            new_report.panelsettings.botoverrides.sni = resobj["panelsettings"].GetObject()["botoverrides"].GetObject()["sni"].GetString();
+            new_report.panelsettings.botoverrides.ws_host = resobj["panelsettings"].GetObject()["botoverrides"].GetObject()["ws_host"].GetString();
+            new_report.panelsettings.botoverrides.port = resobj["panelsettings"].GetObject()["botoverrides"].GetObject()["port"].GetInt();
 
             ServerReportStore::last_report = new_report;
             (ServerReportStore::signal)(&new_report);

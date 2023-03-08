@@ -45,6 +45,7 @@ void MainWindow::onFrame()
 
     case 5:
         telegram_bot_view_frame(panel_tgbot_activated);
+        panel_tgbot_activated = false;
         break;
     case 6:
         about_view_frame();

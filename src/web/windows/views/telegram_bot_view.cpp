@@ -20,6 +20,12 @@ static int state = 0;
 static SellerOptions selleroptions;
 static BotUserOptions useroptions;
 
+static void cursor_pos()
+{
+    const float TEXT_BASE_WIDTH = ImGui::CalcTextSize("x").x;
+
+    ImGui::SetCursorPosX(TEXT_BASE_WIDTH * 30);
+}
 static void error_popupframe()
 {
     if (has_error)
@@ -337,26 +343,26 @@ void activated_view(bool tab_changed)
     if (ImGui::BeginTable("tg_admin_options", 3, flags, ImVec2(0.0f, TEXT_BASE_HEIGHT * 25), 0.0f))
     {
 
-        ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch, 0.0f, AdminTable_Name);
+        ImGui::TableSetupColumn("Notify on:", ImGuiTableColumnFlags_WidthStretch, 0.0f, AdminTable_Name);
         ImGui::TableSetupColumn("Enable", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 6, AdminTable_Enable);
         ImGui::TableSetupColumn("Notification Sound", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 18, AdminTable_Notify);
 
         ImGui::TableSetupScrollFreeze(0, 1); // Make row always visible
         ImGui::TableHeadersRow();
-        admin_row("Notify on panel login fail (incorrect password)", &selleroptions.notif_panel_login_fail);
-        admin_row("Notify on panel login succeed", &selleroptions.notif_panel_login_success);
-        admin_row("Notify on panel settings changed (domain,port,etc..)", &selleroptions.notif_panel_information_changed);
-        admin_row("Notify on high cpu usage", &selleroptions.notif_panel_cpu_usage_high);
-        admin_row("Notify on high memory usage", &selleroptions.notif_panel_mem_usage_high);
-        admin_row("Notify on server reboot", &selleroptions.notif_panel_server_reboot);
-        admin_row("Notify on panel start", &selleroptions.notif_panel_start);
-        admin_row("Notify when a user expires (days-left = 0) and becomes disabled", &selleroptions.notif_user_reach_duration_limit);
-        admin_row("Notify when a user reaches traffic limit and becomes disabled", &selleroptions.notif_user_reach_traffic_limit);
-        admin_row("Notify on a new user created", &selleroptions.notif_user_added);
-        admin_row("Notify on a user becomes disabled for any reason", &selleroptions.notif_user_disabled);
-        admin_row("Notify on a user becomes enabled for any reason", &selleroptions.notif_user_enable);
-        admin_row("Notify on a user gets deleted", &selleroptions.notif_user_removed);
-        admin_row("Notify when a user asks for support", &selleroptions.notif_user_support);
+        admin_row("panel login fail (incorrect password)", &selleroptions.notif_panel_login_fail);
+        admin_row("panel login succeed", &selleroptions.notif_panel_login_success);
+        admin_row("panel settings changed (domain,port,etc..)", &selleroptions.notif_panel_information_changed);
+        admin_row("high cpu usage", &selleroptions.notif_panel_cpu_usage_high);
+        admin_row("high memory usage", &selleroptions.notif_panel_mem_usage_high);
+        admin_row("server reboot", &selleroptions.notif_panel_server_reboot);
+        admin_row("panel start", &selleroptions.notif_panel_start);
+        admin_row("a user expires (days left = 0) and becomes disabled", &selleroptions.notif_user_reach_duration_limit);
+        admin_row("a user reaches traffic limit and becomes disabled", &selleroptions.notif_user_reach_traffic_limit);
+        admin_row("a new user created", &selleroptions.notif_user_added);
+        admin_row("a user becomes disabled for any reason", &selleroptions.notif_user_disabled);
+        admin_row("a user becomes enabled for any reason", &selleroptions.notif_user_enable);
+        admin_row("a user gets deleted", &selleroptions.notif_user_removed);
+        admin_row("a user asks for support", &selleroptions.notif_user_support);
 
         ImGui::EndTable();
     }
@@ -367,22 +373,112 @@ void activated_view(bool tab_changed)
     if (ImGui::BeginTable("tg_users_options", 2, flags, ImVec2(0.0f, TEXT_BASE_HEIGHT * 13), 0.0f))
     {
 
-        ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_WidthStretch, 0.0f, UserTable_Name);
+        ImGui::TableSetupColumn("Users can:", ImGuiTableColumnFlags_WidthStretch, 0.0f, UserTable_Name);
         ImGui::TableSetupColumn("Enable", ImGuiTableColumnFlags_WidthFixed, TEXT_BASE_WIDTH * 6, UserTable_Enable);
 
         ImGui::TableSetupScrollFreeze(0, 1); // Make row always visible
         ImGui::TableHeadersRow();
 
-        user_row("Users can ask for any information (rules all below options)", &useroptions.can_ask_info);
-        user_row("Users can see their traffic usage", &useroptions.info_include_traffic_used);
-        user_row("Users can see their ip limit amount", &useroptions.info_include_ip_limit);
-        user_row("Users can see their speed limit", &useroptions.info_include_speed_limit);
-        user_row("Users can see their maximum allowed traffic", &useroptions.info_include_traffic_limit);
-        user_row("Users can see their expiration days-left", &useroptions.info_include_days_left);
-        user_row("Users can see their notes", &useroptions.info_include_user_note);
+        user_row(" ask for any information (rules all below options)", &useroptions.can_ask_info);
+        user_row(" see their traffic usage", &useroptions.info_include_traffic_used);
+        user_row(" see their ip limit amount", &useroptions.info_include_ip_limit);
+        user_row(" see their speed limit", &useroptions.info_include_speed_limit);
+        user_row(" see their maximum allowed traffic", &useroptions.info_include_traffic_limit);
+        user_row(" see their expiration days-left", &useroptions.info_include_days_left);
+        user_row(" see their notes", &useroptions.info_include_user_note);
 
         ImGui::EndTable();
     }
+    ImGui::NewLine();
+    ImGui::NewLine();
+    ImGui::TextUnformatted("Bot Configs Override");
+    ImGui::SameLine();
+    HelpMarker("You can change the parameters of the configs the user will take from bot.\n\n"
+               "This settings will affect when bot sends configs for any user.\n"
+               "This settings will affect when a user asks config from bot."
+               // "If you want , you can enter cloudflare ip instead of domain.\n"
+               // "If you want , you can enter different domain instead of the panel main domain.\n"
+               // "If you want , you can enter SNI, but the empty SNI is your domain ofcourse.\n"
+               // "If you want , you can enter different port, that can be useful for tunnels.\n"
+               // "If you want , you can enter different port, that can be useful for tunnels.\n"
+
+    );
+
+    ImGui::Separator();
+
+    static char ps_domain[80];
+    static int ps_mainport;
+
+    static char domain_hint[100];
+    static char sni_hint[100];
+    static char ws_host_hint[100];
+    static char port_hint[100];
+
+    static char input_domain[100];
+    static char input_sni[100];
+    static char input_ws_host[100];
+    static char input_port[100];
+    if (tab_changed)
+    {
+        strcpy(ps_domain, ServerReportStore::last_report.panelsettings.domain.c_str());
+        ps_mainport = ServerReportStore::last_report.panelsettings.mainport;
+
+        sprintf(domain_hint, "empty = %s , you can enter cloudflare ip, or a domain that your certificate supports", ps_domain);
+        sprintf(sni_hint, "empty = %s , v2ray app knows emtpy sni = your domain", ps_domain);
+        sprintf(ws_host_hint, "empty = %s , v2ray app knows emtpy ws host = your domain", ps_domain);
+        sprintf(port_hint, "empty = %d", ps_mainport);
+
+        strcpy(input_domain, ServerReportStore::last_report.panelsettings.botoverrides.domain.c_str());
+        strcpy(input_sni, ServerReportStore::last_report.panelsettings.botoverrides.sni.c_str());
+        strcpy(input_ws_host, ServerReportStore::last_report.panelsettings.botoverrides.ws_host.c_str());
+        sprintf(input_port,"%d", ServerReportStore::last_report.panelsettings.botoverrides.port);
+        // strcpy(input_port, ServerReportStore::last_report.panelsettings.botoverrides.port);
+
+    }
+    ImGui::Indent();
+    ImGui::Text("domain:");
+    ImGui::SameLine();
+    cursor_pos();
+    ImGui::InputTextWithHint("##tbv_iov_domain", domain_hint, input_domain, IM_ARRAYSIZE(input_domain));
+
+    ImGui::Text("sni:");
+    ImGui::SameLine();
+    cursor_pos();
+    ImGui::InputTextWithHint("##tbv_iov_sni", sni_hint, input_sni, IM_ARRAYSIZE(input_sni));
+
+    ImGui::Text("ws host:");
+    ImGui::SameLine();
+    HelpMarker("only for ws configs");
+    ImGui::SameLine();
+    cursor_pos();
+    ImGui::InputTextWithHint("##tbv_iov_ws_host", ws_host_hint, input_ws_host, IM_ARRAYSIZE(input_ws_host));
+
+    ImGui::Text("port:");
+    ImGui::SameLine();
+    cursor_pos();
+    ImGui::InputTextWithHint("##tbv_iov_port", port_hint, input_port, IM_ARRAYSIZE(input_port));
+    ImGui::NewLine();
+    if (ImGui::Button("Save Overrides", ImVec2(160, TEXT_BASE_HEIGHT * 1.0f)))
+    {
+        Connection::send("update-bot-overrides", 4, input_domain, input_sni, input_ws_host, input_port)->connect([](Result res)
+                                                                                                                 {
+                loading = false;
+                if(res.success)
+                {
+                    console.log("override settings updated.");
+                }
+                else{
+                    has_error = true;
+                    console.log("override settings rejected! info:");
+                    console.log("%s",res.info);
+                    error = res.info;
+
+
+                } });
+    }
+    ImGui::Unindent();
+
+    ImGui::Separator();
 
     ImGui::PopStyleVar();
 }
@@ -410,5 +506,5 @@ void telegram_bot_view_frame(bool tab_changed)
     }
     ImGui::PopStyleVar(3);
 
-    // error_popupframe();
+    error_popupframe();
 }

@@ -73,7 +73,14 @@ struct BotUserOptions
     bool info_include_days_left;
     bool info_include_user_note;
 };
-
+struct BotOverrideOptions
+{
+    string domain;
+    string sni;
+    string ws_host;
+    int port;
+   
+};
 struct PanelConfStructure
 {
     string admin_username;
@@ -87,7 +94,10 @@ struct PanelConfStructure
     bool mux;
     bool first_launch;
     string telegram_bot_key;
+    BotOverrideOptions botoverrides;
+
 };
+
 
 struct ServerReport
 {
