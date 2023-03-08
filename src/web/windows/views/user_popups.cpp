@@ -428,7 +428,7 @@ void new_user_popup_frame(bool *new_state)
         ImGui::Text("Ip Limit:");
         ImGui::SameLine();
         HelpMarker("How many devices can connect at same time?\n"
-                   "Important Warning: Do NOT use ip limit when you want to put your server behind cdn or tunnel.\n"
+                   "Warning: Do NOT use ip limit when you want to put your server behind cdn or tunnel.\n"
                    "because all your users are coming from 1 ip ! \n\n"
                    "The user may connect multiple devices behind a NAT\n(wifi forexample) and all of them count as 1 device\n"
                    "because they have 1 ip.\n"
@@ -645,7 +645,9 @@ void edit_user_popupframe(User **_user)
         ImGui::Text("Ip Limit:");
         ImGui::SameLine();
         HelpMarker("How many devices can connect at same time?\n"
-                   "Indeed, the user can connect multiple devices behind a NAT\n(wifi forexample) and all of them count as 1 device\n"
+                   "Warning: Do NOT use ip limit when you want to put your server behind cdn or tunnel.\n"
+                   "because all your users are coming from 1 ip ! \n\n"
+                   "The user may connect multiple devices behind a NAT\n(wifi forexample) and all of them count as 1 device\n"
                    "because they have 1 ip.\n"
                    "Unit: (IP Count)");
 
