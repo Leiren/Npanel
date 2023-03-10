@@ -182,7 +182,7 @@ void render_list()
 
         // Sort our data if sort specs have been changed!
         if (ImGuiTableSortSpecs *sorts_specs = ImGui::TableGetSortSpecs())
-            if (resort)
+            if (resort || sorts_specs->SpecsDirty)
             {
                 resort = false;
                 UserRowModel::s_current_sort_specs = sorts_specs; // Store in variable accessible by the sort function.
