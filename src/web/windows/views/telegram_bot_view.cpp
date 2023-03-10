@@ -417,7 +417,7 @@ void activated_view(bool tab_changed)
     static char input_domain[100];
     static char input_sni[100];
     static char input_ws_host[100];
-    static char input_port[100];
+    static char input_port[100] = {0};
     if (tab_changed)
     {
         strcpy(ps_domain, ServerReportStore::last_report.panelsettings.domain.c_str());
@@ -431,7 +431,9 @@ void activated_view(bool tab_changed)
         strcpy(input_domain, ServerReportStore::last_report.panelsettings.botoverrides.domain.c_str());
         strcpy(input_sni, ServerReportStore::last_report.panelsettings.botoverrides.sni.c_str());
         strcpy(input_ws_host, ServerReportStore::last_report.panelsettings.botoverrides.ws_host.c_str());
-        sprintf(input_port,"%d", ServerReportStore::last_report.panelsettings.botoverrides.port);
+        int _i_port = ServerReportStore::last_report.panelsettings.botoverrides.port;
+        if(_i_port != 0)
+            sprintf(input_port,"%d", _i_port);
         // strcpy(input_port, ServerReportStore::last_report.panelsettings.botoverrides.port);
 
     }
