@@ -73,15 +73,19 @@ after that, only ports 80,443 are required to be allowed in firewall settings.
 #	Backup
  > Npanel has auto backup and restore, it is safe to backup but not required
 
- - on Linux all the data you can backup are in /opt/Npanel/AutoBackup
+ - on Linux all the data you can backup are in /opt/Npanel/AutoBackup/*
  
  - on Windows The Npanel folder is your backup indeed.
+ 
+ - To restore, stop the panel then put your backup files to /opt/Npanel/* 
  
  # Transfer
 on Linux you should backup /opt/Npanel Folder on old server then
 - install npanel using install script on destination server.
 - on destination server replace /opt/Npanel with your backup from old server
 - service npanel restart
+
+Note that you must bring your cert&key files from old server or generatie a new one.
 
 on Windows you can just copy the Npanel folder and move it to destination server since it is portable.
 
