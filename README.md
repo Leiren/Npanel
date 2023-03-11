@@ -85,7 +85,8 @@ on Linux you should backup /opt/Npanel Folder on old server then
 - on destination server replace /opt/Npanel with your backup from old server
 - service npanel restart
 
-Note that you must bring your cert&key files from old server or generatie a new one.
+Note that you must also bring your cert&key files from old server or generate a new certificate on target server
+and put them in same path that was on old server.
 
 on Windows you can just copy the Npanel folder and move it to destination server since it is portable.
 
