@@ -3,6 +3,7 @@
 A user interface designed to implement the **[Trojan-Go](https://github.com/p4gefau1t/trojan-go) API** to manage users or monitor the server,
 
 * Supports trojan-tcp and trojan-ws
+* Next update will be node management, 60% is done.
 
 ![image](https://user-images.githubusercontent.com/123581768/221713162-05470cbf-f118-44f5-ac91-af825c42a229.png)
 
@@ -73,15 +74,20 @@ after that, only ports 80,443 are required to be allowed in firewall settings.
 #	Backup
  > Npanel has auto backup and restore, it is safe to backup but not required
 
- - on Linux all the data you can backup are in /opt/Npanel/AutoBackup
+ - on Linux all the data you can backup are in /opt/Npanel/AutoBackup/*
  
  - on Windows The Npanel folder is your backup indeed.
+ 
+ - To restore, stop the panel then put your backup files to /opt/Npanel/* 
  
  # Transfer
 on Linux you should backup /opt/Npanel Folder on old server then
 - install npanel using install script on destination server.
 - on destination server replace /opt/Npanel with your backup from old server
 - service npanel restart
+
+Note that you must also bring your cert&key files from old server or generate a new certificate on target server
+and put them in same path that was on old server.
 
 on Windows you can just copy the Npanel folder and move it to destination server since it is portable.
 
