@@ -10,7 +10,7 @@ REQUIRED_PKG="unzip"
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $REQUIRED_PKG|grep "install ok installed")
 echo Checking for $REQUIRED_PKG: $PKG_OK
 if [ "" = "$PKG_OK" ]; then
-  echo "No $REQUIRED_PKG. Setting up $REQUIRED_PKG."
+  echo "Setting up $REQUIRED_PKG."
   sudo apt-get --yes install $REQUIRED_PKG
 fi
 
@@ -18,9 +18,18 @@ REQUIRED_PKG="wget"
 PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $REQUIRED_PKG|grep "install ok installed")
 echo Checking for $REQUIRED_PKG: $PKG_OK
 if [ "" = "$PKG_OK" ]; then
-  echo "No $REQUIRED_PKG. Setting up $REQUIRED_PKG."
+  echo "Setting up $REQUIRED_PKG."
   sudo apt-get --yes install $REQUIRED_PKG
 fi
+
+REQUIRED_PKG="iptables"
+PKG_OK=$(dpkg-query -W --showformat='${Status}\n' $REQUIRED_PKG|grep "install ok installed")
+echo Checking for $REQUIRED_PKG: $PKG_OK
+if [ "" = "$PKG_OK" ]; then
+  echo "Setting up $REQUIRED_PKG."
+  sudo apt-get --yes install $REQUIRED_PKG
+fi
+
 printf  "\n"
 printf  "\n"
 
@@ -63,6 +72,7 @@ sudo systemctl enable npanel
 sudo chmod +x Npanel
 cd linux
 sudo chmod +x trojan-go
+sudo chmod +x gost-linux-amd64
 
 printf  "\n"
 printf  "\n"
