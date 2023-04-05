@@ -27,7 +27,8 @@ void LeftSideBarWindow::onFrame()
         "Users",
         "Panel Settings",
         "Bash",
-        "Nodes & Routers",
+        "Inside Map",
+        "OutSide Map",
         "Telegram Bot",
         "About"
 

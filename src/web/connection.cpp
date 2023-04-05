@@ -71,8 +71,9 @@ rocket::signal<void(Result)> *Connection::send(const char *req, volatile int par
         int addic = (16 - (raw_len % 16)) == 16 ? 0 : (16 - (raw_len % 16));
         raw_len = raw_len + addic;
         char *enc_ed = encrypt(send_raw);
+        int32_t size_ln = *(int32_t*)(enc_ed);
         EMSCRIPTEN_RESULT result;
-        result = emscripten_websocket_send_binary(*socket, enc_ed, raw_len);
+        result = emscripten_websocket_send_binary(*socket, enc_ed+4, size_ln);
         if (result == EMSCRIPTEN_RESULT_SUCCESS)
         {
             // console.log("[Socket] [Send] sent:%s", send_raw);

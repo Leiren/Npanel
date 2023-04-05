@@ -6,7 +6,11 @@ node_modules
 /temp
 /src/server
 /src/register
-/src/node
+/src/os
+/src/modules
+/src/helper
+/src/asynctools
+/src/custom
 
 
 *.nims
