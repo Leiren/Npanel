@@ -3,8 +3,6 @@
 A user interface designed to implement the **[Trojan-Go](https://github.com/p4gefau1t/trojan-go) API** to manage users or monitor the server,
 
 * Supports trojan-tcp and trojan-ws
-* Thanks to continues suggestions form community specially I keep falling behind the progress of releasing nodes and routers update,
-but Ill keep working on it full time to make all the requested features possible. next update will be released in a few days
 
 ![image](https://user-images.githubusercontent.com/123581768/221713162-05470cbf-f118-44f5-ac91-af825c42a229.png)
 
