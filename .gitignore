@@ -11,7 +11,7 @@ node_modules
 /src/helper
 /src/asynctools
 /src/custom
-
+/.idea
 
 *.nims
 *.nim
